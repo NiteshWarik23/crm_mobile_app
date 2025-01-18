@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 abstract final class AppColors {
+  static const black = Color(0xFF000000);
   static const black1 = Color(0xFF101010);
   static const white1 = Color(0xFFFFF7FA);
   static const grey1 = Color(0xFFF2F2F2);
@@ -10,6 +11,7 @@ abstract final class AppColors {
       Color(0x4DFFFFFF); // Figma rgba(255, 255, 255, 0.3)
   static const blackTransparent = Color(0x4D000000);
   static const red1 = Color(0xFFE74C3C);
+  static const greenshade01 = Color(0xFF009963);
 
   static const lightColorScheme = ColorScheme(
     brightness: Brightness.light,
