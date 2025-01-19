@@ -34,6 +34,7 @@ class _DashboardHeaderState extends State<DashboardHeader>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        surfaceTintColor: Colors.transparent,
         title: Text(
           'Welcome Back 👋',
           style:

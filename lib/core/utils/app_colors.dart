@@ -21,6 +21,7 @@ abstract final class AppColors {
     onSecondary: AppColors.white1,
     surface: Colors.white,
     onSurface: AppColors.black1,
+    surfaceTint: Colors.transparent,
     error: Colors.white,
     onError: Colors.red,
   );
@@ -33,6 +34,7 @@ abstract final class AppColors {
     onSecondary: AppColors.black1,
     surface: AppColors.black1,
     onSurface: Colors.white,
+    surfaceTint: Colors.transparent,
     error: Colors.black,
     onError: AppColors.red1,
   );
