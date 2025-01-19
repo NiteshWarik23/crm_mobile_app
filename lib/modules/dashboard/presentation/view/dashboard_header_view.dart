@@ -1,11 +1,34 @@
 import 'package:crm_mobile_app/core/utils/app_colors.dart';
+import 'package:crm_mobile_app/modules/dashboard/presentation/view/dashboard_lead_view.dart';
 import 'package:crm_mobile_app/modules/dashboard/presentation/view/dashboard_tabs_widget.dart';
+import 'package:crm_mobile_app/modules/dashboard/presentation/view/dashboard_todays_follow_up_widget.dart';
 import 'package:crm_mobile_app/modules/splash/graph.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class DashboardHeader extends StatelessWidget {
+class DashboardHeader extends StatefulWidget {
   const DashboardHeader({super.key});
+
+  @override
+  State<DashboardHeader> createState() => _DashboardHeaderState();
+}
+
+class _DashboardHeaderState extends State<DashboardHeader>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  final List<double> salesData = [5, 8, 6, 10, 12, 4, 2, 16, 22, 8, 15, 35];
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,13 +68,32 @@ class DashboardHeader extends StatelessWidget {
                 SizedBox(
                   height: 120,
                   width: 120,
-                  child: CircleAvatar(),
+                  child: CircleAvatar(
+                    backgroundImage: AssetImage("assets/images/image.png"),
+                  ),
                 ),
                 TotalBalance(),
               ],
             ),
           ),
-          RoundedTabBar(),
+          RoundedTabBar(
+            tabController: _tabController,
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Column(
+                  spacing: 20,
+                  children: [
+                    TabBarViewBody(
+                      tabController: _tabController,
+                      salesData: salesData,
+                    ),
+                    LeadViewWidget(),
+                    TodaysFollowUpWidget(),
+                  ],
+                )),
+          ),
         ],
       ),
     );

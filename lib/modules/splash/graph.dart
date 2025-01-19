@@ -94,6 +94,7 @@
 
 
 //*********************************Example 2***************************************
+import 'package:crm_mobile_app/core/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
 
@@ -175,7 +176,7 @@ class SalesChartPainter extends CustomPainter {
 
     // Draw month labels on the x-axis
     final textPainter = TextPainter(textDirection: TextDirection.ltr);
-    final textStyle = TextStyle(color: Colors.black, fontSize: 12);
+    final textStyle = TextStyle(color: AppColors.greenshade01, fontSize: 12,fontWeight: FontWeight.w600);
 
     for (int i = 0; i < salesData.length; i++) {
       double x = i * xSpacing + 20;

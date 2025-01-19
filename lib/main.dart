@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: BlocProvider<BottomNavBloc>(
         create: (_) => BottomNavBloc(),
-        child: DashboardHeader(),
+        child: HomeScreen(),
       ),
     );
   }
