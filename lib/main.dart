@@ -7,6 +7,7 @@ import 'package:crm_mobile_app/modules/dashboard/presentation/view/dashboard_tab
 import 'package:crm_mobile_app/modules/dashboard/presentation/view/dashboard_view.dart';
 import 'package:crm_mobile_app/modules/dashboard/presentation/view_model/bottom_bar_bloc/bottom_nav_bar_bloc.dart';
 import 'package:crm_mobile_app/modules/marketing/presentation/view/campaign_detailed_view/view_campaign_detailed_view.dart';
+import 'package:crm_mobile_app/modules/profile/presentation/view/profile_view.dart';
 import 'package:crm_mobile_app/modules/splash/graph.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -29,11 +30,11 @@ class MyApp extends StatelessWidget {
       initialRoute: AppRoutes.splashRoute,
       onGenerateRoute: AppRouter.generateRoute,
       debugShowCheckedModeBanner: false,
-      home: //ViewCampaignDetailedView(),
-      BlocProvider<BottomNavBloc>(
-        create: (_) => BottomNavBloc(),
-        child: HomeScreen(),
-      ),
+      home: ProfileView(),
+      // BlocProvider<BottomNavBloc>(
+      //   create: (_) => BottomNavBloc(),
+      //   child: HomeScreen(),
+      // ),
     );
   }
 }
