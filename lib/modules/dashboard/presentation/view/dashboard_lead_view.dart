@@ -29,6 +29,7 @@ class LeadViewWidget extends StatelessWidget {
                 height: 25,
                 width: 25,
                 child: FloatingActionButton(
+                  elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(50),
                   ),

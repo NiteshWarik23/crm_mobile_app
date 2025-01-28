@@ -122,7 +122,7 @@ class SalesChartCustom extends StatelessWidget {
     return AspectRatio(
       aspectRatio: 1.5, // Makes it responsive
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.only(left:16.0,right:16.0,bottom: 16.0),
         child: CustomPaint(
           size: Size(MediaQuery.of(context).size.width, 300),
           painter: SalesChartPainter(monthlySales, monthLabels),

@@ -1,4 +1,7 @@
 import 'package:crm_mobile_app/core/utils/app_colors.dart';
+import 'package:crm_mobile_app/modules/dashboard/presentation/view/dashboard_active_campaign_widget.dart';
+import 'package:crm_mobile_app/modules/dashboard/presentation/view/dashboard_channel_widget.dart';
+import 'package:crm_mobile_app/modules/dashboard/presentation/view/dashboard_deal_value_widget.dart';
 import 'package:crm_mobile_app/modules/dashboard/presentation/view/dashboard_lead_view.dart';
 import 'package:crm_mobile_app/modules/dashboard/presentation/view/dashboard_tabs_widget.dart';
 import 'package:crm_mobile_app/modules/dashboard/presentation/view/dashboard_todays_follow_up_widget.dart';
@@ -84,14 +87,19 @@ class _DashboardHeaderState extends State<DashboardHeader>
             child: SingleChildScrollView(
                 scrollDirection: Axis.vertical,
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   spacing: 20,
                   children: [
+                    DealValueWidget(),
                     TabBarViewBody(
                       tabController: _tabController,
                       salesData: salesData,
                     ),
                     LeadViewWidget(),
                     TodaysFollowUpWidget(),
+                    PieChartSample2(),
+                    ActiveCampaignWidget(),
+                    //ChannelStatsFlChart(),
                   ],
                 )),
           ),

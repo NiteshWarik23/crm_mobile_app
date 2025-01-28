@@ -33,19 +33,22 @@ class HomeScreen extends StatelessWidget {
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.only(
-          right: 10.0,
-          left: 10.0,
-          bottom: 15.0,
+          right: 8.0,
+          left: 8.0,
+          bottom: 25.0,
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(25),
           child: BottomNavigationBar(
+            iconSize: 10,
             type: BottomNavigationBarType.fixed,
             backgroundColor: Colors.black,
             selectedItemColor: AppColors.greenshade01,
             unselectedItemColor: Colors.grey,
             showSelectedLabels: true,
             showUnselectedLabels: true,
+            selectedFontSize: 12,
+            unselectedFontSize: 12,
             currentIndex:
                 (context.watch<BottomNavBloc>().state is BottomNavUpdatedState)
                     ? (context.watch<BottomNavBloc>().state
@@ -57,23 +60,43 @@ class HomeScreen extends StatelessWidget {
             },
             items: [
               BottomNavigationBarItem(
-                icon: Icon(Icons.home),
-                label: 'Home',
+                icon: Image.asset(
+                  'assets/icons/dashboard.png',
+                  width: 18,
+                  height: 18,
+                ),
+                label: 'Dashboard',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.search),
-                label: 'Search',
+                icon: Image.asset(
+                  'assets/icons/crm.png',
+                  width: 20,
+                  height: 20,
+                ),
+                label: 'CRM',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.add_circle_outline),
-                label: 'Add',
+                icon: Image.asset(
+                  'assets/icons/marketing.png',
+                  width: 20,
+                  height: 20,
+                ),
+                label: 'Marketing',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.notifications),
-                label: 'Alerts',
+                icon: Image.asset(
+                  'assets/icons/chats.png',
+                  width: 20,
+                  height: 20,
+                ),
+                label: 'Chats',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.person),
+                icon: Image.asset(
+                  'assets/icons/profile.png',
+                  width: 20,
+                  height: 20,
+                ),
                 label: 'Profile',
               ),
             ],

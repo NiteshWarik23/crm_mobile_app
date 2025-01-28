@@ -1,8 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 
-class TodaysFollowUpWidget extends StatelessWidget {
-  const TodaysFollowUpWidget({super.key});
+class ActiveCampaignWidget extends StatelessWidget {
+  const ActiveCampaignWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +15,7 @@ class TodaysFollowUpWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Today\'s Follow Up',
+            'Active Campaign',
             style: TextStyle(
               fontSize: 16.0,
               fontWeight: FontWeight.bold,
@@ -44,15 +44,11 @@ class TodaysFollowUpWidget extends StatelessWidget {
                       title: Padding(
                         padding: const EdgeInsets.only(left: 8.0, right: 8.0),
                         child: Column(
+                          spacing: 8,
                           children: [
                             Row(
                               spacing: 20.0,
                               children: [
-                                CircleAvatar(
-                                  radius: 25.0,
-                                  backgroundImage: NetworkImage(
-                                      'https://picsum.photos/200'), // Replace with actual image URL
-                                ),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -80,49 +76,25 @@ class TodaysFollowUpWidget extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 15.0, left: 8.0, right: 0.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                spacing: 5.0,
-                                children: [
-                                  Text(
-                                    'Time: 5:30 PM',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 12,
-                                    ),
+                            Column(
+                              spacing: 8,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Campaign Progress',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12,
+                                    color: Colors.grey
                                   ),
-                                  // AssetImage(
-                                  //     'assets/icons/instagram.svg'), // Replace with actual SVG path
-                                  // SvgPicture.asset(
-                                  //     'assets/icons/facebook.svg'), // Replace with actual SVG path
-                                  Row(
-                                    spacing: 10.0,
-                                    children: [
-                                      CommonFloatingButtonWidget(
-                                        iconPath: "assets/icons/instagram.png",
-                                      ),
-                                      CommonFloatingButtonWidget(
-                                        iconPath: "assets/icons/whatsapp.png",
-                                      ),
-                                      CommonFloatingButtonWidget(
-                                        iconPath: "assets/icons/instagram.png",
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
+                                ),
+                                GradientLinearProgressIndicator(
+                                  value: 0.7,
+                                ),
+                              ],
+                            )
                           ],
                         ),
                       ),
-                      // trailing: Padding(
-                      //   padding: const EdgeInsets.only(right: 8.0,bottom: 10),
-                      //   child: Icon(Icons.more_vert),
-                      // ),
                       contentPadding: EdgeInsets.zero,
                       visualDensity: VisualDensity.compact,
                     ),
@@ -137,34 +109,57 @@ class TodaysFollowUpWidget extends StatelessWidget {
   }
 }
 
-class CommonFloatingButtonWidget extends StatelessWidget {
-  const CommonFloatingButtonWidget({
+
+class GradientLinearProgressIndicator extends StatelessWidget {
+  final double value; // Progress value (0.0 to 1.0)
+
+  const GradientLinearProgressIndicator({
     super.key,
-    required this.iconPath,
+    required this.value,
   });
-  final String iconPath;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 25,
-      width: 25,
-      child: FloatingActionButton(
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(50),
+    return Stack(
+      children: [
+        Container(
+          width: double.infinity,
+          height: 5,
+          decoration: BoxDecoration(
+            color: Colors.transparent, // Background color
+            borderRadius: BorderRadius.circular(5),
+             border: Border.all(
+              color: Colors.white,
+              width: 0.5,
+              style: BorderStyle.solid,
+            ),
+          ),
         ),
-        onPressed: () {},
-        backgroundColor: Colors.yellow,
-        mini: true,
-        child: Image.asset(
-          height: 13,
-          width: 13,
-          iconPath,
-          filterQuality: FilterQuality.high,
-          color: Colors.black,
+        Container(
+          width: MediaQuery.of(context).size.width * value,
+          height: 5,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment(0.8, 1),
+              colors: <Color>[
+                Color(0xFFFDDA81),
+                Color(0XFF009963),
+                // Color(0xff1f005c),
+                // Color(0xff5b0060),
+                // Color(0xff870160),
+                // Color(0xffac255e),
+                // Color(0xffca485c),
+                // Color(0xffe16b5c),
+                // Color(0xfff39060),
+                // Color(0xffffb56b),
+              ],
+              tileMode: TileMode.mirror,
+            ),
+            borderRadius: BorderRadius.horizontal(left: Radius.circular(5)),
+          ),
         ),
-      ),
+      ],
     );
   }
 }

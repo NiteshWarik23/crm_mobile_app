@@ -31,6 +31,7 @@ class _RoundedTabBarState extends State<RoundedTabBar> {
             borderRadius: BorderRadius.circular(30),
           ),
           child: TabBar(
+            tabAlignment: TabAlignment.center,
             dividerColor: Colors.transparent,
             controller: widget._tabController,
             indicator: BoxDecoration(
@@ -38,7 +39,7 @@ class _RoundedTabBarState extends State<RoundedTabBar> {
               borderRadius: BorderRadius.circular(30),
             ),
             indicatorPadding: EdgeInsets.symmetric(vertical: 2),
-            labelPadding: EdgeInsets.symmetric(horizontal: 50),
+            labelPadding: EdgeInsets.symmetric(horizontal: 60),
             labelColor: Colors.white,
             unselectedLabelColor: Theme.of(context).colorScheme.primary,
             isScrollable: true,
