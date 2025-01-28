@@ -6,7 +6,7 @@ import 'package:crm_mobile_app/modules/dashboard/presentation/view/dashboard_hea
 import 'package:crm_mobile_app/modules/dashboard/presentation/view/dashboard_tabs_widget.dart';
 import 'package:crm_mobile_app/modules/dashboard/presentation/view/dashboard_view.dart';
 import 'package:crm_mobile_app/modules/dashboard/presentation/view_model/bottom_bar_bloc/bottom_nav_bar_bloc.dart';
-import 'package:crm_mobile_app/modules/marketing/presentation/view/view_campaign_detailed_view.dart';
+import 'package:crm_mobile_app/modules/marketing/presentation/view/campaign_detailed_view/view_campaign_detailed_view.dart';
 import 'package:crm_mobile_app/modules/splash/graph.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

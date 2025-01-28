@@ -1,9 +1,9 @@
 import 'package:crm_mobile_app/core/utils/app_colors.dart';
 import 'package:crm_mobile_app/modules/dashboard/presentation/view/dashboard_bar_graph_widget.dart';
-import 'package:crm_mobile_app/modules/marketing/presentation/view/campaign_progress_widget.dart';
-import 'package:crm_mobile_app/modules/marketing/presentation/view/campaign_status_widget.dart';
-import 'package:crm_mobile_app/modules/marketing/presentation/view/channel_bar_chart_view.dart';
-import 'package:crm_mobile_app/modules/marketing/presentation/view/channel_performance_widget.dart';
+import 'package:crm_mobile_app/modules/marketing/presentation/view/campaign_detailed_view/campaign_progress_widget.dart';
+import 'package:crm_mobile_app/modules/marketing/presentation/view/campaign_detailed_view/campaign_status_widget.dart';
+import 'package:crm_mobile_app/modules/marketing/presentation/view/campaign_detailed_view/channel_bar_chart_view.dart';
+import 'package:crm_mobile_app/modules/marketing/presentation/view/campaign_detailed_view/channel_performance_widget.dart';
 import 'package:flutter/material.dart';
 
 class ViewCampaignDetailedView extends StatelessWidget {
