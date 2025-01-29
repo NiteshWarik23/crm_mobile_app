@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:crm_mobile_app/core/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class ProfileHeaderViewWidget extends StatelessWidget {
@@ -22,7 +23,14 @@ class ProfileHeaderViewWidget extends StatelessWidget {
                     backgroundImage: AssetImage("assets/images/image.png"),
                   ),
                 ),
-                Text("Mitchel Cameron")
+                Text("Mitchel Cameron"),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.6,
+                  child: Divider(
+                    color: Colors.grey.shade400,
+                    thickness: 1.0,
+                  ),
+                ),
               ],
             ),
           ),
@@ -53,7 +61,9 @@ class TitlewithActionWidget extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(title),
+        Text(title,
+          style: TextStyle(fontSize: 12,color: AppColors.greyshade500),
+        ),
         GestureDetector(
           onTap: action,
           child: Icon(Icons.arrow_forward_rounded)),
@@ -78,13 +88,16 @@ class TitleAndValueWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       spacing: 10,
       children: [
-        Text(title),
+        Text(title,
+          style: TextStyle(fontSize: 12, color: AppColors.greyshade500),
+        ),
         Expanded(
           child: Text(
             value,
             maxLines: 1,
             textAlign: TextAlign.right,
             overflow: TextOverflow.ellipsis,
+            style: TextStyle(fontSize: 12),
           ),
         ),
       ],

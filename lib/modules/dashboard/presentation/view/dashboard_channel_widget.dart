@@ -1,5 +1,3 @@
-
-
 import 'package:crm_mobile_app/core/utils/app_colors.dart';
 import 'package:crm_mobile_app/modules/dashboard/presentation/view/indicators_widget.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -15,129 +13,137 @@ class PieChartSample2 extends StatefulWidget {
 class PieChart2State extends State {
   int touchedIndex = -1;
 
-
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 1.3,
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            child: AspectRatio(
-              aspectRatio: 1,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  PieChart(
-                    PieChartData(
-                      pieTouchData: PieTouchData(
-                        touchCallback: (FlTouchEvent event, pieTouchResponse) {
-                          setState(() {
-                            if (!event.isInterestedForInteractions ||
-                                pieTouchResponse == null ||
-                                pieTouchResponse.touchedSection == null) {
-                              touchedIndex = -1;
-                              return;
-                            }
-                            touchedIndex = pieTouchResponse
-                                .touchedSection!.touchedSectionIndex;
-                          });
-                        },
-                      ),
-                      borderData: FlBorderData(
-                        show: false,
-                      ),
-                      sectionsSpace: 0,
-                      centerSpaceRadius: 40.0,
-                      sections: showingSections(),
+    return Padding(
+      padding: const EdgeInsets.only(
+        right: 10.0,
+        left: 10.0,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("Channel"),
+          AspectRatio(
+            aspectRatio: 1.3,
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: AspectRatio(
+                    aspectRatio: 1,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        PieChart(
+                          PieChartData(
+                            pieTouchData: PieTouchData(
+                              touchCallback:
+                                  (FlTouchEvent event, pieTouchResponse) {
+                                setState(() {
+                                  if (!event.isInterestedForInteractions ||
+                                      pieTouchResponse == null ||
+                                      pieTouchResponse.touchedSection == null) {
+                                    touchedIndex = -1;
+                                    return;
+                                  }
+                                  touchedIndex = pieTouchResponse
+                                      .touchedSection!.touchedSectionIndex;
+                                });
+                              },
+                            ),
+                            borderData: FlBorderData(
+                              show: false,
+                            ),
+                            sectionsSpace: 0,
+                            centerSpaceRadius: 40.0,
+                            sections: showingSections(),
+                          ),
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("Total",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold)),
+                            Text("4,266",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text("Total",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.primary,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold)),
-                      Text("4,266",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color:  Theme.of(context).colorScheme.primary,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold)),
-                    ],
-                  ),
-                ],
-              ),
+                ),
+                const Column(
+                  spacing: 4.0,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Indicator(
+                      color: AppColors.red1,
+                      text: 'First',
+                      isSquare: true,
+                    ),
+                    Indicator(
+                      color: AppColors.greenshade01,
+                      text: 'Second',
+                      isSquare: true,
+                    ),
+                    Indicator(
+                      color: AppColors.grey2,
+                      text: 'Third',
+                      isSquare: true,
+                    ),
+                    Indicator(
+                      color: AppColors.black,
+                      text: 'Fourth',
+                      isSquare: true,
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  width: 20,
+                ),
+                const Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: 4.0,
+                  children: <Widget>[
+                    Indicator(
+                      color: AppColors.red1,
+                      text: 'First',
+                      isSquare: true,
+                    ),
+                    Indicator(
+                      color: AppColors.greenshade01,
+                      text: 'Second',
+                      isSquare: true,
+                    ),
+                    Indicator(
+                      color: AppColors.grey2,
+                      text: 'Third',
+                      isSquare: true,
+                    ),
+                    Indicator(
+                      color: AppColors.black,
+                      text: 'Fourth',
+                      isSquare: true,
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  width: 28,
+                ),
+              ],
             ),
-          ),
-          const Column(
-            spacing: 4.0,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Indicator(
-                color: AppColors.red1,
-                text: 'First',
-                isSquare: true,
-              ),
-              
-              Indicator(
-                color: AppColors.greenshade01,
-                text: 'Second',
-                isSquare: true,
-              ),
-             
-              Indicator(
-                color: AppColors.grey2,
-                text: 'Third',
-                isSquare: true,
-              ),
-             
-              Indicator(
-                color: AppColors.black,
-                text: 'Fourth',
-                isSquare: true,
-              ),
-              
-            ],
-          ),
-          SizedBox(width: 20,),
-          const Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: 4.0,
-            children: <Widget>[
-              Indicator(
-                color: AppColors.red1,
-                text: 'First',
-                isSquare: true,
-              ),
-             
-              Indicator(
-                color: AppColors.greenshade01,
-                text: 'Second',
-                isSquare: true,
-              ),
-             
-              Indicator(
-                color: AppColors.grey2,
-                text: 'Third',
-                isSquare: true,
-              ),
-            
-              Indicator(
-                color: AppColors.black,
-                text: 'Fourth',
-                isSquare: true,
-              ),
-             
-            ],
-          ),
-          const SizedBox(
-            width: 28,
           ),
         ],
       ),

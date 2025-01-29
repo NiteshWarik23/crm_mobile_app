@@ -8,6 +8,7 @@ class ChannelPerformanceWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 5,
       children: [
+        Text("Channel Performance"),
         Text(
           "CTR",
           style: TextStyle(
@@ -29,7 +30,7 @@ class ChannelPerformanceWidget extends StatelessWidget {
                 text: 'Last 30 Days ',
                 style: TextStyle(
                     fontSize: 14.0,
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.primary,
                     fontWeight: FontWeight.w400),
               ),
               TextSpan(

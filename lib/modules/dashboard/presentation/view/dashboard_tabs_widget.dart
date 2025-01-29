@@ -39,7 +39,7 @@ class _RoundedTabBarState extends State<RoundedTabBar> {
               borderRadius: BorderRadius.circular(30),
             ),
             indicatorPadding: EdgeInsets.symmetric(vertical: 2),
-            labelPadding: EdgeInsets.symmetric(horizontal: 60),
+            labelPadding: EdgeInsets.symmetric(horizontal: 50),
             labelColor: Colors.white,
             unselectedLabelColor: Theme.of(context).colorScheme.primary,
             isScrollable: true,

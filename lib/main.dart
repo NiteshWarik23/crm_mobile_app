@@ -30,11 +30,11 @@ class MyApp extends StatelessWidget {
       initialRoute: AppRoutes.splashRoute,
       onGenerateRoute: AppRouter.generateRoute,
       debugShowCheckedModeBanner: false,
-      home: ProfileView(),
-      // BlocProvider<BottomNavBloc>(
-      //   create: (_) => BottomNavBloc(),
-      //   child: HomeScreen(),
-      // ),
+      home: //ProfileView(),
+      BlocProvider<BottomNavBloc>(
+        create: (_) => BottomNavBloc(),
+        child: HomeScreen(),
+      ),
     );
   }
 }

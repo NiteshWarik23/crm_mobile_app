@@ -129,7 +129,7 @@ class GradientLinearProgressIndicator extends StatelessWidget {
             color: Colors.transparent, // Background color
             borderRadius: BorderRadius.circular(5),
              border: Border.all(
-              color: Colors.white,
+              color: Colors.grey,
               width: 0.5,
               style: BorderStyle.solid,
             ),

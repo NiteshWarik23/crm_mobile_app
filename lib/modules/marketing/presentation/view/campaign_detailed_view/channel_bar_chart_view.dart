@@ -162,7 +162,7 @@ int touchedIndex = -1; // Store the currently touched index
       BarChartGroupData(
         x: 0,
         barsSpace: barsSpace,
-        showingTooltipIndicators: [0],
+       // showingTooltipIndicators: [0],
         barRods: [
           BarChartRodData(
             toY: 17000000000,

@@ -1,3 +1,4 @@
+import 'package:crm_mobile_app/core/utils/app_colors.dart';
 import 'package:crm_mobile_app/modules/profile/presentation/view/widgets/profile_header_view_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -6,12 +7,14 @@ class CompanyProfileWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(right: 15.0, left: 15.0, top: 15.0),
+      padding: const EdgeInsets.only(right: 15.0, left: 15.0, top: 30.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         spacing: 20,
         children: [
-          Text("Company Profile"),
+          Text("Company Profile",
+            style: TextStyle(fontSize: 14,fontWeight: FontWeight.w700),
+          ),
           TitleAndValueWidget(title: "Company Name", value: "Mitchel"),
           TitleAndValueWidget(
               title: "Company Email", value: "MitchelLtd@gmail.com"),
@@ -44,18 +47,9 @@ class TitlewithValueAndActionWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       spacing: 10,
       children: [
-        //  Column(
-        //   crossAxisAlignment: CrossAxisAlignment.start,
-        //   spacing: 10,
-        //   children: [
-        //     Text(title),
-        //     Text(
-        //       value,
-        //       style: TextStyle(fontSize: 12),
-        //     ),
-        //   ],
-        // ),
-        Text(title),
+        Text(title,
+          style: TextStyle(fontSize: 12, color: AppColors.greyshade500),
+        ),
         Expanded(
           child: Text(
             value,

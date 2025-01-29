@@ -1,7 +1,11 @@
 import 'package:crm_mobile_app/core/utils/app_colors.dart';
+import 'package:crm_mobile_app/modules/profile/presentation/view/widgets/app_integration_widget.dart';
 import 'package:crm_mobile_app/modules/profile/presentation/view/widgets/company_profile_widget.dart';
 import 'package:crm_mobile_app/modules/profile/presentation/view/widgets/profile_header_view_widget.dart';
+import 'package:crm_mobile_app/modules/profile/presentation/view/widgets/setting_widget.dart';
+import 'package:crm_mobile_app/modules/profile/presentation/view/widgets/support_widget.dart';
 import 'package:flutter/material.dart';
+
 
 class ProfileView extends StatelessWidget {
   const ProfileView({super.key});
@@ -25,11 +29,17 @@ class ProfileView extends StatelessWidget {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          ProfileHeaderViewWidget(),
-          CompanyProfileWidget(),
-        ],
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Column(
+          children: [
+            ProfileHeaderViewWidget(),
+            CompanyProfileWidget(),
+            AppIntegrationWidget(),
+            SettingWidget(),
+            SupportWidget(),
+          ],
+        ),
       ),
     );
   }
