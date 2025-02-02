@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:crm_mobile_app/core/utils/apis.dart';
 import 'package:crm_mobile_app/core/utils/constants.dart';
 import 'package:dio/dio.dart';
 
@@ -9,8 +10,9 @@ class DioClient {
   DioClient() {
     Map<String, String> headersMap = {};
     headersMap[HttpHeaders.contentTypeHeader] = 'application/json';
+    headersMap[HttpHeaders.acceptHeader] = 'application/json';
     BaseOptions options = BaseOptions(
-        baseUrl: Constants.baseUrlDev,
+        baseUrl: ApiEndPoints.Base_Url,
         connectTimeout: const Duration(seconds: 90),
         responseType: ResponseType.json,
         headers: headersMap);
