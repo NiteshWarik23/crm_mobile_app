@@ -7,6 +7,7 @@ import 'package:crm_mobile_app/modules/login/data/repositories/login_repository.
 import 'package:crm_mobile_app/modules/login/data/services/login_api.dart';
 import 'package:crm_mobile_app/modules/login/data/services/models/request/login_request_model.dart';
 import 'package:crm_mobile_app/modules/login/data/services/models/response/login_response.dart';
+import 'package:dio/dio.dart';
 
 class LoginRepositoryImpl implements LoginRepository {
   final LoginAPi loginAPi;
@@ -32,6 +33,8 @@ class LoginRepositoryImpl implements LoginRepository {
     } on ApiServerException catch (e) {
       return DataFailed(
           ServerFailure(e.message ?? Strings.defaultErrMsg, e.statusCode!));
+    } on DioException catch (e) {
+      return DataFailed(UnknownFailure(e.toString(), 0));
     } catch (e) {
       return DataFailed(UnknownFailure(e.toString(), 0));
     }

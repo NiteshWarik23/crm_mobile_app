@@ -1,3 +1,7 @@
 abstract final class AppRoutes {
   static const splashRoute = '/';
+  static const loginRoute = "/login";
+  static const dashboardRoute = "/dashboard";
+  static const profileRoute = "/profile";
+  static const viewCampaignDetailedRoute = "/view_campaign_detailed_route";
 }

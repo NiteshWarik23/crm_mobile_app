@@ -12,10 +12,14 @@ class DioClient {
     headersMap[HttpHeaders.contentTypeHeader] = 'application/json';
     headersMap[HttpHeaders.acceptHeader] = 'application/json';
     BaseOptions options = BaseOptions(
-        baseUrl: ApiEndPoints.Base_Url,
-        connectTimeout: const Duration(seconds: 90),
-        responseType: ResponseType.json,
-        headers: headersMap);
+      baseUrl: ApiEndPoints.Base_Url,
+      connectTimeout: const Duration(seconds: 90),
+      responseType: ResponseType.json,
+      headers: headersMap,
+      validateStatus: (status) {
+        return status != null; // Allow all status codes to be processed
+      },
+    );
 
     _dio = Dio(options);
 

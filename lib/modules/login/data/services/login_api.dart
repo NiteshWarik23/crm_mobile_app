@@ -23,14 +23,17 @@ class LoginAPiImpl implements LoginAPi {
         ApiEndPoints.login,
         queryParameters: loginDataRequestModel.toJson(),
       );
+      print("Response Code${response.statusCode}");
       if (response.statusCode == 200) {
         return LoginSuccessResponseModel.fromJson(response.data);
-      }else if (response.statusCode == 401){
+      } else if (response.statusCode == 401) {
+        print("API Error ${response.data.toString()}");
         return LoginErrorResponseModel.fromJson(response.data);
       } else {
         throw ServerException(response.statusMessage);
       }
     } on DioException catch (e) {
+      print("Response Code !${e.response!.statusCode}");
       throw handleDioClientError(e);
     }
   }
