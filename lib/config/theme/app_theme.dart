@@ -5,37 +5,37 @@ import 'package:flutter/material.dart';
 abstract final class AppTheme {
   static const _textTheme = TextTheme(
     headlineLarge: TextStyle(
-      fontSize: 32,
+      fontSize: 32.0,
       fontWeight: FontWeight.w500,
     ),
     headlineSmall: TextStyle(
-      fontSize: 18,
+      fontSize: 18.0,
       fontWeight: FontWeight.w400,
     ),
     titleMedium: TextStyle(
-      fontSize: 18,
+      fontSize: 22.0,
       fontWeight: FontWeight.w500,
     ),
     bodyLarge: TextStyle(
-      fontSize: 18,
+      fontSize: 18.0,
       fontWeight: FontWeight.w400,
     ),
     bodyMedium: TextStyle(
-      fontSize: 16,
+      fontSize: 16.0,
       fontWeight: FontWeight.w400,
     ),
     bodySmall: TextStyle(
-      fontSize: 14,
+      fontSize: 14.0,
       fontWeight: FontWeight.w400,
       color: AppColors.grey3,
     ),
     labelSmall: TextStyle(
-      fontSize: 10,
+      fontSize: 10.0,
       fontWeight: FontWeight.w500,
       color: AppColors.grey3,
     ),
     labelLarge: TextStyle(
-      fontSize: 18,
+      fontSize: 18.0,
       fontWeight: FontWeight.w400,
       color: AppColors.grey3,
     ),
