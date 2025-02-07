@@ -1,6 +1,10 @@
 import 'package:crm_mobile_app/config/routes/router.dart';
 import 'package:crm_mobile_app/config/routes/routes.dart';
 import 'package:crm_mobile_app/config/theme/app_theme.dart';
+import 'package:crm_mobile_app/modules/chats/presentation/viewModel/chat_screen.dart';
+import 'package:crm_mobile_app/modules/leads/presentation/view_model/lead_profile_screen.dart';
+import 'package:crm_mobile_app/modules/leads/presentation/view_model/leads_screen.dart';
+import 'package:crm_mobile_app/modules/markating/presentaion/view_model/markating_active_campaigns.dart';
 import 'package:crm_mobile_app/modules/splash/graph.dart';
 import 'package:flutter/material.dart';
 
@@ -21,7 +25,7 @@ class MyApp extends StatelessWidget {
       darkTheme: AppTheme.darkTheme,
       initialRoute: AppRoutes.splashRoute,
       onGenerateRoute: AppRouter.generateRoute,
-      home: SalesScreenCustom(), 
+      home: ChatInboxScreen(),
     );
   }
 }

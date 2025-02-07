@@ -11,12 +11,16 @@ class DashboardApiImplementation implements DashboardApi {
   final DioClient dioClient;
 
   DashboardApiImplementation(this.dioClient);
+  @override
   Future<DashboardModel> getDashboardData() async {
     try {
       final response = await dioClient.dio.get(Constants.baseUrlDev);
       if (response.statusCode == 200) {
         return DashboardModel.fromJson(response.data);
       }
-    } catch (e) {}
+    } catch (e) {
+    }
+    Map<String,dynamic> mpp = {"Error":""};
+    return DashboardModel.fromJson(mpp);
   }
 }
