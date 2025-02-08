@@ -4,6 +4,7 @@ import 'package:crm_mobile_app/modules/dashboard/presentation/view/dashboard_hea
 import 'package:crm_mobile_app/modules/dashboard/presentation/view_model/bottom_bar_bloc/bottom_nav_bar_bloc.dart';
 import 'package:crm_mobile_app/modules/dashboard/presentation/view_model/bottom_bar_bloc/bottom_nav_bar_event.dart';
 import 'package:crm_mobile_app/modules/dashboard/presentation/view_model/bottom_bar_bloc/bottom_nav_bar_state.dart';
+import 'package:crm_mobile_app/modules/leads/presentation/view_model/leads_screen.dart';
 import 'package:crm_mobile_app/modules/marketing/presentation/view/campaign_detailed_view/view_campaign_detailed_view.dart';
 import 'package:crm_mobile_app/modules/profile/presentation/view/profile_view.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,7 @@ class DashboardScreen extends StatelessWidget {
 
   final List<Widget> _screens = [
     DashboardHeader(),
-    SearchPage(),
+    LeadsScreen(),
     ViewCampaignDetailedView(),
     AlertsPage(),
     ProfileView(),

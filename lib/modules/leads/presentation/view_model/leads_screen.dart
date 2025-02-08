@@ -1,3 +1,4 @@
+import 'package:crm_mobile_app/config/routes/routes.dart';
 import 'package:crm_mobile_app/modules/leads/presentation/view_model/calender_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -376,7 +377,9 @@ class UserCard extends StatelessWidget {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.pushNamed(context, AppRoutes.leadProfileScreen);
+                  },
                   child: Text(
                     "View Details",
                     style: TextStyle(

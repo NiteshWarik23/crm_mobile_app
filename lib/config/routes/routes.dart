@@ -4,4 +4,5 @@ abstract final class AppRoutes {
   static const dashboardRoute = "/dashboard";
   static const profileRoute = "/profile";
   static const viewCampaignDetailedRoute = "/view_campaign_detailed_route";
+  static const leadProfileScreen = "/lead_profile_screen";
 }
