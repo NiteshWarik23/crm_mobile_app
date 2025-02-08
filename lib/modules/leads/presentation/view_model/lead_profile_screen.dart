@@ -21,6 +21,7 @@ class ContactProfileScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
