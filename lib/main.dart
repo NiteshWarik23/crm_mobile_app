@@ -8,6 +8,7 @@ import 'package:crm_mobile_app/modules/dashboard/presentation/view/dashboard_hea
 import 'package:crm_mobile_app/modules/dashboard/presentation/view/dashboard_tabs_widget.dart';
 import 'package:crm_mobile_app/modules/dashboard/presentation/view/dashboard_view.dart';
 import 'package:crm_mobile_app/modules/dashboard/presentation/view_model/bottom_bar_bloc/bottom_nav_bar_bloc.dart';
+import 'package:crm_mobile_app/modules/leads/presentation/view_model/leads_screen.dart';
 import 'package:crm_mobile_app/modules/login/presentation/view/login_screen.dart';
 import 'package:crm_mobile_app/modules/login/presentation/view_model/login_bloc/login_bloc.dart';
 import 'package:crm_mobile_app/modules/marketing/presentation/view/campaign_detailed_view/view_campaign_detailed_view.dart';
@@ -36,7 +37,7 @@ class MyApp extends StatelessWidget {
       initialRoute: AppRoutes.splashRoute,
       onGenerateRoute: AppRouter.generateRoute,
       debugShowCheckedModeBanner: false,
-      home: LoginScreen(),
+      home: LeadsScreen(),
     );
   }
 }
