@@ -10,6 +10,11 @@ abstract class UsecaseWithoutParams<Type> {
   ResultWithoutFuture<Type> call();
 }
 
+abstract class FutureUsecaseWithoutParams<Type> {
+  FutureUsecaseWithoutParams();
+  ResultFuture<Type> call();
+}
+
 abstract class UseCase<T> {
   Future<T> call();
 }

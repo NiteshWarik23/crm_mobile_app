@@ -31,18 +31,18 @@ class _RoundedTabBarState extends State<RoundedTabBar> {
             borderRadius: BorderRadius.circular(30),
           ),
           child: TabBar(
-            tabAlignment: TabAlignment.center,
+            tabAlignment: TabAlignment.fill,
             dividerColor: Colors.transparent,
             controller: widget._tabController,
             indicator: BoxDecoration(
               color: AppColors.greenshade01,
               borderRadius: BorderRadius.circular(30),
             ),
-            indicatorPadding: EdgeInsets.symmetric(vertical: 2),
+            indicatorPadding: EdgeInsets.symmetric(vertical: 2,horizontal: 5),
             labelPadding: EdgeInsets.symmetric(horizontal: 50),
             labelColor: Colors.white,
             unselectedLabelColor: Theme.of(context).colorScheme.primary,
-            isScrollable: true,
+            //isScrollable: true,
             indicatorSize: TabBarIndicatorSize.tab,
             tabs: [
               Tab(text: "Leads"),

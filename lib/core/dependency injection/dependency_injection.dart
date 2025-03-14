@@ -1,4 +1,9 @@
 import 'package:crm_mobile_app/config/dio_client/dio_client.dart';
+import 'package:crm_mobile_app/modules/crm/data/repositories/lead_repository.dart';
+import 'package:crm_mobile_app/modules/crm/data/repositories/lead_repository_impl.dart';
+import 'package:crm_mobile_app/modules/crm/data/services/lead_api.dart';
+import 'package:crm_mobile_app/modules/crm/domain/usecase/lead_usecase.dart';
+import 'package:crm_mobile_app/modules/crm/presentation/view_model/lead_bloc/lead_bloc.dart';
 import 'package:crm_mobile_app/modules/dashboard/presentation/view_model/bottom_bar_bloc/bottom_nav_bar_bloc.dart';
 import 'package:crm_mobile_app/modules/login/data/repositories/login_repository.dart';
 import 'package:crm_mobile_app/modules/login/data/repositories/login_repository_impl.dart';
@@ -68,4 +73,17 @@ void init() {
 //UseCaase
 //Bloc or ViewModel
   locator.registerFactory<BottomNavBloc>(() => BottomNavBloc());
+
+
+  // CRM Module Dependencies
+  // Lead
+  //API Services
+  locator.registerLazySingleton<LeadApi>(() => LeadApiImpl(locator()));
+//Repositories
+  locator.registerLazySingleton<LeadRepository>(
+      () => LeadRepositoryImpl(locator()));
+//Use Cases
+  locator.registerLazySingleton<LeadUsecase>(() => LeadUsecase(locator()));
+//Bloc or ViewModels
+  locator.registerFactory<LeadBloc>(() => LeadBloc(locator()));
 }

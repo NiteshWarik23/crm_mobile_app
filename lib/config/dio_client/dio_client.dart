@@ -22,7 +22,7 @@ class DioClient {
     );
 
     _dio = Dio(options);
-
+    //dio.options.extra = {'withCredentials': true};
     dio.interceptors.add(LogInterceptor(requestBody: true, responseBody: true));
   }
 

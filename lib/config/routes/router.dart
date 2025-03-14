@@ -1,7 +1,8 @@
+import 'package:crm_mobile_app/config/routes/arguments/lead_details_arguments.dart';
 import 'package:crm_mobile_app/config/routes/error_route.dart';
 import 'package:crm_mobile_app/config/routes/routes.dart';
 import 'package:crm_mobile_app/modules/dashboard/presentation/view/dashboard_view.dart';
-import 'package:crm_mobile_app/modules/leads/presentation/view_model/lead_profile_screen.dart';
+import 'package:crm_mobile_app/modules/crm/presentation/view/lead_profile_screen.dart';
 import 'package:crm_mobile_app/modules/login/presentation/view/login_screen.dart';
 import 'package:crm_mobile_app/modules/marketing/presentation/view/campaign_detailed_view/view_campaign_detailed_view.dart';
 import 'package:crm_mobile_app/modules/profile/presentation/view/profile_view.dart';
@@ -22,7 +23,16 @@ class AppRouter {
       case AppRoutes.profileRoute:
         return MaterialPageRoute(builder: (_) => ProfileView());
       case AppRoutes.leadProfileScreen:
-        return MaterialPageRoute(builder: (_) => ContactProfileScreen());
+        LeadDetailsArguments leadDetailsArguments =
+            settings.arguments as LeadDetailsArguments;
+        return MaterialPageRoute(
+            builder: (_) => LeadDetailsScreen(
+                  leadName: leadDetailsArguments.leadName,
+                  leadEmailId: leadDetailsArguments.leadEmailId,
+                  leadContact: leadDetailsArguments.leadContact,
+                  leadStatus: leadDetailsArguments.leadStatus,
+                  leadChannel: leadDetailsArguments.leadChannel,
+                ));
 
       default:
         return MaterialPageRoute(

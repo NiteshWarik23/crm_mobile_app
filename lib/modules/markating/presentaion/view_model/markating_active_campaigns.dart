@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class MarketingScreen extends StatelessWidget {
-  const MarketingScreen({super.key});
+   MarketingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,17 +22,19 @@ class MarketingScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildActiveCampaignsCard(),
-            const SizedBox(height: 20),
-            _buildCampaignsList(),
-            const SizedBox(height: 20),
-            _buildLeadsSection(),
-          ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildActiveCampaignsCard(),
+              const SizedBox(height: 20),
+              _buildCampaignsList(),
+              const SizedBox(height: 20),
+              _buildLeadsSection(),
+            ],
+          ),
         ),
       ),
     );

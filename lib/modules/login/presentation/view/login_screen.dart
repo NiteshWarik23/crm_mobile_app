@@ -111,9 +111,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         controller: _passwordController,
                         obscureText: _obscurePassword,
                         decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.lock),
+                          prefixIcon: const Icon(Icons.lock,
+                            color: Colors.black,
+                          ),
                           labelText: "Password",
                           border: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           suffixIcon: IconButton(
@@ -202,7 +205,7 @@ class _LoginScreenState extends State<LoginScreen> {
             : null,
         style: ElevatedButton.styleFrom(
           backgroundColor:
-              isDisabledValue ? Colors.black : Colors.grey.shade400,
+              isDisabledValue ? Colors.black : Colors.black,//Colors.grey.shade400,
           foregroundColor: isDisabledValue ? Colors.white : Colors.black,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),

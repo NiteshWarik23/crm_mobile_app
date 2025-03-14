@@ -1,10 +1,12 @@
 import 'package:crm_mobile_app/core/dependency%20injection/dependency_injection.dart';
 import 'package:crm_mobile_app/core/utils/app_colors.dart';
+import 'package:crm_mobile_app/modules/chats/presentation/viewModel/chat_screen.dart';
 import 'package:crm_mobile_app/modules/dashboard/presentation/view/dashboard_header_view.dart';
 import 'package:crm_mobile_app/modules/dashboard/presentation/view_model/bottom_bar_bloc/bottom_nav_bar_bloc.dart';
 import 'package:crm_mobile_app/modules/dashboard/presentation/view_model/bottom_bar_bloc/bottom_nav_bar_event.dart';
 import 'package:crm_mobile_app/modules/dashboard/presentation/view_model/bottom_bar_bloc/bottom_nav_bar_state.dart';
-import 'package:crm_mobile_app/modules/leads/presentation/view_model/leads_screen.dart';
+import 'package:crm_mobile_app/modules/crm/presentation/view/leads_screen.dart';
+import 'package:crm_mobile_app/modules/markating/presentaion/view_model/markating_active_campaigns.dart';
 import 'package:crm_mobile_app/modules/marketing/presentation/view/campaign_detailed_view/view_campaign_detailed_view.dart';
 import 'package:crm_mobile_app/modules/profile/presentation/view/profile_view.dart';
 import 'package:flutter/material.dart';
@@ -16,8 +18,9 @@ class DashboardScreen extends StatelessWidget {
   final List<Widget> _screens = [
     DashboardHeader(),
     LeadsScreen(),
-    ViewCampaignDetailedView(),
-    AlertsPage(),
+    MarketingScreen(),
+    //ViewCampaignDetailedView(),
+    ChatInboxScreen(),
     ProfileView(),
   ];
 
