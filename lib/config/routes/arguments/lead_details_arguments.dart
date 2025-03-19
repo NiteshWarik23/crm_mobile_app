@@ -4,6 +4,7 @@ class LeadDetailsArguments {
   final String? leadContact;
   final String? leadStatus;
   final String? leadChannel;
+  final String? leadID;
 
   LeadDetailsArguments({
     this.leadName,
@@ -11,5 +12,6 @@ class LeadDetailsArguments {
     this.leadContact,
     this.leadStatus,
     this.leadChannel,
+    this.leadID
   });
 }

@@ -2,7 +2,9 @@ import 'package:crm_mobile_app/config/dio_client/dio_client.dart';
 import 'package:crm_mobile_app/modules/crm/data/repositories/lead_repository.dart';
 import 'package:crm_mobile_app/modules/crm/data/repositories/lead_repository_impl.dart';
 import 'package:crm_mobile_app/modules/crm/data/services/lead_api.dart';
+import 'package:crm_mobile_app/modules/crm/domain/usecase/convert_lead_to_deal_usecase.dart';
 import 'package:crm_mobile_app/modules/crm/domain/usecase/lead_usecase.dart';
+import 'package:crm_mobile_app/modules/crm/domain/usecase/update_lead_status_usecase.dart';
 import 'package:crm_mobile_app/modules/crm/presentation/view_model/lead_bloc/lead_bloc.dart';
 import 'package:crm_mobile_app/modules/dashboard/presentation/view_model/bottom_bar_bloc/bottom_nav_bar_bloc.dart';
 import 'package:crm_mobile_app/modules/login/data/repositories/login_repository.dart';
@@ -74,7 +76,6 @@ void init() {
 //Bloc or ViewModel
   locator.registerFactory<BottomNavBloc>(() => BottomNavBloc());
 
-
   // CRM Module Dependencies
   // Lead
   //API Services
@@ -82,8 +83,16 @@ void init() {
 //Repositories
   locator.registerLazySingleton<LeadRepository>(
       () => LeadRepositoryImpl(locator()));
-//Use Cases
+// Lead Use Cases
   locator.registerLazySingleton<LeadUsecase>(() => LeadUsecase(locator()));
+//Convert To Lead Use Cases
+  locator.registerLazySingleton<ConvertLeadToDealUsecase>(
+      () => ConvertLeadToDealUsecase(locator()));
+//Update Lead Status Usecase
+  locator.registerLazySingleton<UpdateLeadStatusUsecase>(
+      () => UpdateLeadStatusUsecase(locator()));
+
 //Bloc or ViewModels
-  locator.registerFactory<LeadBloc>(() => LeadBloc(locator()));
+  locator.registerFactory<LeadBloc>(
+      () => LeadBloc(locator(), locator(), locator()));
 }

@@ -32,6 +32,7 @@ class AppRouter {
                   leadContact: leadDetailsArguments.leadContact,
                   leadStatus: leadDetailsArguments.leadStatus,
                   leadChannel: leadDetailsArguments.leadChannel,
+                  leadID: leadDetailsArguments.leadID,
                 ));
 
       default:

@@ -38,6 +38,7 @@ class _DashboardHeaderState extends State<DashboardHeader>
     return Scaffold(
       appBar: AppBar(
         surfaceTintColor: Colors.transparent,
+        automaticallyImplyLeading: false,
         title: Text(
           'Welcome Back 👋',
           style:

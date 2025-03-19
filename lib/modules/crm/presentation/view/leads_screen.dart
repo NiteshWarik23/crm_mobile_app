@@ -61,7 +61,7 @@ class _LeadsScreenState extends State<LeadsScreen>  with SingleTickerProviderSta
                         borderRadius: BorderRadius.circular(50),
                         boxShadow: [
                           BoxShadow(
-                              color: Colors.grey.shade400,
+                              color: Colors.grey.shade200,
                               // Shadow color
                               spreadRadius: 0.5,
                               // Reduce spread for a smaller shadow
@@ -89,7 +89,7 @@ class _LeadsScreenState extends State<LeadsScreen>  with SingleTickerProviderSta
                     ),
                     boxShadow: [
                       BoxShadow(
-                          color: Colors.grey.shade400,
+                          color: Colors.grey.shade200,
                           // Shadow color
                           spreadRadius: 0.5,
                           // Reduce spread for a smaller shadow

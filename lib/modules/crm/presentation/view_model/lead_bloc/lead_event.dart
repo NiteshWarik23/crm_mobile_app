@@ -23,3 +23,24 @@ class FABVisibilityEvent extends LeadEvent {
   @override
   List<Object> get props => [isVisible];
 }
+
+class ClearLeadsEvent extends LeadEvent {}
+
+class ConvertLeadToDealEvent extends LeadEvent {
+  final String leadID;
+
+  ConvertLeadToDealEvent({required this.leadID});
+
+  @override
+  List<Object> get props => [leadID];
+}
+
+class UpdateLeadStatusEvent extends LeadEvent {
+  final String leadID;
+  final String status;
+
+  UpdateLeadStatusEvent({required this.leadID, required this.status});
+
+  @override
+  List<Object> get props => [leadID, status];
+}
