@@ -106,30 +106,32 @@ class _LeadsListScreenState extends State<LeadsListScreen> {
                           : Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 10.0),
-                              child: Dismissible(
-                                  key: Key(state.leadData[index].toString()),
-                                  direction: DismissDirection.endToStart,
-                                  onDismissed: (direction) {
-                                    leadBloc.add(ConvertLeadToDealEvent(
-                                        leadID:
-                                            state.leadData[index].name ?? ""));
-                                  },
-                                  background: Container(
-                                    color: Colors.black,
-                                    child: Align(
-                                      alignment: Alignment.centerRight,
-                                      child: Text(
-                                        "Convert To Deal  ",
-                                        style: GoogleFonts.nunitoSans(
-                                          fontSize: 16,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  child: LeadCard(
-                                      leadData: state.leadData[index])),
+                              child: 
+                              // Dismissible(
+                              //   key: Key(state.leadData[index].toString()),
+                              //   direction: DismissDirection.endToStart,
+                              //   onDismissed: (direction) {
+                              //     leadBloc.add(ConvertLeadToDealEvent(
+                              //         leadID:
+                              //             state.leadData[index].name ?? ""));
+                              //   },
+                              //   background: Container(
+                              //     color: Colors.black,
+                              //     child: Align(
+                              //       alignment: Alignment.centerRight,
+                              //       child: Text(
+                              //         "Convert To Deal  ",
+                              //         style: GoogleFonts.nunitoSans(
+                              //           fontSize: 16,
+                              //           color: Colors.white,
+                              //           fontWeight: FontWeight.w600,
+                              //         ),
+                              //       ),
+                              //     ),
+                              //   ),
+                              //   child:
+                                    LeadCard(leadData: state.leadData[index]),
+                              //),
                             );
                     },
                   );
