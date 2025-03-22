@@ -6,10 +6,15 @@ import 'package:crm_mobile_app/core/error/exception.dart';
 import 'package:crm_mobile_app/core/utils/apis.dart';
 import 'package:crm_mobile_app/core/utils/secure_storage.dart';
 import 'package:crm_mobile_app/modules/crm/data/services/models/request/convert_lead_to_deal_request_model.dart';
+import 'package:crm_mobile_app/modules/crm/data/services/models/request/create_lead_request_model.dart';
+import 'package:crm_mobile_app/modules/crm/data/services/models/request/delete_lead_request_model.dart';
 import 'package:crm_mobile_app/modules/crm/data/services/models/request/lead_request_model.dart';
 import 'package:crm_mobile_app/modules/crm/data/services/models/request/update_lead_status_request_model.dart';
 import 'package:crm_mobile_app/modules/crm/data/services/models/response/convert_lead_to_deal_response_model.dart';
+import 'package:crm_mobile_app/modules/crm/data/services/models/response/create_lead_response_model.dart';
+import 'package:crm_mobile_app/modules/crm/data/services/models/response/delete_lead_response_model.dart';
 import 'package:crm_mobile_app/modules/crm/data/services/models/response/lead_response.dart';
+import 'package:crm_mobile_app/modules/crm/data/services/models/response/search_lead_response_model.dart';
 import 'package:crm_mobile_app/modules/crm/data/services/models/response/update_lead_status_response_model.dart';
 import 'package:dio/dio.dart';
 
@@ -20,6 +25,11 @@ abstract class LeadApi {
       ConvertLeadToDealRequestModel convertLeadToDealRequestModel);
   Future<UpdateLeadStatusResponse> updateLeadStatus(
       UpdateLeadStatusRequestModel updateLeadStatusRequestModel);
+  Future<SearchLeadResponse> searchLead(String enteredSearchText);
+  Future<DeleteLeadResponse> deleteLead(
+      DeleteLeadRequestModel deleteLeadRequestModel);
+  Future<CreateLeadResponseModel> createLead(
+      CreateLeadRequestModel createLeadRequestModel);
 }
 
 class LeadApiImpl implements LeadApi {
@@ -160,7 +170,9 @@ class LeadApiImpl implements LeadApi {
     }
   }
 
-  Future<UpdateLeadStatusResponse> updateLeadStatus(UpdateLeadStatusRequestModel updateLeadStatusRequestModel) async{
+  @override
+  Future<UpdateLeadStatusResponse> updateLeadStatus(
+      UpdateLeadStatusRequestModel updateLeadStatusRequestModel) async {
     String? sessionID = await SecureStorage.instance
         .readSecureData(SecureStorageKeys.sid_cookie);
 
@@ -178,16 +190,73 @@ class LeadApiImpl implements LeadApi {
         data: updateLeadStatusRequestModel.toJson(),
         options: Options(headers: headers),
       );
+      print("Response Code--->${response.statusCode}");
+      if (response.statusCode == 200) {
+        print("API Error 1${response.data.toString()}");
+        return UpdateLeadStatusResponseModel.fromJson(response.data);
+      } else if (response.statusCode == 401) {
+        print("API Error 2 ${response.data.toString()}");
+        return UpdateLeadStatusErrorResponseModel.fromJson(response.data);
+      } else if (response.statusCode == 500) {
+        print("API Error 3 ${response.data.toString()}");
+        return UpdateLeadStatusErrorResponseModel.fromJson(response.data);
+      } else {
+        print("object44");
+
+        throw ServerException(response.statusMessage);
+      }
+    } on DioException catch (e) {
+      print("Response Code 2 !${e.response!.statusCode}");
+      throw handleDioClientError(e);
+    }
+  }
+
+  @override
+  Future<SearchLeadResponse> searchLead(String enteredSearchText) async {
+    String? sessionID = await SecureStorage.instance
+        .readSecureData(SecureStorageKeys.sid_cookie);
+
+    if (sessionID == null || sessionID.isEmpty) {
+      throw ServerException("Session ID is null or empty");
+    }
+    try {
+      Uri uri = Uri.parse(ApiEndPoints.leads).replace(
+        queryParameters: {
+          "filters": jsonEncode([
+            ["name", "like", "%$enteredSearchText%"]
+          ]),
+          // Ensure fields are treated as strings
+          "fields": jsonEncode([
+            'name',
+            'owner',
+            'creation',
+            'facebook_campaign',
+            'meta_platform',
+            'first_name',
+            'last_name',
+            'email',
+            'mobile_no',
+            'status',
+            'communication_status'
+          ]),
+        },
+      );
+      var headers = {'Cookie': 'sid=$sessionID;'};
+      print("Url String $uri");
+      final response = await dioClient.dio.getUri(
+        uri,
+        options: Options(headers: headers),
+      );
       print("Response Code${response.statusCode}");
       if (response.statusCode == 200) {
         print("API Error ${response.data.toString()}");
-        return UpdateLeadStatusResponseModel.fromJson(response.data);
+        return SearchLeadSuccesssResponseModel.fromJson(response.data);
       } else if (response.statusCode == 401) {
         print("API Error ${response.data.toString()}");
-        return UpdateLeadStatusErrorResponseModel.fromJson(response.data);
+        return SearchLeadErrorResponseModel.fromJson(response.data);
       } else if (response.statusCode == 500) {
         print("API Error ${response.data.toString()}");
-        return UpdateLeadStatusErrorResponseModel.fromJson(response.data);
+        return SearchLeadErrorResponseModel.fromJson(response.data);
       } else {
         throw ServerException(response.statusMessage);
       }
@@ -196,4 +265,83 @@ class LeadApiImpl implements LeadApi {
       throw handleDioClientError(e);
     }
   }
+
+  @override
+  Future<DeleteLeadResponse> deleteLead(
+      DeleteLeadRequestModel deleteLeadRequestModel) async {
+    String? sessionID = await SecureStorage.instance
+        .readSecureData(SecureStorageKeys.sid_cookie);
+
+    if (sessionID == null || sessionID.isEmpty) {
+      throw ServerException("Session ID is null or empty");
+    }
+    try {
+      Uri uri = Uri.parse(ApiEndPoints.deleteLead);
+      var headers = {
+        'Cookie': 'sid=$sessionID;'
+        //daec58a24b6104dc7c54e39b1c3b1a8defff48801ea1fa56a1e05ad7;'
+      };
+      final response = await dioClient.dio.deleteUri(
+        uri,
+        data: deleteLeadRequestModel.toJson(),
+        options: Options(headers: headers),
+      );
+      print("Response Code${response.statusCode}");
+      if (response.statusCode == 200) {
+        print("API Error ${response.data.toString()}");
+        return DeleteLeadSuccessResponseModel.fromJson(response.data);
+      } else if (response.statusCode == 401) {
+        print("API Error ${response.data.toString()}");
+        return DeleteLeadErrorResponseModel.fromJson(response.data);
+      } else if (response.statusCode == 500) {
+        print("API Error ${response.data.toString()}");
+        return DeleteLeadErrorResponseModel.fromJson(response.data);
+      } else {
+        throw ServerException(response.statusMessage);
+      }
+    } on DioException catch (e) {
+      print("Response Code !${e.response!.statusCode}");
+      throw handleDioClientError(e);
+    }
+  }
+
+  @override
+  Future<CreateLeadResponseModel> createLead(
+      CreateLeadRequestModel createLeadRequestModel) async {
+    String? sessionID = await SecureStorage.instance
+        .readSecureData(SecureStorageKeys.sid_cookie);
+
+    if (sessionID == null || sessionID.isEmpty) {
+      throw ServerException("Session ID is null or empty");
+    }
+    try {
+      Uri uri = Uri.parse(ApiEndPoints.leads);
+      var headers = {
+        'Cookie': 'sid=$sessionID;'
+        //daec58a24b6104dc7c54e39b1c3b1a8defff48801ea1fa56a1e05ad7;'
+      };
+      final response = await dioClient.dio.postUri(
+        uri,
+        data: createLeadRequestModel.toFormData(),
+        options: Options(headers: headers),
+      );
+      print("Response Code${response.statusCode}");
+      if (response.statusCode == 200) {
+        print("API Error ${response.data.toString()}");
+        return CreateLeadSuccessResponseModel.fromJson(response.data);
+      } else if (response.statusCode == 401) {
+        print("API Error ${response.data.toString()}");
+        return CreateLeadErrorResponseModel.fromJson(response.data);
+      } else if (response.statusCode == 500) {
+        print("API Error ${response.data.toString()}");
+        return CreateLeadErrorResponseModel.fromJson(response.data);
+      } else {
+        throw ServerException(response.statusMessage);
+      }
+    } on DioException catch (e) {
+      print("Response Code !${e.response!.statusCode}");
+      throw handleDioClientError(e);
+    }
+  }
+
 }

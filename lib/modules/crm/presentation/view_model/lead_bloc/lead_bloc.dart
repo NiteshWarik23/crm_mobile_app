@@ -1,13 +1,18 @@
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:crm_mobile_app/core/utils/data_state.dart';
 import 'package:crm_mobile_app/modules/crm/data/services/models/request/convert_lead_to_deal_request_model.dart';
+import 'package:crm_mobile_app/modules/crm/data/services/models/request/delete_lead_request_model.dart';
 import 'package:crm_mobile_app/modules/crm/data/services/models/request/lead_request_model.dart';
 import 'package:crm_mobile_app/modules/crm/data/services/models/request/update_lead_status_request_model.dart';
 import 'package:crm_mobile_app/modules/crm/data/services/models/response/convert_lead_to_deal_response_model.dart';
+import 'package:crm_mobile_app/modules/crm/data/services/models/response/delete_lead_response_model.dart';
 import 'package:crm_mobile_app/modules/crm/data/services/models/response/lead_response.dart';
+import 'package:crm_mobile_app/modules/crm/data/services/models/response/search_lead_response_model.dart';
 import 'package:crm_mobile_app/modules/crm/data/services/models/response/update_lead_status_response_model.dart';
 import 'package:crm_mobile_app/modules/crm/domain/usecase/convert_lead_to_deal_usecase.dart';
+import 'package:crm_mobile_app/modules/crm/domain/usecase/delete_lead_usecase.dart';
 import 'package:crm_mobile_app/modules/crm/domain/usecase/lead_usecase.dart';
+import 'package:crm_mobile_app/modules/crm/domain/usecase/search_lead_usecase.dart';
 import 'package:crm_mobile_app/modules/crm/domain/usecase/update_lead_status_usecase.dart';
 import 'package:crm_mobile_app/modules/crm/presentation/view_model/lead_bloc/lead_event.dart';
 import 'package:crm_mobile_app/modules/crm/presentation/view_model/lead_bloc/lead_state.dart';
@@ -22,16 +27,26 @@ EventTransformer<E> throttleDroppable<E>(Duration duration) {
   };
 }
 
+const _duration = Duration(milliseconds: 300);
+
+EventTransformer<Event> debounce<Event>(Duration duration) {
+  return (events, mapper) => events.debounce(duration).switchMap(mapper);
+}
+
 class LeadBloc extends Bloc<LeadEvent, LeadState> {
   final LeadUsecase leadUsecase;
   final ConvertLeadToDealUsecase convertLeadToDealUsecase;
   final UpdateLeadStatusUsecase updateLeadStatusUsecase;
+  final SearchLeadUsecase searchLeadUsecase;
+  final DeleteLeadUsecase deleteLeadUsecase;
 
   LeadBloc(
-    this.leadUsecase,
-    this.convertLeadToDealUsecase,
-    this.updateLeadStatusUsecase,
-  ) : super(LeadState()) {
+      this.leadUsecase,
+      this.convertLeadToDealUsecase,
+      this.updateLeadStatusUsecase,
+      this.searchLeadUsecase,
+      this.deleteLeadUsecase)
+      : super(LeadState()) {
     on<FetchLeadsEvent>(
       fetchLeads,
       transformer: throttleDroppable(throttleDuration),
@@ -39,6 +54,11 @@ class LeadBloc extends Bloc<LeadEvent, LeadState> {
     on<ClearLeadsEvent>(clearLeads);
     on<ConvertLeadToDealEvent>(convertLeadToDeal);
     on<UpdateLeadStatusEvent>(updateLeadStatus);
+    on<SearchLeadEvent>(
+      searchLeads,
+      transformer: debounce(_duration),
+    );
+    on<DeleteLeadEvent>(deleteLead);
   }
 
   final int limit = 10; // Number of items per request
@@ -117,6 +137,10 @@ class LeadBloc extends Bloc<LeadEvent, LeadState> {
 
   Future<void> convertLeadToDeal(
       ConvertLeadToDealEvent event, Emitter<LeadState> emit) async {
+    emit(state.copyWith(
+      convertToDealStatus: ConvertToDealStatus.convertToDealLoading,
+    ));
+
     final DataState<ConvertLeadToDealResponse> convertLeadToDealResponse =
         await convertLeadToDealUsecase.call(
       ConvertLeadToDealRequestParams(
@@ -131,20 +155,39 @@ class LeadBloc extends Bloc<LeadEvent, LeadState> {
           convertLeadToDealResponse.data;
       if (convertLeadToDealSuccessResponseData
           is ConvertLeadToDealResponseModel) {
+        // List<LeadData> updatedLeads = state.leadData.map((lead) {
+        //   if (lead.name == event.leadID) {
+        //     // return lead.copyWith(status: "Converted to Deal"); // Update locally
+        //     //return lead.status = "Converted to Deal";
+        //   }
+        //   return lead;
+        // }).toList();
+
+        // emit(state.copyWith(
+        //   convertToDealStatus: ConvertToDealStatus.convertToDealSuccess,
+        //   leadData: updatedLeads,
+        // ));
         emit(state.copyWith(
-          status: LeadListStatus.success,
+          convertToDealStatus: ConvertToDealStatus.convertToDealSuccess,
         ));
       } else if (convertLeadToDealSuccessResponseData
           is ConvertLeadToDealErrorResponseModel) {
-        emit(state.copyWith(status: LeadListStatus.failure));
+        emit(state.copyWith(
+          convertToDealStatus: ConvertToDealStatus.convertToDealFailure,
+        ));
       }
     } else if (convertLeadToDealResponse is DataFailed) {
-      emit(state.copyWith(status: LeadListStatus.failure));
+      emit(state.copyWith(
+        convertToDealStatus: ConvertToDealStatus.convertToDealFailure,
+      ));
     }
   }
 
   Future<void> updateLeadStatus(
       UpdateLeadStatusEvent event, Emitter<LeadState> emit) async {
+    emit(state.copyWith(
+      updateLeadStatus: UpdateLeadStatus.updateLeadStatusLoading,
+    ));
     final DataState<UpdateLeadStatusResponse> updateLeadStatusResponse =
         await updateLeadStatusUsecase.call(
       UpdateLeadStatusRequestParams(
@@ -162,25 +205,114 @@ class LeadBloc extends Bloc<LeadEvent, LeadState> {
 
       if (updateLeadStatusSuccessResponseData
           is UpdateLeadStatusResponseModel) {
-              print(
-            "Lead Updates Status${updateLeadStatusSuccessResponseData.message!.status}");
-        if (updateLeadStatusSuccessResponseData.message?.status != null &&
-            updateLeadStatusSuccessResponseData.message!.status ==
-                event.status) {
-          print(
-              "Lead Updates Status${updateLeadStatusSuccessResponseData.message!.status}");
-          emit(state.copyWith(
-            status: LeadListStatus.updateLeadStatusSuccess,
-          ));
-        } else {
-          emit(state.copyWith(status: LeadListStatus.updateLeadStatusFailure));
-        }
+        emit(state.copyWith(
+          updateLeadStatus: UpdateLeadStatus.updateLeadStatusSuccess,
+        ));
+        // if (updateLeadStatusSuccessResponseData.message?.status != null &&
+        //     updateLeadStatusSuccessResponseData.message!.status ==
+        //         event.status) {
+        //   print(
+        //       "Lead Updates Status${updateLeadStatusSuccessResponseData.message!.status}");
+        //   emit(state.copyWith(
+        //     updateLeadStatus: UpdateLeadStatus.updateLeadStatusSuccess,
+        //   ));
+        // }
       } else if (updateLeadStatusSuccessResponseData
           is UpdateLeadStatusErrorResponseModel) {
-        emit(state.copyWith(status: LeadListStatus.updateLeadStatusFailure));
+        emit(state.copyWith(
+            updateLeadStatus: UpdateLeadStatus.updateLeadStatusFailure));
       }
     } else if (updateLeadStatusResponse is DataFailed) {
-      emit(state.copyWith(status: LeadListStatus.updateLeadStatusFailure));
+      emit(state.copyWith(
+          updateLeadStatus: UpdateLeadStatus.updateLeadStatusFailure));
+    }
+  }
+
+//TODO: Change the ssearchstatus while emitting
+  Future<void> searchLeads(
+      SearchLeadEvent event, Emitter<LeadState> emit) async {
+    emit(state.copyWith(
+      status: LeadListStatus.initial,
+      leadData: [], // Clear old leads when refreshing
+      hasReachedMax: false, // Reset pagination
+    ));
+    try {
+      final DataState<SearchLeadResponse> leadResponse =
+          await searchLeadUsecase.call(
+              // LeadDataOffsetLimitRequestParams(
+              //   offsetLimitRequestModel: OffsetLimitRequestModel(
+              //     limitStart: 0,
+              //     limit: limit,
+              //   ),
+              //   searchText: event.searchText,
+              // ),
+              SearchLeadDataRequestParams(enteredSearchText: event.searchText));
+
+      if (leadResponse is DataSuccess) {
+        final leadSuccessResponseData = leadResponse.data;
+        if (leadSuccessResponseData is SearchLeadSuccesssResponseModel) {
+          List<SearchLeadData> newLeads = leadSuccessResponseData.data ?? [];
+          // Stop pagination if no new data is returned
+          bool reachedMax = newLeads.isEmpty;
+
+          // if (newLeads.isEmpty) {
+          //   return emit(state.copyWith(hasReachedMax: true));
+          // }
+          // Only set hasReachedMax to true if we're paginating and get an empty list
+          if (event.searchText.isNotEmpty && newLeads.isEmpty) {
+            emit(state.copyWith(hasReachedMax: true));
+            return;
+          }
+
+          emit(state.copyWith(
+            status: LeadListStatus.success,
+            searchLeadData: newLeads,
+            hasReachedMax: reachedMax,
+          ));
+
+          //limitStart += limit; // Increase offset for next fetch
+          // Update pagination offset only if new data exists
+          if (newLeads.isNotEmpty) {
+            limitStart += limit;
+          }
+        } else if (leadResponse is DataFailed) {
+          emit(state.copyWith(status: LeadListStatus.failure));
+        }
+      }
+    } catch (e) {
+      emit(state.copyWith(status: LeadListStatus.failure));
+    }
+  }
+
+  Future<void> deleteLead(
+      DeleteLeadEvent event, Emitter<LeadState> emit) async {
+    emit(state.copyWith(
+      deleteLeadStatus: DeleteLeadStatus.deleteLeadLoading,
+    ));
+
+    final DataState<DeleteLeadResponse> deleteLeadResponse =
+        await deleteLeadUsecase.call(
+      DeleteLeadRequestParams(
+          deleteLeadRequestModel: DeleteLeadRequestModel(
+              items: "[\"${event.leadID}\"]", doctype: "CRM Lead")),
+    );
+
+    if (deleteLeadResponse is DataSuccess) {
+      final deleteLeadSuccessResponseData = deleteLeadResponse.data;
+      if (deleteLeadSuccessResponseData is DeleteLeadSuccessResponseModel) {
+        emit(state.copyWith(
+          deleteLeadStatus: DeleteLeadStatus.deleteLeadSuccess,
+        ));
+      } else if (deleteLeadSuccessResponseData
+          is DeleteLeadErrorResponseModel) {
+        emit(state.copyWith(
+          deleteLeadStatus: DeleteLeadStatus.deleteLeadFailure,
+        ));
+      }
+    } else if (deleteLeadResponse is DataFailed) {
+      emit(state.copyWith(
+        deleteLeadStatus: DeleteLeadStatus.deleteLeadFailure,
+      ));
     }
   }
 }

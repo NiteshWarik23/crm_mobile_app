@@ -6,4 +6,6 @@ class ApiEndPoints {
   static const String convertLeadToDeal =
       "/api/method/crm.fcrm.doctype.crm_lead.crm_lead.convert_to_deal";
   static const String updateLeadStatus = "/api/method/frappe.client.set_value";
+  static const String deleteLead =
+      "/api/method/frappe.desk.reportview.delete_items";
 }

@@ -1,9 +1,14 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:crm_mobile_app/core/dependency%20injection/dependency_injection.dart';
 import 'package:crm_mobile_app/core/utils/call_service.dart';
 import 'package:crm_mobile_app/core/utils/email_service.dart';
 import 'package:crm_mobile_app/core/utils/sms_service.dart';
+import 'package:crm_mobile_app/modules/crm/presentation/view_model/lead_bloc/lead_bloc.dart';
+import 'package:crm_mobile_app/modules/crm/presentation/view_model/lead_bloc/lead_state.dart';
 import 'package:crm_mobile_app/modules/crm/presentation/widgets/dropdown_bottom_sheet.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class LeadDetailsScreen extends StatelessWidget {
@@ -14,7 +19,7 @@ class LeadDetailsScreen extends StatelessWidget {
   final String? leadChannel;
   final String? leadID;
 
-  const LeadDetailsScreen(
+  LeadDetailsScreen(
       {super.key,
       this.leadName,
       this.leadEmailId,
@@ -23,45 +28,79 @@ class LeadDetailsScreen extends StatelessWidget {
       this.leadChannel,
       this.leadID});
 
+  final LeadBloc leadBloc = locator<LeadBloc>();
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: appBarWidget(context),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            leadImageAndNameWidget(),
-            const SizedBox(height: 10),
-            contactInformationWidget(),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+    return BlocProvider(
+      create: (context) => leadBloc,
+      child: BlocListener<LeadBloc, LeadState>(
+        listener: (BuildContext context,LeadState state) {
+          print("Listening");
+          if (state.updateLeadStatus ==
+              UpdateLeadStatus.updateLeadStatusLoading) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("Updating Lead Status...Please Wait"),
+              ),
+            );
+            //Navigator.pop(context);
+          } else if (state.updateLeadStatus ==
+              UpdateLeadStatus.updateLeadStatusSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("Lead Status Updated"),
+              ),
+            );
+            Navigator.pop(context);
+          } else if (state.updateLeadStatus ==
+              UpdateLeadStatus.updateLeadStatusFailure) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("Failed to update Lead Status"),
+              ),
+            );
+          }
+        },
+        child: Scaffold(
+          appBar: appBarWidget(context),
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildIconButton(Icons.call, () {
-                  CallService.makePhoneCall(leadContact ?? "");
-                }),
-                _buildIconButton(Icons.sms, () {
-                  SmsService.sendSms(leadContact ?? "",
-                      message: "Hello $leadName");
-                }),
-                _buildIconButton(Icons.mail_lock_outlined, () {}),
-                _buildIconButton(Icons.mail, () {
-                  MailService.sendEmail(
-                    email: "$leadEmailId",
-                    subject: "Hello",
-                    body: "This is a test email",
-                  );
-                }),
+                leadImageAndNameWidget(),
+                const SizedBox(height: 10),
+                contactInformationWidget(),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _buildIconButton(Icons.call, () {
+                      CallService.makePhoneCall(leadContact ?? "");
+                    }),
+                    _buildIconButton(Icons.sms, () {
+                      SmsService.sendSms(leadContact ?? "",
+                          message: "Hello $leadName");
+                    }),
+                    _buildIconButton(Icons.mail_lock_outlined, () {}),
+                    _buildIconButton(Icons.mail, () {
+                      MailService.sendEmail(
+                        email: "$leadEmailId",
+                        subject: "Hello",
+                        body: "This is a test email",
+                      );
+                    }),
+                  ],
+                ),
+                const SizedBox(height: 30),
+                campaignDetailsWidget(),
+                const SizedBox(height: 20),
+                const SizedBox(height: 10),
+                taskSectionWidget(context),
               ],
             ),
-            const SizedBox(height: 30),
-            campaignDetailsWidget(),
-            const SizedBox(height: 20),
-            const SizedBox(height: 10),
-            taskSectionWidget(context),
-          ],
+          ),
         ),
       ),
     );
@@ -243,7 +282,8 @@ class LeadDetailsScreen extends StatelessWidget {
             shape: BoxShape.rectangle,
             borderRadius: BorderRadius.circular(10)),
         padding: const EdgeInsets.all(10),
-        child: Icon(icon, color: Colors.black, size: 23),
+        child: SvgPicture.asset("assets/icons/Vector.svg")
+         //Icon(icon, color: Colors.black, size: 23),
       ),
     );
   }

@@ -3,8 +3,12 @@ import 'package:crm_mobile_app/modules/crm/data/repositories/lead_repository.dar
 import 'package:crm_mobile_app/modules/crm/data/repositories/lead_repository_impl.dart';
 import 'package:crm_mobile_app/modules/crm/data/services/lead_api.dart';
 import 'package:crm_mobile_app/modules/crm/domain/usecase/convert_lead_to_deal_usecase.dart';
+import 'package:crm_mobile_app/modules/crm/domain/usecase/delete_lead_usecase.dart';
 import 'package:crm_mobile_app/modules/crm/domain/usecase/lead_usecase.dart';
+import 'package:crm_mobile_app/modules/crm/domain/usecase/search_lead_usecase.dart';
 import 'package:crm_mobile_app/modules/crm/domain/usecase/update_lead_status_usecase.dart';
+import 'package:crm_mobile_app/modules/crm/presentation/view_model/convert_to_deal_bloc/convert_to_deal_bloc.dart';
+import 'package:crm_mobile_app/modules/crm/presentation/view_model/dropdown_bloc/dropdown_bloc.dart';
 import 'package:crm_mobile_app/modules/crm/presentation/view_model/lead_bloc/lead_bloc.dart';
 import 'package:crm_mobile_app/modules/dashboard/presentation/view_model/bottom_bar_bloc/bottom_nav_bar_bloc.dart';
 import 'package:crm_mobile_app/modules/login/data/repositories/login_repository.dart';
@@ -91,8 +95,19 @@ void init() {
 //Update Lead Status Usecase
   locator.registerLazySingleton<UpdateLeadStatusUsecase>(
       () => UpdateLeadStatusUsecase(locator()));
-
+//SearchLeadUsecase
+locator.registerLazySingleton<SearchLeadUsecase>(
+      () => SearchLeadUsecase(locator()));
+//DeleteLeadUsecase
+  locator.registerLazySingleton<DeleteLeadUsecase>(
+      () => DeleteLeadUsecase(locator()));
 //Bloc or ViewModels
   locator.registerFactory<LeadBloc>(
-      () => LeadBloc(locator(), locator(), locator()));
+      () => LeadBloc(locator(), locator(), locator(),locator(),locator()));
+//Dropdown Bloc
+locator.registerFactory<DropdownBloc>(
+      () => DropdownBloc());
+//Bloc or ViewModels
+  locator.registerFactory<ConvertLeadToDealBloc>(
+      () => ConvertLeadToDealBloc(locator()));
 }

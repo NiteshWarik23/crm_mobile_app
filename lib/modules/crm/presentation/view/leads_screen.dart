@@ -1,4 +1,3 @@
-import 'package:crm_mobile_app/config/routes/routes.dart';
 import 'package:crm_mobile_app/modules/crm/presentation/view/crm_tabs_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -9,7 +8,8 @@ class LeadsScreen extends StatefulWidget {
   State<LeadsScreen> createState() => _LeadsScreenState();
 }
 
-class _LeadsScreenState extends State<LeadsScreen>  with SingleTickerProviderStateMixin {
+class _LeadsScreenState extends State<LeadsScreen>
+    with SingleTickerProviderStateMixin {
   int currentPageIndex = 0;
   late TabController _tabController;
 
@@ -19,7 +19,6 @@ class _LeadsScreenState extends State<LeadsScreen>  with SingleTickerProviderSta
     _tabController = TabController(length: 3, vsync: this);
   }
 
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,7 +40,10 @@ class _LeadsScreenState extends State<LeadsScreen>  with SingleTickerProviderSta
                 height: MediaQuery.sizeOf(context).height * 0.05,
                 child: SearchBar(
                   hintText: "Search...",
-                  hintStyle:WidgetStateProperty.all(TextStyle(fontSize: 16),) ,
+                  hintStyle: WidgetStateProperty.all(
+                    TextStyle(fontSize: 16),
+                  ),
+                  textInputAction: TextInputAction.search,
                   padding: WidgetStateProperty.all(
                       EdgeInsets.symmetric(horizontal: 10)),
                   backgroundColor: WidgetStateProperty.all(Colors.white),
@@ -80,7 +82,7 @@ class _LeadsScreenState extends State<LeadsScreen>  with SingleTickerProviderSta
                 height: 40,
                 width: 40,
                 decoration: BoxDecoration(
-                  shape: BoxShape.circle,
+                    shape: BoxShape.circle,
                     color: Colors.white,
                     //borderRadius: BorderRadius.circular(50),
                     border: Border.all(
@@ -104,9 +106,15 @@ class _LeadsScreenState extends State<LeadsScreen>  with SingleTickerProviderSta
               ),
             ],
           ),
-          CrmRoundedTabBar(tabController: _tabController,),
-          Expanded(child: TabBarViewBody(tabController: _tabController,))
-                ],
+          CrmRoundedTabBar(
+            tabController: _tabController,
+          ),
+          //SingleChoice(),
+          Expanded(
+              child: TabBarViewBody(
+            tabController: _tabController,
+          ))
+        ],
       ),
       // bottomNavigationBar: NavigationBar(
       //   onDestinationSelected: (int index) {
@@ -136,5 +144,58 @@ class _LeadsScreenState extends State<LeadsScreen>  with SingleTickerProviderSta
   }
 }
 
+enum Calendar { day, week, month, year }
 
+class SingleChoice extends StatefulWidget {
+  const SingleChoice({super.key});
 
+  @override
+  State<SingleChoice> createState() => _SingleChoiceState();
+}
+
+class _SingleChoiceState extends State<SingleChoice> {
+  Calendar calendarView = Calendar.day;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: MediaQuery.sizeOf(context).height * 0.05,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: SegmentedButton<Calendar>(
+          segments: const <ButtonSegment<Calendar>>[
+            ButtonSegment<Calendar>(
+              value: Calendar.day,
+              label: Text('Day'),
+              icon: Icon(Icons.calendar_view_day),
+            ),
+            ButtonSegment<Calendar>(
+              value: Calendar.week,
+              label: Text('Week'),
+              icon: Icon(Icons.calendar_view_week),
+            ),
+            ButtonSegment<Calendar>(
+              value: Calendar.month,
+              label: Text('Month'),
+              icon: Icon(Icons.calendar_view_month),
+            ),
+            ButtonSegment<Calendar>(
+              value: Calendar.year,
+              label: Text('Year'),
+              icon: Icon(Icons.calendar_today),
+            ),
+          ],
+          selected: <Calendar>{calendarView},
+          onSelectionChanged: (Set<Calendar> newSelection) {
+            setState(() {
+              // By default there is only a single segment that can be
+              // selected at one time, so its value is always the first
+              // item in the selected set.
+              calendarView = newSelection.first;
+            });
+          },
+        ),
+      ),
+    );
+  }
+}

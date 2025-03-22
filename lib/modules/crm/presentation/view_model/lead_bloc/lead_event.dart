@@ -44,3 +44,21 @@ class UpdateLeadStatusEvent extends LeadEvent {
   @override
   List<Object> get props => [leadID, status];
 }
+
+class SearchLeadEvent extends LeadEvent {
+  final String searchText;
+
+  SearchLeadEvent({required this.searchText});
+
+  @override
+  List<Object> get props => [searchText];
+}
+
+class DeleteLeadEvent extends LeadEvent {
+  final String leadID;
+
+  DeleteLeadEvent({required this.leadID});
+
+  @override
+  List<Object> get props => [leadID];
+}

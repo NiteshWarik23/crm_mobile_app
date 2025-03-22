@@ -4,266 +4,324 @@ import 'package:crm_mobile_app/core/dependency%20injection/dependency_injection.
 import 'package:crm_mobile_app/modules/crm/data/services/models/response/lead_response.dart';
 import 'package:crm_mobile_app/modules/crm/presentation/view_model/lead_bloc/lead_bloc.dart';
 import 'package:crm_mobile_app/modules/crm/presentation/view_model/lead_bloc/lead_event.dart';
+import 'package:crm_mobile_app/modules/crm/presentation/view_model/lead_bloc/lead_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 
-enum Menu { preview, share, getLink, remove, download }
+enum Menu { delete, convertToDeal }
 
 class LeadCard extends StatelessWidget {
   final LeadData leadData;
 
-   LeadCard({super.key, required this.leadData});
+  LeadCard({super.key, required this.leadData});
 
-    final LeadBloc leadBloc = locator<LeadBloc>();
-
-
+  final LeadBloc leadBloc = locator<LeadBloc>();
+  // final ConvertLeadToDealBloc convertLeadToDealBloc =
+  //     locator<ConvertLeadToDealBloc>();
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    return BlocProvider(
+    return 
+    BlocProvider(
       create: (context) => leadBloc,
-      child: GestureDetector(
-        onTap: () {
-          print("-->Lead Card Lead CRM ID ${leadData.name}");
-      
-          Navigator.pushNamed(
-            context,
-            AppRoutes.leadProfileScreen,
-            arguments: LeadDetailsArguments(
-              leadName: leadData.firstName,
-              leadEmailId: leadData.email,
-              leadContact: leadData.mobileNo,
-              leadStatus: leadData.status,
-              leadChannel: leadData.facebookCampaign,
-              leadID: leadData.name,
-            ),
-          );
+      child: BlocListener<LeadBloc, LeadState>(
+        listener: (BuildContext context, LeadState state) {
+          print("Listening ${state}");
+          if (state.convertToDealStatus ==
+              ConvertToDealStatus.convertToDealLoading) {
+            Fluttertoast.showToast(
+                msg: "Converting Lead To Deal...Please Wait");
+          } else if (state.convertToDealStatus ==
+              ConvertToDealStatus.convertToDealSuccess) {
+            Fluttertoast.showToast(msg: "Lead Converted To Deal Successfully");
+          } else if (state.convertToDealStatus ==
+              ConvertToDealStatus.convertToDealFailure) {
+            Fluttertoast.showToast(msg: "Failed to convert Lead To Deal");
+          } else if (state.deleteLeadStatus ==
+              DeleteLeadStatus.deleteLeadLoading) {
+            Fluttertoast.showToast(msg: "Deleting Lead...Please Wait");
+          } else if (state.deleteLeadStatus ==
+              DeleteLeadStatus.deleteLeadSuccess) {
+            Fluttertoast.showToast(msg: "Lead deleted Successfully");
+          } else if (state.deleteLeadStatus ==
+              DeleteLeadStatus.deleteLeadFailure) {
+            Fluttertoast.showToast(msg: "Failed to delete Lead.");
+          }
+          // if (state is ConvertToDealLoadingState) {
+          //   print("Listening ${state}");
+
+          //   scaffoldMessengerKey.currentState?.showSnackBar(
+          //     SnackBar(
+          //       content: Text("Converting Lead To Deal...Please Wait"),
+          //     ),
+          //   );
+          // } else if (state is ConvertToDealStateSuccessState) {
+          //   print("Listening ${state}");
+
+          //   Fluttertoast.showToast(
+          //       gravity: ToastGravity.TOP,
+          //       msg: "Lead Converted To Deal Successfully");
+          //   scaffoldMessengerKey.currentState?.showSnackBar(
+          //     SnackBar(
+          //       content: Text("Lead Converted To Deal Successfully"),
+          //     ),
+          //   );
+          // } else if (state is ConvertToDealFailureState) {
+          //   scaffoldMessengerKey.currentState?.showSnackBar(
+          //     SnackBar(
+          //       content: Text("Failed to convert Lead To Deal"),
+          //     ),
+          //   );
+          // }
         },
-        child: Card(
-          margin: EdgeInsets.only(bottom: 18.0),
-          elevation: 1,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          child: Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start, // Aligns children to the top
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CircleAvatar(
-                          radius: 24,
-                          backgroundColor: Colors.grey.shade300,
-                          child: Icon(Icons.person, size: 30, color: Colors.grey),
-                        ),
-                        // SizedBox(
-                        //   height: 20,
-                        // )
-                      ],
-                    ),
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
+        child: GestureDetector(
+          onTap: () {
+            print("-->Lead Card Lead CRM ID ${leadData.name}");
+
+            Navigator.pushNamed(
+              context,
+              AppRoutes.leadProfileScreen,
+              arguments: LeadDetailsArguments(
+                leadName: leadData.firstName,
+                leadEmailId: leadData.email,
+                leadContact: leadData.mobileNo,
+                leadStatus: leadData.status,
+                leadChannel: leadData.facebookCampaign,
+                leadID: leadData.name,
+              ),
+            );
+          },
+          child: Card(
+            margin: EdgeInsets.only(bottom: 18.0),
+            elevation: 1,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            child: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment:
+                        CrossAxisAlignment.start, // Aligns children to the top
+                    children: [
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          FittedBox(
-                            fit: BoxFit.scaleDown, // Scales the text down to fit
-                            child: Text(
-                              leadData.firstName ?? "NA",
-                              style: TextStyle(
-                                fontSize: 16,
-                                // fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                          CircleAvatar(
+                            radius: 24,
+                            backgroundColor: Colors.grey.shade300,
+                            child: Icon(Icons.person,
+                                size: 30, color: Colors.grey),
                           ),
-                          SizedBox(height: 4),
-                          FittedBox(
-                            fit: BoxFit.scaleDown, // Scales the text down to fit
-                            child: Text(
-                              "Email : ${leadData.email ?? "NA"}",
-                              maxLines: 1, // Restrict to a single line
-                              overflow: TextOverflow.visible,
-                              style: TextStyle(fontSize: 12, color: Colors.grey),
-                            ),
-                          ),
-                          FittedBox(
-                            fit: BoxFit.scaleDown, // Scales the text down to fit
-                            child: Text(
-                              "Contact : ${leadData.mobileNo ?? "NA"}",
-                              maxLines: 1, // Restrict to a single line
-                              style: TextStyle(fontSize: 12, color: Colors.grey),
-                            ),
-                          ),
-                          FittedBox(
-                            fit: BoxFit.scaleDown, // Scales the text down to fit
-                            child: Text(
-                              "Campaign Name",
-                              maxLines: 1, // Restrict to a single line
-                              style: TextStyle(fontSize: 12, color: Colors.grey),
-                            ),
-                          ),
-                          SizedBox(height: 8),
+                          // SizedBox(
+                          //   height: 20,
+                          // )
                         ],
                       ),
-                    ),
-                    PopupMenuButton<Menu>(
-                      //popUpAnimationStyle: _animationStyle,
-                      icon: const Icon(Icons.more_vert),
-                      onSelected: (Menu item) {},
-                      itemBuilder: (BuildContext context) =>
-                          <PopupMenuEntry<Menu>>[
-                         PopupMenuItem<Menu>(
-                          value: Menu.preview,
-                          child: GestureDetector(
-                            onTap: (){
-                              //TODO Add Delete 
-                              // leadBloc.add(ConvertLeadToDealEvent(
-                              //             leadID:
-                              //                 leadData.name?? ""));
-                            },
+                      SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            FittedBox(
+                              fit: BoxFit
+                                  .scaleDown, // Scales the text down to fit
+                              child: Text(
+                                leadData.firstName ?? "NA",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  // fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            FittedBox(
+                              fit: BoxFit
+                                  .scaleDown, // Scales the text down to fit
+                              child: Text(
+                                "Email : ${leadData.email ?? "NA"}",
+                                maxLines: 1, // Restrict to a single line
+                                overflow: TextOverflow.visible,
+                                style:
+                                    TextStyle(fontSize: 12, color: Colors.grey),
+                              ),
+                            ),
+                            FittedBox(
+                              fit: BoxFit
+                                  .scaleDown, // Scales the text down to fit
+                              child: Text(
+                                "Contact : ${leadData.mobileNo ?? "NA"}",
+                                maxLines: 1, // Restrict to a single line
+                                style:
+                                    TextStyle(fontSize: 12, color: Colors.grey),
+                              ),
+                            ),
+                            FittedBox(
+                              fit: BoxFit
+                                  .scaleDown, // Scales the text down to fit
+                              child: Text(
+                                "Campaign Name",
+                                maxLines: 1, // Restrict to a single line
+                                style:
+                                    TextStyle(fontSize: 12, color: Colors.grey),
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                          ],
+                        ),
+                      ),
+                      PopupMenuButton<Menu>(
+                        //popUpAnimationStyle: _animationStyle,
+                        icon: const Icon(Icons.more_vert),
+                        onSelected: (Menu item) {
+                          if (item == Menu.delete) {
+                            leadBloc.add(
+                                DeleteLeadEvent(leadID: leadData.name ?? ""));
+                          } else if (item == Menu.convertToDeal) {
+                            leadBloc.add(ConvertLeadToDealEvent(
+                                leadID: leadData.name ?? ""));
+                          }
+                        },
+                        itemBuilder: (BuildContext context) =>
+                            <PopupMenuEntry<Menu>>[
+                          PopupMenuItem<Menu>(
+                            value: Menu.delete,
                             child: ListTile(
                               contentPadding: EdgeInsets.all(0),
                               leading: Icon(Icons.delete),
                               title: Text('Delete'),
                             ),
                           ),
-                        ),
-                         PopupMenuItem<Menu>(
-                          value: Menu.share,
-                          child: GestureDetector(
-                            onTap: (){
-                              leadBloc.add(ConvertLeadToDealEvent(
-                                  leadID: leadData.name ?? ""));
-                            },
+                          PopupMenuItem<Menu>(
+                            value: Menu.convertToDeal,
                             child: ListTile(
                               leading: Icon(Icons.replay),
                               title: Text('Convert To Deal'),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    //Lead status
-                    // Container(
-                    //   width: screenWidth * 0.2, // Fixed width
-                    //   height: screenHeight * 0.03, // Fixed height
-                    //   decoration: BoxDecoration(
-                    //     color: getStatusColor(
-                    //         leadData.status ?? ""), //user.statusColor,
-                    //     borderRadius: BorderRadius.circular(20),
-                    //   ),
-                    //   alignment:
-                    //       Alignment.center, // Center the text within the container
-                    //   child: Text(
-                    //     leadData.status ?? "",
-                    //     style: TextStyle(
-                    //       color: Colors.white,
-                    //       fontSize: 12,
-                    //       fontWeight: FontWeight.bold,
-                    //     ),
-                    //     overflow: TextOverflow
-                    //         .ellipsis, // Truncate the text if it's too long
-                    //   ),
-                    // ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      spacing: 8,
-                      children: [
-                        Text(
-                          formatDate(leadData.creation ?? "NA"),
-                          style: TextStyle(fontSize: 12, color: Colors.black),
-                        ),
-                        leadData.metaPlatform != null
-                            ? leadData.metaPlatform == "ig"
-                                ? SizedBox(
-                                    height: 12,
-                                    width: 12,
-                                    child: Image.asset("assets/icons/insta.png"),
-                                  )
-                                : SizedBox()
-                            : SizedBox(),
-                      ],
-                    ),
-                    // Add a SizedBox with height to make the VerticalDivider visible
-                    SizedBox(
-                      height:
-                          screenHeight * 0.02, // Set height to match the content
-                      child: VerticalDivider(
-                        width: 16, // Space before and after the divider
-                        thickness: 1, // Thickness of the divider
-                        color: Colors.black26, // Color of the divider
+                        ],
                       ),
-                    ),
-      
-                    //View Details Text Button
-                    // GestureDetector(
-                    //   onTap: () {
-                    //     Navigator.pushNamed(
-                    //       context,
-                    //       AppRoutes.leadProfileScreen,
-                    //       arguments: LeadDetailsArguments(
-                    //         leadName: leadData.firstName,
-                    //         leadEmailId: leadData.email,
-                    //         leadContact: leadData.mobileNo,
-                    //         leadStatus: leadData.status,
-                    //         leadChannel: leadData.facebookCampaign,
-                    //       ),
-                    //     );
-                    //   },
-                    //   child: Row(
-                    //     spacing: 5,
-                    //     children: [
-                    //       Text(
-                    //         "View Details",
-                    //         style: GoogleFonts.nunitoSans(
-                    //           color: Colors.grey,
-                    //           fontSize: 12,
-                    //           fontWeight: FontWeight.w400,
-                    //           decoration: TextDecoration.underline,
-                    //         ),
-                    //       ),
-                    //       Icon(
-                    //         Icons.north_east,
-                    //         size: 15,
-                    //         color: Colors.grey,
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
-                    Container(
-                      width: screenWidth * 0.2, // Fixed width
-                      height: screenHeight * 0.03, // Fixed height
-                      decoration: BoxDecoration(
-                        color: getStatusColor(
-                            leadData.status ?? ""), //user.statusColor,
-                        borderRadius: BorderRadius.circular(20),
+                      //Lead status
+                      // Container(
+                      //   width: screenWidth * 0.2, // Fixed width
+                      //   height: screenHeight * 0.03, // Fixed height
+                      //   decoration: BoxDecoration(
+                      //     color: getStatusColor(
+                      //         leadData.status ?? ""), //user.statusColor,
+                      //     borderRadius: BorderRadius.circular(20),
+                      //   ),
+                      //   alignment:
+                      //       Alignment.center, // Center the text within the container
+                      //   child: Text(
+                      //     leadData.status ?? "",
+                      //     style: TextStyle(
+                      //       color: Colors.white,
+                      //       fontSize: 12,
+                      //       fontWeight: FontWeight.bold,
+                      //     ),
+                      //     overflow: TextOverflow
+                      //         .ellipsis, // Truncate the text if it's too long
+                      //   ),
+                      // ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        spacing: 8,
+                        children: [
+                          Text(
+                            formatDate(leadData.creation ?? "NA"),
+                            style: TextStyle(fontSize: 12, color: Colors.black),
+                          ),
+                          leadData.metaPlatform != null
+                              ? leadData.metaPlatform == "ig"
+                                  ? SizedBox(
+                                      height: 12,
+                                      width: 12,
+                                      child:
+                                          Image.asset("assets/icons/insta.png"),
+                                    )
+                                  : SizedBox()
+                              : SizedBox(),
+                        ],
                       ),
-                      alignment: Alignment
-                          .center, // Center the text within the container
-                      child: Text(
-                        leadData.status ?? "",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
+                      // Add a SizedBox with height to make the VerticalDivider visible
+                      SizedBox(
+                        height: screenHeight *
+                            0.02, // Set height to match the content
+                        child: VerticalDivider(
+                          width: 16, // Space before and after the divider
+                          thickness: 1, // Thickness of the divider
+                          color: Colors.black26, // Color of the divider
                         ),
-                        overflow: TextOverflow
-                            .ellipsis, // Truncate the text if it's too long
                       ),
-                    ),
-                  ],
-                ),
-              ],
+
+                      //View Details Text Button
+                      // GestureDetector(
+                      //   onTap: () {
+                      //     Navigator.pushNamed(
+                      //       context,
+                      //       AppRoutes.leadProfileScreen,
+                      //       arguments: LeadDetailsArguments(
+                      //         leadName: leadData.firstName,
+                      //         leadEmailId: leadData.email,
+                      //         leadContact: leadData.mobileNo,
+                      //         leadStatus: leadData.status,
+                      //         leadChannel: leadData.facebookCampaign,
+                      //       ),
+                      //     );
+                      //   },
+                      //   child: Row(
+                      //     spacing: 5,
+                      //     children: [
+                      //       Text(
+                      //         "View Details",
+                      //         style: GoogleFonts.nunitoSans(
+                      //           color: Colors.grey,
+                      //           fontSize: 12,
+                      //           fontWeight: FontWeight.w400,
+                      //           decoration: TextDecoration.underline,
+                      //         ),
+                      //       ),
+                      //       Icon(
+                      //         Icons.north_east,
+                      //         size: 15,
+                      //         color: Colors.grey,
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
+                      Container(
+                        width: screenWidth * 0.2, // Fixed width
+                        height: screenHeight * 0.03, // Fixed height
+                        decoration: BoxDecoration(
+                          color: getStatusColor(
+                              leadData.status ?? ""), //user.statusColor,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        alignment: Alignment
+                            .center, // Center the text within the container
+                        child: Text(
+                          leadData.status ?? "",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          overflow: TextOverflow
+                              .ellipsis, // Truncate the text if it's too long
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),

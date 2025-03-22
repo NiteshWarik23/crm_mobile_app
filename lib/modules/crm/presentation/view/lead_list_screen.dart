@@ -1,16 +1,15 @@
 import 'dart:async';
 
 import 'package:crm_mobile_app/core/dependency%20injection/dependency_injection.dart';
-import 'package:crm_mobile_app/main.dart';
 import 'package:crm_mobile_app/modules/crm/presentation/view/lead_card.dart';
 import 'package:crm_mobile_app/modules/crm/presentation/view/new_lead_form.dart';
+import 'package:crm_mobile_app/modules/crm/presentation/view_model/convert_to_deal_bloc/convert_to_deal_bloc.dart';
 import 'package:crm_mobile_app/modules/crm/presentation/view_model/lead_bloc/lead_bloc.dart';
 import 'package:crm_mobile_app/modules/crm/presentation/view_model/lead_bloc/lead_event.dart';
 import 'package:crm_mobile_app/modules/crm/presentation/view_model/lead_bloc/lead_state.dart';
 import 'package:crm_mobile_app/modules/crm/presentation/widgets/bottom_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class LeadsListScreen extends StatefulWidget {
   const LeadsListScreen({super.key});
@@ -25,6 +24,8 @@ class _LeadsListScreenState extends State<LeadsListScreen> {
   final ValueNotifier<bool> _isFabVisible = ValueNotifier<bool>(true);
 
   final LeadBloc leadBloc = locator<LeadBloc>();
+  final ConvertLeadToDealBloc convertLeadToDealBloc =
+      locator<ConvertLeadToDealBloc>();
 
   final _scrollController = ScrollController();
 
@@ -59,34 +60,39 @@ class _LeadsListScreenState extends State<LeadsListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: RefreshIndicator(
-        key: _refreshIndicatorKey,
-        triggerMode: RefreshIndicatorTriggerMode.anywhere,
-        onRefresh: () async {
-          //return Future<void>.delayed(const Duration(seconds: 3));
-          leadBloc.limitStart = 0;
-          leadBloc.hasReachedMax = false;
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => leadBloc),
+        BlocProvider(create: (context) => convertLeadToDealBloc)
+      ],
+      child: Scaffold(
+        body: RefreshIndicator.adaptive(
+          key: _refreshIndicatorKey,
+          triggerMode: RefreshIndicatorTriggerMode.anywhere,
+          onRefresh: () async {
+            //return Future<void>.delayed(const Duration(seconds: 3));
+            leadBloc.limitStart = 0;
+            leadBloc.hasReachedMax = false;
 
-          // final Completer<void> completer = Completer<void>();
+            final Completer<void> completer = Completer<void>();
+            leadBloc.add(ClearLeadsEvent());
+            leadBloc.add(FetchLeadsEvent(limitStart: 0, limit: 10));
 
-          // // Listen for state change and complete when done
-          // leadBloc.stream
-          //     .firstWhere((state) =>
-          //         state.status == LeadListStatus.success ||
-          //         state.status == LeadListStatus.failure)
-          //     .then((_) {
-          //   completer.complete();
-          // });
-          leadBloc.add(ClearLeadsEvent());
-          return leadBloc.add(FetchLeadsEvent(limitStart: 0, limit: 10));
+            // Listen for state change and complete when done
+            leadBloc.stream
+                .firstWhere((state) =>
+                    state.status == LeadListStatus.success ||
+                    state.status == LeadListStatus.failure)
+                .then((_) {
+              completer.complete();
+            });
 
-          //return completer.future; // Ensure UI waits for refresh to complete
-        },
-        child: BlocProvider(
-          create: (context) => leadBloc,
+            return completer.future; // Ensure UI waits for refresh to complete
+          },
           child: BlocBuilder<LeadBloc, LeadState>(
             builder: (context, state) {
+              //TODO : show different list when user searches
+              if(state.isUserSearching){}else{}
               switch (state.status) {
                 case LeadListStatus.initial:
                   return LeadShimmerList(
@@ -96,100 +102,94 @@ class _LeadsListScreenState extends State<LeadsListScreen> {
                 case LeadListStatus.failure:
                   return const Center(child: Text("Failed to load leads"));
                 case LeadListStatus.success:
-                  return ListView.builder(
+                  return Scrollbar(
                     controller: _scrollController,
-                    itemCount:
-                        state.leadData.length + (state.hasReachedMax ? 0 : 1),
-                    itemBuilder: (context, index) {
-                      return index >= state.leadData.length
-                          ? const BottomLoader()
-                          : Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 10.0),
-                              child: 
-                              // Dismissible(
-                              //   key: Key(state.leadData[index].toString()),
-                              //   direction: DismissDirection.endToStart,
-                              //   onDismissed: (direction) {
-                              //     leadBloc.add(ConvertLeadToDealEvent(
-                              //         leadID:
-                              //             state.leadData[index].name ?? ""));
-                              //   },
-                              //   background: Container(
-                              //     color: Colors.black,
-                              //     child: Align(
-                              //       alignment: Alignment.centerRight,
-                              //       child: Text(
-                              //         "Convert To Deal  ",
-                              //         style: GoogleFonts.nunitoSans(
-                              //           fontSize: 16,
-                              //           color: Colors.white,
-                              //           fontWeight: FontWeight.w600,
-                              //         ),
-                              //       ),
-                              //     ),
-                              //   ),
-                              //   child:
-                                    LeadCard(leadData: state.leadData[index]),
-                              //),
-                            );
-                    },
+                    thickness: 5.0,
+                    radius: Radius.circular(5.0),
+                    //thumbVisibility: true,
+                    trackVisibility: true,
+                    child: ListView.builder(
+                      controller: _scrollController,
+                      itemCount:
+                          state.leadData.length + (state.hasReachedMax ? 0 : 1),
+                      itemBuilder: (context, index) {
+                        return index >= state.leadData.length
+                            ? const BottomLoader()
+                            : Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 10.0),
+                                child: LeadCard(leadData: state.leadData[index]),
+                                // Dismissible(
+                                //   key: Key(state.leadData[index].toString()),
+                                //   direction: DismissDirection.endToStart,
+                                //   onDismissed: (direction) {
+                                //     leadBloc.add(ConvertLeadToDealEvent(
+                                //         leadID:
+                                //             state.leadData[index].name ?? ""));
+                                //   },
+                                //   background: Container(
+                                //     color: Colors.black,
+                                //     child: Align(
+                                //       alignment: Alignment.centerRight,
+                                //       child: Text(
+                                //         "Convert To Deal  ",
+                                //         style: GoogleFonts.nunitoSans(
+                                //           fontSize: 16,
+                                //           color: Colors.white,
+                                //           fontWeight: FontWeight.w600,
+                                //         ),
+                                //       ),
+                                //     ),
+                                //   ),
+                                //   child:
+                                //),
+                              );
+                      },
+                    ),
                   );
-
-                case LeadListStatus.convertToDealSuccess:
-                  return SizedBox();
-                case LeadListStatus.convertToDealFailure:
-                  return SizedBox();
-                case LeadListStatus.updateLeadStatusSuccess:
-                  return SizedBox();
-                case LeadListStatus.updateLeadStatusFailure:
-                  return SizedBox();
-                // ScaffoldMessenger.of(context).showSnackBar(
-                //   const SnackBar(content: Text("Logging in...")),
-                // );
               }
             },
           ),
         ),
+        floatingActionButton: ValueListenableBuilder<bool>(
+          valueListenable: _isFabVisible,
+          builder: (context, isVisible, child) {
+            return AnimatedSwitcher(
+              duration: Duration(milliseconds: 300),
+              transitionBuilder: (child, animation) {
+                return ScaleTransition(scale: animation, child: child);
+              },
+              child: isVisible
+                  ? FloatingActionButton(
+                      key: ValueKey(
+                          "fab_visible"), // Helps AnimatedSwitcher differentiate between old & new FAB
+                      onPressed: () => newLeadFormBottomSheetWidget(context),
+                      child: Icon(Icons.add),
+                    )
+                  : SizedBox.shrink(
+                      key: ValueKey(
+                          "fab_hidden")), // Replaces FAB with an empty widget
+            );
+          },
+        ),
+        // ValueListenableBuilder(
+        //   valueListenable: _isFabVisible,
+        //   builder: (context, value, child) {
+        //     return AnimatedSlide(
+        //       duration: Duration(milliseconds: 300),
+        //       offset: value ? Offset(0, 0) : Offset(0, 2),
+        //       child: FloatingActionButton(
+        //         onPressed: () {
+        //           newLeadFormBottomSheetWidget(context);
+        //         },
+        //         child: Icon(
+        //           Icons.add,
+        //         ),
+        //       ),
+        //     );
+        //   },
+        // ),
       ),
-      floatingActionButton: ValueListenableBuilder<bool>(
-        valueListenable: _isFabVisible,
-        builder: (context, isVisible, child) {
-          return AnimatedSwitcher(
-            duration: Duration(milliseconds: 300),
-            transitionBuilder: (child, animation) {
-              return ScaleTransition(scale: animation, child: child);
-            },
-            child: isVisible
-                ? FloatingActionButton(
-                    key: ValueKey(
-                        "fab_visible"), // Helps AnimatedSwitcher differentiate between old & new FAB
-                    onPressed: () => newLeadFormBottomSheetWidget(context),
-                    child: Icon(Icons.add),
-                  )
-                : SizedBox.shrink(
-                    key: ValueKey(
-                        "fab_hidden")), // Replaces FAB with an empty widget
-          );
-        },
-      ),
-      // ValueListenableBuilder(
-      //   valueListenable: _isFabVisible,
-      //   builder: (context, value, child) {
-      //     return AnimatedSlide(
-      //       duration: Duration(milliseconds: 300),
-      //       offset: value ? Offset(0, 0) : Offset(0, 2),
-      //       child: FloatingActionButton(
-      //         onPressed: () {
-      //           newLeadFormBottomSheetWidget(context);
-      //         },
-      //         child: Icon(
-      //           Icons.add,
-      //         ),
-      //       ),
-      //     );
-      //   },
-      // ),
     );
   }
 
@@ -208,68 +208,6 @@ class _LeadsListScreenState extends State<LeadsListScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) => LeadFormBottomSheet(),
-    );
-  }
-}
-
-class SwipeToDismissExample extends StatefulWidget {
-  @override
-  _SwipeToDismissExampleState createState() => _SwipeToDismissExampleState();
-}
-
-class _SwipeToDismissExampleState extends State<SwipeToDismissExample> {
-  List<String> items = List.generate(10, (index) => 'Lead ${index + 1}');
-
-  Future<void> _deleteLead(int index) async {
-    String leadId = items[index];
-
-    // Simulate API call
-    await Future.delayed(Duration(seconds: 1));
-
-    setState(() {
-      items.removeAt(index);
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("$leadId deleted successfully!")),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Swipe to Dismiss")),
-      body: ListView.builder(
-        itemCount: items.length,
-        itemBuilder: (context, index) {
-          return Dismissible(
-            key: Key(items[index]),
-            direction: DismissDirection.endToStart, // Swipe from right to left
-            background: Container(
-              color: Colors.red,
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              alignment: Alignment.centerRight,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text("Delete",
-                      style: TextStyle(color: Colors.white, fontSize: 18)),
-                  SizedBox(width: 10),
-                  Icon(Icons.delete, color: Colors.white),
-                ],
-              ),
-            ),
-            onDismissed: (direction) {
-              _deleteLead(index);
-            },
-            child: ListTile(
-              title: Text(items[index]),
-              trailing:
-                  Icon(Icons.arrow_back_ios, size: 16, color: Colors.grey),
-            ),
-          );
-        },
-      ),
     );
   }
 }
@@ -487,3 +425,6 @@ class LeadShimmerList extends StatelessWidget {
     );
   }
 }
+
+
+

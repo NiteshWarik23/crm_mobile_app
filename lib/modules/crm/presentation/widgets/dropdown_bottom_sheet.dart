@@ -1,6 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:crm_mobile_app/modules/crm/presentation/view_model/lead_bloc/lead_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:crm_mobile_app/core/dependency%20injection/dependency_injection.dart';
@@ -9,7 +11,6 @@ import 'package:crm_mobile_app/modules/crm/presentation/view_model/dropdown_bloc
 import 'package:crm_mobile_app/modules/crm/presentation/view_model/dropdown_bloc/dropdown_state.dart';
 import 'package:crm_mobile_app/modules/crm/presentation/view_model/lead_bloc/lead_bloc.dart';
 import 'package:crm_mobile_app/modules/crm/presentation/view_model/lead_bloc/lead_event.dart';
-import 'package:crm_mobile_app/modules/crm/presentation/view_model/lead_bloc/lead_state.dart';
 
 void showDropdownBottomSheet(BuildContext context, String leadID) {
   showModalBottomSheet(
@@ -34,6 +35,7 @@ class DropDownBottomSheet extends StatelessWidget {
   });
 
   final LeadBloc leadBloc = locator<LeadBloc>();
+  final DropdownBloc dropdownBloc = locator<DropdownBloc>();
 
   @override
   Widget build(BuildContext context) {
@@ -45,20 +47,20 @@ class DropDownBottomSheet extends StatelessWidget {
         BlocProvider(create: (context) => leadBloc)
       ],
       child: BlocListener<LeadBloc, LeadState>(
-        listener: (context, state) {
-          if (state.status ==LeadListStatus.updateLeadStatusSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text("Lead Status Updated"),
-              ),
-            );
+        listener: (BuildContext context, LeadState state) {
+          print("Listening");
+          if (state.updateLeadStatus ==
+              UpdateLeadStatus.updateLeadStatusLoading) {
+            Fluttertoast.showToast(msg: "Updating Lead Status...Please Wait");
+           // Navigator.pop(context);
+          } else if (state.updateLeadStatus ==
+              UpdateLeadStatus.updateLeadStatusSuccess) {
+            Fluttertoast.showToast(msg: "Lead Status Updated");
             Navigator.pop(context);
-          } else if (state.status == LeadListStatus.updateLeadStatusFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text("Failed to update Lead Status"),
-              ),
-            );
+          } else if (state.updateLeadStatus ==
+              UpdateLeadStatus.updateLeadStatusFailure) {
+            Fluttertoast.showToast(msg: "Failed to update Lead Status");
+            Navigator.pop(context);
           }
         },
         child: BlocBuilder<DropdownBloc, DropdownState>(
@@ -174,13 +176,13 @@ class DropDownBottomSheet extends StatelessWidget {
                         ElevatedButton(
                           onPressed: state.selectedOption.isNotEmpty
                               ? () {
-                                  Navigator.pop(context);
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                          "Selected: ${state.selectedOption}"),
-                                    ),
-                                  );
+                                  
+                                  // ScaffoldMessenger.of(context).showSnackBar(
+                                  //   SnackBar(
+                                  //     content: Text(
+                                  //         "Selected: ${state.selectedOption}"),
+                                  //   ),
+                                  // );
                                   leadBloc.add(UpdateLeadStatusEvent(
                                       leadID: leadIDValue,
                                       status: state.selectedOption));
