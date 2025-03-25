@@ -1,5 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:crm_mobile_app/core/utils/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class TodaysFollowUpWidget extends StatelessWidget {
   const TodaysFollowUpWidget({super.key});
@@ -16,9 +19,9 @@ class TodaysFollowUpWidget extends StatelessWidget {
         children: [
           Text(
             'Today\'s Follow Up',
-            style: TextStyle(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 16.0,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w700,
             ),
           ),
           SizedBox(height: 16.0),
@@ -59,16 +62,16 @@ class TodaysFollowUpWidget extends StatelessWidget {
                                   children: [
                                     Text(
                                       'Name ${index + 1}',
-                                      style: TextStyle(
+                                      style: GoogleFonts.nunitoSans(
                                         fontWeight: FontWeight.w500,
                                         fontSize: 14,
                                       ),
                                     ),
                                     Text(
                                       'Campaign Name ${index + 1}',
-                                      style: TextStyle(
+                                      style: GoogleFonts.nunitoSans(
                                         fontWeight: FontWeight.w400,
-                                        fontSize: 12,
+                                        fontSize: 11,
                                       ),
                                     ),
                                   ],
@@ -90,9 +93,10 @@ class TodaysFollowUpWidget extends StatelessWidget {
                                 children: [
                                   Text(
                                     'Time: 5:30 PM',
-                                    style: TextStyle(
+                                    style: GoogleFonts.nunitoSans(
                                       fontWeight: FontWeight.w400,
                                       fontSize: 12,
+                                      color: AppColors.greyshade500,
                                     ),
                                   ),
                                   // AssetImage(
@@ -103,7 +107,7 @@ class TodaysFollowUpWidget extends StatelessWidget {
                                     spacing: 10.0,
                                     children: [
                                       CommonFloatingButtonWidget(
-                                        iconPath: "assets/icons/instagram.png",
+                                        iconPath: "assets/icons/whatsapp.png",
                                       ),
                                       CommonFloatingButtonWidget(
                                         iconPath: "assets/icons/whatsapp.png",
@@ -149,20 +153,28 @@ class CommonFloatingButtonWidget extends StatelessWidget {
     return SizedBox(
       height: 25,
       width: 25,
-      child: FloatingActionButton(
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(50),
-        ),
-        onPressed: () {},
-        backgroundColor: Colors.yellow,
-        mini: true,
-        child: Image.asset(
-          height: 13,
-          width: 13,
-          iconPath,
-          filterQuality: FilterQuality.high,
-          color: Colors.black,
+      child: GestureDetector(
+        onTap: () {
+          // Action when button is tapped
+        },
+        child: Container(
+          width: 60,
+          height: 60,
+          decoration: BoxDecoration(
+            color: AppColors.yellowshade,
+            shape: BoxShape.circle, // Makes it circular
+          ),
+          child: Center(
+            child: Image.asset(
+              iconPath,
+              height: 13,
+              width: 13,
+
+              //filterQuality: FilterQuality.high,
+              //color: Colors.black,
+            ),
+            //Icon(Icons.add, size: 20, color: Colors.black),
+          ),
         ),
       ),
     );

@@ -5,8 +5,8 @@ import 'package:crm_mobile_app/modules/dashboard/presentation/view/dashboard_dea
 import 'package:crm_mobile_app/modules/dashboard/presentation/view/dashboard_lead_view.dart';
 import 'package:crm_mobile_app/modules/dashboard/presentation/view/dashboard_tabs_widget.dart';
 import 'package:crm_mobile_app/modules/dashboard/presentation/view/dashboard_todays_follow_up_widget.dart';
-import 'package:crm_mobile_app/modules/splash/graph.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class DashboardHeader extends StatefulWidget {
@@ -39,23 +39,27 @@ class _DashboardHeaderState extends State<DashboardHeader>
       appBar: AppBar(
         surfaceTintColor: Colors.transparent,
         automaticallyImplyLeading: false,
-        title: Text(
-          'Welcome Back 👋',
-          style:
-              GoogleFonts.nunitoSans(fontSize: 16, fontWeight: FontWeight.w700),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          spacing: 5,
+          children: [
+            Text(
+              'Welcome Back',
+              style: GoogleFonts.nunitoSans(
+                  fontSize: 16, fontWeight: FontWeight.w700),
+            ),
+            SvgPicture.asset("assets/icons/welcome.svg"),
+          ],
         ),
         centerTitle: true,
         actions: [
-          IconButton(
-            icon: Badge(
-              //count: 50,
-              label: Text(
-                '🟢',
-                style: TextStyle(fontSize: 8, color: AppColors.greenshade01),
-              ),
-              child: const Icon(Icons.notifications_none_outlined),
+          GestureDetector(
+            //TODO: Navigate to Notification screen
+            onTap: (){},
+            child: Padding(
+              padding: const EdgeInsets.only(right: 10.0),
+              child: SvgPicture.asset("assets/icons/notification.svg"),
             ),
-            onPressed: () {},
           ),
         ],
       ),
@@ -73,7 +77,10 @@ class _DashboardHeaderState extends State<DashboardHeader>
                 SizedBox(
                   height: 120,
                   width: 120,
-                  child: CircleAvatar(
+                  child: 
+                  //SvgPicture.asset("assets/icons/userprofile.svg")
+                  CircleAvatar(
+                    maxRadius: 30.0 ,
                     backgroundImage: AssetImage("assets/images/image.png"),
                   ),
                 ),
@@ -135,19 +142,17 @@ class TotalBalance extends StatelessWidget {
         RichText(
           text: TextSpan(
             text: '+2.5% ',
-            style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w500,
-              color: AppColors.greenshade01,
-            ),
+            style: GoogleFonts.nunitoSans(fontSize: 17,fontWeight: FontWeight.w500,color: AppColors.greenshade01),
             children: [
               TextSpan(
                 text: 'This Month',
-                style: TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w500,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
+                style: GoogleFonts.nunitoSans(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w500,
+                    color: Theme.of(context).colorScheme.primary,
+
+                    ),
+                
               ),
             ],
           ),

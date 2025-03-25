@@ -54,7 +54,7 @@ class _LeadsListScreenState extends State<LeadsListScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
-    leadBloc.add(ClearLeadsEvent()); // Reset the list when exiting
+    //leadBloc.add(ClearLeadsEvent()); // Reset the list when exiting
     super.dispose();
   }
 
@@ -92,7 +92,8 @@ class _LeadsListScreenState extends State<LeadsListScreen> {
           child: BlocBuilder<LeadBloc, LeadState>(
             builder: (context, state) {
               //TODO : show different list when user searches
-              if(state.isUserSearching){}else{}
+              if (state.isUserSearching) {
+              } else {}
               switch (state.status) {
                 case LeadListStatus.initial:
                   return LeadShimmerList(
@@ -116,9 +117,10 @@ class _LeadsListScreenState extends State<LeadsListScreen> {
                         return index >= state.leadData.length
                             ? const BottomLoader()
                             : Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 10.0),
-                                child: LeadCard(leadData: state.leadData[index]),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10.0),
+                                child:
+                                    LeadCard(leadData: state.leadData[index]),
                                 // Dismissible(
                                 //   key: Key(state.leadData[index].toString()),
                                 //   direction: DismissDirection.endToStart,
@@ -202,12 +204,21 @@ class _LeadsListScreenState extends State<LeadsListScreen> {
   Future<dynamic> newLeadFormBottomSheetWidget(BuildContext context) {
     return showModalBottomSheet(
       context: context,
+      showDragHandle: true,
+      enableDrag: true,
+      sheetAnimationStyle: AnimationStyle(
+        duration: const Duration(
+          seconds: 4,
+        ),
+        reverseDuration: const Duration(seconds: 2),
+      ),
       isScrollControlled:
           true, // Makes the bottom sheet take full height if needed
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) => LeadFormBottomSheet(),
+      builder: (context) =>
+          FractionallySizedBox(heightFactor: 0.8, child: LeadFormBottomSheet()),
     );
   }
 }
@@ -425,6 +436,3 @@ class LeadShimmerList extends StatelessWidget {
     );
   }
 }
-
-
-

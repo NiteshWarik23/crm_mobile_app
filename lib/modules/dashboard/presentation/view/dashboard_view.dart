@@ -25,6 +25,8 @@ class DashboardScreen extends StatelessWidget {
   ];
 
   final BottomNavBloc bottomNavBloc = locator<BottomNavBloc>();
+    int currentPageIndex = 0;
+
 
   @override
   Widget build(BuildContext context) {

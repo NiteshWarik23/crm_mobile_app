@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:crm_mobile_app/core/utils/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class LeadViewWidget extends StatelessWidget {
   const LeadViewWidget({super.key});
@@ -20,23 +21,29 @@ class LeadViewWidget extends StatelessWidget {
             children: [
               Text(
                 'Lead View',
-                style: TextStyle(
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
               SizedBox(
                 height: 25,
                 width: 25,
-                child: FloatingActionButton(
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50),
+                child: GestureDetector(
+                  onTap: () {
+                    // Action when button is tapped
+                  },
+                  child: Container(
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: AppColors.yellowshade,
+                      shape: BoxShape.circle, // Makes it circular
+                    ),
+                    child: Center(
+                      child: Icon(Icons.add, size: 20, color: Colors.black),
+                    ),
                   ),
-                  onPressed: () {},
-                  backgroundColor: Colors.yellow,
-                  mini: true,
-                  child: Icon(Icons.add, color: Colors.black),
                 ),
               ),
             ],
@@ -94,18 +101,19 @@ class CardWidget extends StatelessWidget {
         ),
         Text(
           title,
-          style: TextStyle(
-            fontSize: 10,
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 12,
             fontWeight: FontWeight.w400,
           ),
         ),
         Text(
           value,
-          style: TextStyle(
-            fontSize: 10,
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 12,
             fontWeight: FontWeight.w400,
             color: AppColors.greenshade01,
           ),
+         
         ),
       ],
     );

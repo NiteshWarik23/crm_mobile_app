@@ -2,6 +2,7 @@ import 'package:crm_mobile_app/core/utils/app_colors.dart';
 import 'package:crm_mobile_app/modules/dashboard/presentation/view/dashboard_bar_graph_widget.dart';
 import 'package:crm_mobile_app/modules/splash/graph.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class RoundedTabBar extends StatefulWidget {
   const RoundedTabBar({
@@ -39,9 +40,10 @@ class _RoundedTabBarState extends State<RoundedTabBar> {
               borderRadius: BorderRadius.circular(30),
             ),
             indicatorPadding: EdgeInsets.symmetric(vertical: 2,horizontal: 5),
-            labelPadding: EdgeInsets.symmetric(horizontal: 50),
+            labelPadding: EdgeInsets.symmetric(horizontal: 45),
             labelColor: Colors.white,
-            unselectedLabelColor: Theme.of(context).colorScheme.primary,
+            labelStyle: GoogleFonts.inter(fontSize: 14,fontWeight: FontWeight.w400),
+            unselectedLabelColor: AppColors.greenshade01,//Theme.of(context).colorScheme.primary,
             //isScrollable: true,
             indicatorSize: TabBarIndicatorSize.tab,
             tabs: [

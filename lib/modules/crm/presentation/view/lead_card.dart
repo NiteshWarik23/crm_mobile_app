@@ -8,6 +8,7 @@ import 'package:crm_mobile_app/modules/crm/presentation/view_model/lead_bloc/lea
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 enum Menu { delete, convertToDeal }
@@ -24,8 +25,7 @@ class LeadCard extends StatelessWidget {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    return 
-    BlocProvider(
+    return BlocProvider(
       create: (context) => leadBloc,
       child: BlocListener<LeadBloc, LeadState>(
         listener: (BuildContext context, LeadState state) {
@@ -193,14 +193,25 @@ class LeadCard extends StatelessWidget {
                             child: ListTile(
                               contentPadding: EdgeInsets.all(0),
                               leading: Icon(Icons.delete),
-                              title: Text('Delete'),
+                              title: Text(
+                                'Delete',
+                                style: GoogleFonts.nunitoSans(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
                             ),
                           ),
                           PopupMenuItem<Menu>(
                             value: Menu.convertToDeal,
                             child: ListTile(
                               leading: Icon(Icons.replay),
-                              title: Text('Convert To Deal'),
+                              title: Text('Convert To Deal',
+                                style: GoogleFonts.nunitoSans(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
                             ),
                           ),
                         ],

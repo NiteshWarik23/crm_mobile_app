@@ -13,6 +13,7 @@ abstract final class AppColors {
   static const red1 = Color(0xFFE74C3C);
   static const greenshade01 = Color(0xFF009963);
   static const greyshade500 = Color(0xff959595);
+  static const yellowshade = Color(0xffFDDA81);
 
   static const lightColorScheme = ColorScheme(
     brightness: Brightness.light,
