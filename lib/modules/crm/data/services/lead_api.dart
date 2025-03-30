@@ -7,16 +7,19 @@ import 'package:crm_mobile_app/core/utils/apis.dart';
 import 'package:crm_mobile_app/core/utils/secure_storage.dart';
 import 'package:crm_mobile_app/modules/crm/data/services/models/request/convert_lead_to_deal_request_model.dart';
 import 'package:crm_mobile_app/modules/crm/data/services/models/request/create_lead_request_model.dart';
+import 'package:crm_mobile_app/modules/crm/data/services/models/request/create_tag_request_model.dart';
 import 'package:crm_mobile_app/modules/crm/data/services/models/request/delete_lead_request_model.dart';
 import 'package:crm_mobile_app/modules/crm/data/services/models/request/lead_request_model.dart';
 import 'package:crm_mobile_app/modules/crm/data/services/models/request/update_lead_status_request_model.dart';
 import 'package:crm_mobile_app/modules/crm/data/services/models/response/convert_lead_to_deal_response_model.dart';
 import 'package:crm_mobile_app/modules/crm/data/services/models/response/create_lead_response_model.dart';
+import 'package:crm_mobile_app/modules/crm/data/services/models/response/create_tag_response_model.dart';
 import 'package:crm_mobile_app/modules/crm/data/services/models/response/delete_lead_response_model.dart';
 import 'package:crm_mobile_app/modules/crm/data/services/models/response/lead_response.dart';
 import 'package:crm_mobile_app/modules/crm/data/services/models/response/search_lead_response_model.dart';
 import 'package:crm_mobile_app/modules/crm/data/services/models/response/update_lead_status_response_model.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 
 abstract class LeadApi {
   Future<LeadResponse> getLeads(
@@ -30,6 +33,8 @@ abstract class LeadApi {
       DeleteLeadRequestModel deleteLeadRequestModel);
   Future<CreateLeadResponseModel> createLead(
       CreateLeadRequestModel createLeadRequestModel);
+   Future<CreateTagResponseModel> createLeadTag(
+      CreateTagRequestModel createTagRequestModel);
 }
 
 class LeadApiImpl implements LeadApi {
@@ -115,6 +120,10 @@ class LeadApiImpl implements LeadApi {
       print("Response Code${response.statusCode}");
       if (response.statusCode == 200) {
         print("API Error ${response.data.toString()}");
+        // Use compute() to parse JSON in a separate isolate
+        //var result = await compute(parseLeadsList, response.data);
+        //print(" Compute Result ${result}");
+        //return result;
         return LeadsListSuccessResponseModel.fromJson(response.data);
       } else if (response.statusCode == 401) {
         print("API Error ${response.data.toString()}");
@@ -130,6 +139,11 @@ class LeadApiImpl implements LeadApi {
       throw handleDioClientError(e);
     }
   }
+
+  // ✅ Function running in Isolate
+  // LeadResponse parseLeadsList(dynamic responseBody) {
+  //   return LeadsListSuccessResponseModel.fromJson(responseBody);
+  // }
 
   @override
   Future<ConvertLeadToDealResponse> convertLeadToDeal(
@@ -250,6 +264,8 @@ class LeadApiImpl implements LeadApi {
       print("Response Code${response.statusCode}");
       if (response.statusCode == 200) {
         print("API Error ${response.data.toString()}");
+        // Use compute() to parse JSON in a separate isolate
+        //return compute(parseLeads, response.data);
         return SearchLeadSuccesssResponseModel.fromJson(response.data);
       } else if (response.statusCode == 401) {
         print("API Error ${response.data.toString()}");
@@ -264,6 +280,11 @@ class LeadApiImpl implements LeadApi {
       print("Response Code !${e.response!.statusCode}");
       throw handleDioClientError(e);
     }
+  }
+
+  // ✅ Function running in Isolate
+  SearchLeadResponse parseLeads(dynamic responseBody) {
+    return SearchLeadSuccesssResponseModel.fromJson(responseBody);
   }
 
   @override
@@ -320,9 +341,22 @@ class LeadApiImpl implements LeadApi {
         'Cookie': 'sid=$sessionID;'
         //daec58a24b6104dc7c54e39b1c3b1a8defff48801ea1fa56a1e05ad7;'
       };
+      var formData = FormData.fromMap({
+        //'salutation': createLeadRequestModel.salutation,
+        'first_name': createLeadRequestModel.firstname,
+        'last_name': createLeadRequestModel.lastname,
+        'email': createLeadRequestModel.email,
+        'mobile_no': createLeadRequestModel.contact,
+        'organization': createLeadRequestModel.organization,
+        'website': createLeadRequestModel.website,
+        //'creation': date,
+      });
+
+      print("Form Data: ${formData.fields}");
+
       final response = await dioClient.dio.postUri(
         uri,
-        data: createLeadRequestModel.toFormData(),
+        data: formData, //createLeadRequestModel.toFormData(),
         options: Options(headers: headers),
       );
       print("Response Code${response.statusCode}");
@@ -344,4 +378,51 @@ class LeadApiImpl implements LeadApi {
     }
   }
 
+
+  
+  @override
+  Future<CreateTagResponseModel> createLeadTag(
+      CreateTagRequestModel createTagRequestModel) async {
+    String? sessionID = await SecureStorage.instance
+        .readSecureData(SecureStorageKeys.sid_cookie);
+
+    if (sessionID == null || sessionID.isEmpty) {
+      throw ServerException("Session ID is null or empty");
+    }
+    try {
+      Uri uri = Uri.parse(ApiEndPoints.createTag);
+      var headers = {
+        'Cookie': 'sid=$sessionID;'
+      };
+      var formData = FormData.fromMap({
+        'tag': createTagRequestModel.tag,
+        'dt': createTagRequestModel.dt,
+        'dn': createTagRequestModel.dn,
+      });
+
+      print("Form Data: ${formData.fields}");
+
+      final response = await dioClient.dio.postUri(
+        uri,
+        data: formData, //createLeadRequestModel.toFormData(),
+        options: Options(headers: headers),
+      );
+      print("Response Code${response.statusCode}");
+      if (response.statusCode == 200) {
+        print("API Error ${response.data.toString()}");
+        return CreateTagSuccessResponseModel.fromJson(response.data);
+      } else if (response.statusCode == 401) {
+        print("API Error ${response.data.toString()}");
+        return CreateTagErrorResponseModel.fromJson(response.data);
+      } else if (response.statusCode == 500) {
+        print("API Error ${response.data.toString()}");
+        return CreateTagErrorResponseModel.fromJson(response.data);
+      } else {
+        throw ServerException(response.statusMessage);
+      }
+    } on DioException catch (e) {
+      print("Response Code !${e.response!.statusCode}");
+      throw handleDioClientError(e);
+    }
+  }
 }

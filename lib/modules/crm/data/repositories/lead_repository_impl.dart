@@ -7,11 +7,13 @@ import 'package:crm_mobile_app/modules/crm/data/repositories/lead_repository.dar
 import 'package:crm_mobile_app/modules/crm/data/services/lead_api.dart';
 import 'package:crm_mobile_app/modules/crm/data/services/models/request/convert_lead_to_deal_request_model.dart';
 import 'package:crm_mobile_app/modules/crm/data/services/models/request/create_lead_request_model.dart';
+import 'package:crm_mobile_app/modules/crm/data/services/models/request/create_tag_request_model.dart';
 import 'package:crm_mobile_app/modules/crm/data/services/models/request/delete_lead_request_model.dart';
 import 'package:crm_mobile_app/modules/crm/data/services/models/request/lead_request_model.dart';
 import 'package:crm_mobile_app/modules/crm/data/services/models/request/update_lead_status_request_model.dart';
 import 'package:crm_mobile_app/modules/crm/data/services/models/response/convert_lead_to_deal_response_model.dart';
 import 'package:crm_mobile_app/modules/crm/data/services/models/response/create_lead_response_model.dart';
+import 'package:crm_mobile_app/modules/crm/data/services/models/response/create_tag_response_model.dart';
 import 'package:crm_mobile_app/modules/crm/data/services/models/response/delete_lead_response_model.dart';
 import 'package:crm_mobile_app/modules/crm/data/services/models/response/lead_response.dart';
 import 'package:crm_mobile_app/modules/crm/data/services/models/response/search_lead_response_model.dart';
@@ -181,6 +183,37 @@ class LeadRepositoryImpl implements LeadRepository {
         return DataSuccess(createLeadResponse);
       } else if (createLeadResponse
           is CreateLeadErrorResponseModel) {
+        return DataFailed(ServerFailure(
+            //TODO TBD for what message to show
+            //convertLeadToDealResponse.excType ??
+            Strings.defaultErrMsg,
+            401));
+      } else {
+        return DataFailed(UnknownFailure(Strings.defaultErrMsg, 0));
+      }
+    } on ServerException catch (e) {
+      return DataFailed(ServerFailure(e.message ?? Strings.defaultErrMsg, 0));
+    } on ApiServerException catch (e) {
+      return DataFailed(
+          ServerFailure(e.message ?? Strings.defaultErrMsg, e.statusCode!));
+    } on DioException catch (e) {
+      return DataFailed(UnknownFailure(e.toString(), 0));
+    } catch (e) {
+      return DataFailed(UnknownFailure(e.toString(), 0));
+    }
+  }
+
+
+   @override
+  ResultFuture<CreateTagResponseModel> createLeadTag(
+      CreateTagRequestModel createTagRequestModel) async {
+    try {
+      final createTagResponse =
+          await leadApi.createLeadTag(createTagRequestModel);
+
+      if (createTagResponse is CreateTagSuccessResponseModel) {
+        return DataSuccess(createTagResponse);
+      } else if (createTagResponse is CreateTagErrorResponseModel) {
         return DataFailed(ServerFailure(
             //TODO TBD for what message to show
             //convertLeadToDealResponse.excType ??

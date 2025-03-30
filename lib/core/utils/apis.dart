@@ -8,4 +8,8 @@ class ApiEndPoints {
   static const String updateLeadStatus = "/api/method/frappe.client.set_value";
   static const String deleteLead =
       "/api/method/frappe.desk.reportview.delete_items";
+  static const String createTag =
+      "/api/method/frappe.desk.doctype.tag.tag.add_tag";
+  static const String deleteTag =
+      "/api/method/frappe.desk.doctype.tag.tag.remove_tag";
 }

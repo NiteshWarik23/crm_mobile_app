@@ -5,6 +5,7 @@ import 'package:crm_mobile_app/modules/login/presentation/view_model/login_bloc/
 import 'package:crm_mobile_app/modules/login/presentation/view_model/login_bloc/login_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -32,19 +33,13 @@ class _LoginScreenState extends State<LoginScreen> {
             print("New State Emitted: $state"); // Debugging
 
             if (state is LoginLoadingState) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Logging in...")),
-              );
+              Fluttertoast.showToast(msg: 'Logging in..');
             } else if (state is LoginSuccessState) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("Welcome ${state.username}")),
-              );
               // Navigate to home screen or dashboard
               Navigator.pushNamed(context, AppRoutes.dashboardRoute);
+              Fluttertoast.showToast(msg: '"Welcome ${state.username}');
             } else if (state is LoginFailureState) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.errorMessage)),
-              );
+              Fluttertoast.showToast(msg: state.errorMessage.toString());
             }
           },
           child: Padding(
@@ -111,7 +106,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         controller: _passwordController,
                         obscureText: _obscurePassword,
                         decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.lock,
+                          prefixIcon: const Icon(
+                            Icons.lock,
                             color: Colors.black,
                           ),
                           labelText: "Password",
@@ -204,8 +200,9 @@ class _LoginScreenState extends State<LoginScreen> {
               }
             : null,
         style: ElevatedButton.styleFrom(
-          backgroundColor:
-              isDisabledValue ? Colors.black : Colors.black,//Colors.grey.shade400,
+          backgroundColor: isDisabledValue
+              ? Colors.black
+              : Colors.black, //Colors.grey.shade400,
           foregroundColor: isDisabledValue ? Colors.white : Colors.black,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),

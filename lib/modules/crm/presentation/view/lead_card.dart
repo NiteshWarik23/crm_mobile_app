@@ -132,7 +132,8 @@ class LeadCard extends StatelessWidget {
                                   .scaleDown, // Scales the text down to fit
                               child: Text(
                                 leadData.firstName ?? "NA",
-                                style: TextStyle(
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.plusJakartaSans(
                                   fontSize: 16,
                                   // fontWeight: FontWeight.bold,
                                 ),
@@ -145,9 +146,9 @@ class LeadCard extends StatelessWidget {
                               child: Text(
                                 "Email : ${leadData.email ?? "NA"}",
                                 maxLines: 1, // Restrict to a single line
-                                overflow: TextOverflow.visible,
+                                overflow: TextOverflow.ellipsis,
                                 style:
-                                    TextStyle(fontSize: 12, color: Colors.grey),
+                                    GoogleFonts.nunitoSans(fontSize: 12, color: Colors.grey),
                               ),
                             ),
                             FittedBox(
@@ -157,7 +158,7 @@ class LeadCard extends StatelessWidget {
                                 "Contact : ${leadData.mobileNo ?? "NA"}",
                                 maxLines: 1, // Restrict to a single line
                                 style:
-                                    TextStyle(fontSize: 12, color: Colors.grey),
+                                    GoogleFonts.nunitoSans(fontSize: 12, color: Colors.grey),
                               ),
                             ),
                             FittedBox(
@@ -167,7 +168,7 @@ class LeadCard extends StatelessWidget {
                                 "Campaign Name",
                                 maxLines: 1, // Restrict to a single line
                                 style:
-                                    TextStyle(fontSize: 12, color: Colors.grey),
+                                    GoogleFonts.nunitoSans(fontSize: 12, color: Colors.grey),
                               ),
                             ),
                             SizedBox(height: 8),
@@ -248,7 +249,7 @@ class LeadCard extends StatelessWidget {
                         children: [
                           Text(
                             formatDate(leadData.creation ?? "NA"),
-                            style: TextStyle(fontSize: 12, color: Colors.black),
+                            style: GoogleFonts.nunitoSans(fontSize: 12, color: Colors.black),
                           ),
                           leadData.metaPlatform != null
                               ? leadData.metaPlatform == "ig"
@@ -320,10 +321,10 @@ class LeadCard extends StatelessWidget {
                             .center, // Center the text within the container
                         child: Text(
                           leadData.status ?? "",
-                          style: TextStyle(
+                          style: GoogleFonts.nunitoSans(
                             color: Colors.white,
                             fontSize: 12,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w600,
                           ),
                           overflow: TextOverflow
                               .ellipsis, // Truncate the text if it's too long

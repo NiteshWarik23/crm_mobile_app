@@ -94,8 +94,8 @@ class LeadBloc extends Bloc<LeadEvent, LeadState> {
         if (leadSuccessResponseData is LeadsListSuccessResponseModel) {
           List<LeadData> newLeads = leadSuccessResponseData.data ?? [];
           // Stop pagination if no new data is returned
-          bool reachedMax = newLeads.isEmpty;
-
+          bool reachedMax = newLeads.isEmpty || newLeads.length < 10;
+          //print("Lead Count ${newLeads.length}");
           // if (newLeads.isEmpty) {
           //   return emit(state.copyWith(hasReachedMax: true));
           // }
@@ -232,9 +232,10 @@ class LeadBloc extends Bloc<LeadEvent, LeadState> {
   Future<void> searchLeads(
       SearchLeadEvent event, Emitter<LeadState> emit) async {
     emit(state.copyWith(
-      status: LeadListStatus.initial,
-      leadData: [], // Clear old leads when refreshing
+      searchLeadStatus: SearchLeadStatus.searchLeadInitial,
+      searchLeadData: [], // Clear old leads when refreshing
       hasReachedMax: false, // Reset pagination
+      isUserSearching: true,
     ));
     try {
       final DataState<SearchLeadResponse> leadResponse =
@@ -255,9 +256,6 @@ class LeadBloc extends Bloc<LeadEvent, LeadState> {
           // Stop pagination if no new data is returned
           bool reachedMax = newLeads.isEmpty;
 
-          // if (newLeads.isEmpty) {
-          //   return emit(state.copyWith(hasReachedMax: true));
-          // }
           // Only set hasReachedMax to true if we're paginating and get an empty list
           if (event.searchText.isNotEmpty && newLeads.isEmpty) {
             emit(state.copyWith(hasReachedMax: true));
@@ -265,12 +263,11 @@ class LeadBloc extends Bloc<LeadEvent, LeadState> {
           }
 
           emit(state.copyWith(
-            status: LeadListStatus.success,
+            searchLeadStatus: SearchLeadStatus.searchLeadSuccess,
             searchLeadData: newLeads,
             hasReachedMax: reachedMax,
           ));
 
-          //limitStart += limit; // Increase offset for next fetch
           // Update pagination offset only if new data exists
           if (newLeads.isNotEmpty) {
             limitStart += limit;

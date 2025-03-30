@@ -1,10 +1,12 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:crm_mobile_app/core/dependency%20injection/dependency_injection.dart';
+import 'package:crm_mobile_app/core/utils/app_colors.dart';
 import 'package:crm_mobile_app/core/utils/call_service.dart';
 import 'package:crm_mobile_app/core/utils/email_service.dart';
 import 'package:crm_mobile_app/core/utils/sms_service.dart';
 import 'package:crm_mobile_app/modules/crm/presentation/view_model/lead_bloc/lead_bloc.dart';
 import 'package:crm_mobile_app/modules/crm/presentation/view_model/lead_bloc/lead_state.dart';
+import 'package:crm_mobile_app/modules/crm/presentation/widgets/create_tag_widget.dart';
 import 'package:crm_mobile_app/modules/crm/presentation/widgets/dropdown_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -35,7 +37,7 @@ class LeadDetailsScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => leadBloc,
       child: BlocListener<LeadBloc, LeadState>(
-        listener: (BuildContext context,LeadState state) {
+        listener: (BuildContext context, LeadState state) {
           print("Listening");
           if (state.updateLeadStatus ==
               UpdateLeadStatus.updateLeadStatusLoading) {
@@ -76,21 +78,28 @@ class LeadDetailsScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    _buildIconButton(Icons.call, () {
+                    _buildIconButton(
+                        Colors.amber[100]!, "assets/icons/call.svg", () {
                       CallService.makePhoneCall(leadContact ?? "");
                     }),
-                    _buildIconButton(Icons.sms, () {
+                    _buildIconButton(
+                        Colors.amber[100]!, "assets/icons/messageSms.svg", () {
                       SmsService.sendSms(leadContact ?? "",
                           message: "Hello $leadName");
                     }),
-                    _buildIconButton(Icons.mail_lock_outlined, () {}),
-                    _buildIconButton(Icons.mail, () {
-                      MailService.sendEmail(
-                        email: "$leadEmailId",
-                        subject: "Hello",
-                        body: "This is a test email",
-                      );
-                    }),
+                    _buildIconButton(
+                        Colors.amber[100]!, "assets/icons/whatsapp.svg", () {}),
+                    _buildIconButton(
+                      Colors.amber[100]!,
+                      "assets/icons/email.svg",
+                      () {
+                        MailService.sendEmail(
+                          email: "$leadEmailId",
+                          subject: "Hello",
+                          body: "This is a test email",
+                        );
+                      },
+                    ),
                   ],
                 ),
                 const SizedBox(height: 30),
@@ -111,17 +120,23 @@ class LeadDetailsScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 12,
       children: [
-        const Text(
+         Text(
           'Task',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          style: GoogleFonts.nunitoSans(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        //const SizedBox(height: 10),
-        _buildTaskButton(Icons.note_add, 'Add Note', Icons.add),
-        //const SizedBox(height: 10),
-        _buildTaskButton(Icons.update, 'Update Status', Icons.add,
+        _buildTaskButton("assets/icons/note.svg", 'Add Note', Icons.add),
+        _buildTaskButton(
+            "assets/icons/updateStatus.svg", 'Update Status', Icons.add,
             onPressed: () {
-          print("-->Lead Details Lead CRM ID ${leadID}");
-
+          showDropdownBottomSheet(context, leadID ?? "");
+        }),
+        _buildTaskButton("assets/icons/addTag.svg", 'Add Tag', Icons.add,
+            onPressed: () {
+          showCreateTagBottomSheet(context, leadID ?? "");
+        }),
+        _buildTaskButton(
+            "assets/icons/followUp.svg", 'Schedule Follow Up', Icons.add,
+            onPressed: () {
           showDropdownBottomSheet(context, leadID ?? "");
         }),
       ],
@@ -132,11 +147,12 @@ class LeadDetailsScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
+        Padding(
           padding: EdgeInsets.only(bottom: 10),
           child: Text(
             'Campaign Details',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: GoogleFonts.nunitoSans(
+                fontSize: 16, fontWeight: FontWeight.bold),
           ),
         ),
         const Padding(
@@ -162,9 +178,10 @@ class LeadDetailsScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Contact Information',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          style:
+              GoogleFonts.nunitoSans(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 10),
         Column(
@@ -173,11 +190,17 @@ class LeadDetailsScreen extends StatelessWidget {
           children: [
             Text(
               'Work Email',
-              style: TextStyle(fontSize: 16, color: Colors.grey),
+              style: GoogleFonts.nunitoSans(
+                  fontSize: 14,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w400),
             ),
             Text(
               leadEmailId ?? "NA",
-              style: TextStyle(fontSize: 16, color: Colors.black),
+              style: GoogleFonts.nunitoSans(
+                  fontSize: 16,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w600),
             ),
           ],
         ),
@@ -188,11 +211,17 @@ class LeadDetailsScreen extends StatelessWidget {
           children: [
             Text(
               'Contact Number',
-              style: TextStyle(fontSize: 16, color: Colors.grey),
+              style: GoogleFonts.nunitoSans(
+                  fontSize: 14,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w400),
             ),
             Text(
               leadContact ?? "NA",
-              style: TextStyle(fontSize: 16, color: Colors.black),
+              style: GoogleFonts.nunitoSans(
+                  fontSize: 16,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w600),
             ),
           ],
         ),
@@ -223,7 +252,8 @@ class LeadDetailsScreen extends StatelessWidget {
         const SizedBox(height: 10),
         Text(
           leadName?.toUpperCase() ?? "NA",
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          style:
+              GoogleFonts.nunitoSans(fontSize: 18, fontWeight: FontWeight.w700),
         ),
         const SizedBox(height: 20),
         Divider(
@@ -250,6 +280,16 @@ class LeadDetailsScreen extends StatelessWidget {
           fontWeight: FontWeight.w600,
         ),
       ),
+      actions: [
+        GestureDetector(
+          //TODO: Navigate to Notification screen
+          onTap: () {},
+          child: Padding(
+            padding: const EdgeInsets.only(right: 10.0),
+            child: SvgPicture.asset("assets/icons/notification.svg"),
+          ),
+        ),
+      ],
       centerTitle: true,
     );
   }
@@ -273,26 +313,46 @@ class LeadDetailsScreen extends StatelessWidget {
     }
   }
 
-  Widget _buildIconButton(IconData icon, GestureTapCallback onTap) {
+  Widget _buildIconButton(
+      //IconData icon,
+      Color color,
+      String svgAssetString,
+      GestureTapCallback onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        decoration: BoxDecoration(
-            color: Colors.amber[100],
-            shape: BoxShape.rectangle,
-            borderRadius: BorderRadius.circular(10)),
-        padding: const EdgeInsets.all(10),
-        child: SvgPicture.asset("assets/icons/Vector.svg")
-         //Icon(icon, color: Colors.black, size: 23),
-      ),
+          decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.circular(10)),
+          padding: const EdgeInsets.all(10),
+          child: SvgPicture.asset(svgAssetString)
+          //Icon(icon, color: Colors.black, size: 23),
+          ),
     );
   }
 
-  Widget _buildTaskButton(IconData icon, String label, IconData icon2,
+  Widget _buildTaskButton(
+      //IconData icon,
+      String svgAssetString,
+      String label,
+      IconData icon2,
       {GestureTapCallback? onPressed}) {
     return Row(
       children: [
-        Icon(icon, color: Colors.black54),
+        //Icon(icon, color: Colors.black54),
+        Container(
+            height: 40,
+            width: 40,
+            decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: AppColors.greyshade500)),
+            padding: const EdgeInsets.all(10),
+            child: SvgPicture.asset(svgAssetString)
+            //Icon(icon, color: Colors.black, size: 23),
+            ),
         const SizedBox(width: 10),
         Text(label),
         Spacer(),
@@ -303,24 +363,26 @@ class LeadDetailsScreen extends StatelessWidget {
             height: 30,
             width: 30,
             decoration: BoxDecoration(
-              color: Colors.white, // Button background color
-              shape: BoxShape.circle, // Makes it circular
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.shade300,
-                  // Shadow color
-                  spreadRadius: 0.5,
-                  // Reduce spread for a smaller shadow
-                  blurRadius: 5,
-                  // Soften the shadow
-                  offset: const Offset(0, 2), // Subtle vertical shadow
+                color: Colors.white, // Button background color
+                shape: BoxShape.circle, // Makes it circular
+                border: Border.all(color: AppColors.greyshade500)
+                // boxShadow: [
+                //   BoxShadow(
+                //     color: Colors.grey.shade300,
+                //     // Shadow color
+                //     spreadRadius: 0.5,
+                //     // Reduce spread for a smaller shadow
+                //     blurRadius: 5,
+                //     // Soften the shadow
+                //     offset: const Offset(0, 2), // Subtle vertical shadow
+                //   ),
+                // ],
                 ),
-              ],
-            ),
             child: Center(
               child: Icon(
                 icon2,
                 color: Colors.grey,
+                size: 15,
               ),
             ),
           ),
@@ -350,8 +412,8 @@ class _InfoRow extends StatelessWidget {
                 0.4, // Fixed width for the label to ensure alignment
             child: Text(
               label,
-              style: const TextStyle(
-                fontSize: 16,
+              style: GoogleFonts.nunitoSans(
+                fontSize: 14,
                 color: Colors.grey,
               ),
             ),
@@ -359,7 +421,7 @@ class _InfoRow extends StatelessWidget {
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(color: Colors.black),
+              style: GoogleFonts.nunitoSans(fontSize: 16, color: Colors.black),
             ),
           ),
         ],

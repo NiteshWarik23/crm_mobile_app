@@ -65,16 +65,26 @@ class UpdateFormField extends CreateLeadFormEvent {
   final String? salutation;
   final String? firstName;
   final String? lastName;
+  final String? gender;
+  final String? numberOfEmployees;
+  final String? industry;
+  final String? leadOwner;
+  final String? leadStatus;
   final String? email;
   final String? contact;
   final String? organization;
   final String? website;
   final String? date;
 
-   UpdateFormField({
+  UpdateFormField({
     this.salutation,
     this.firstName,
     this.lastName,
+    this.gender,
+    this.numberOfEmployees,
+    this.industry,
+    this.leadOwner,
+    this.leadStatus,
     this.email,
     this.contact,
     this.organization,
@@ -87,6 +97,11 @@ class UpdateFormField extends CreateLeadFormEvent {
         salutation,
         firstName,
         lastName,
+        gender,
+        numberOfEmployees,
+        industry,
+        leadOwner,
+        leadStatus,
         email,
         contact,
         organization,
@@ -95,4 +110,48 @@ class UpdateFormField extends CreateLeadFormEvent {
       ];
 }
 
-class SubmitLeadForm extends CreateLeadFormEvent {}
+class SubmitLeadForm extends CreateLeadFormEvent {
+  final String? salutation;
+  final String? firstName;
+  final String? lastName;
+  final String? gender;
+  final String? numberOfEmployees;
+  final String? industry;
+  final String? leadOwner;
+  final String? leadStatus;
+  final String? email;
+  final String? contact;
+  final String? organization;
+  final String? website;
+
+  SubmitLeadForm({
+    this.salutation,
+    this.firstName,
+    this.lastName,
+    this.gender,
+    this.numberOfEmployees,
+    this.industry,
+    this.leadOwner,
+    this.leadStatus,
+    this.email,
+    this.contact,
+    this.organization,
+    this.website,
+  });
+
+   @override
+  List<Object?> get props => [
+        salutation,
+        firstName,
+        lastName,
+        gender,
+        numberOfEmployees,
+        industry,
+        leadOwner,
+        leadStatus,
+        email,
+        contact,
+        organization,
+        website,
+      ];
+}

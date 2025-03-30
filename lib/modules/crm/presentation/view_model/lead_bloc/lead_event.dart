@@ -47,11 +47,13 @@ class UpdateLeadStatusEvent extends LeadEvent {
 
 class SearchLeadEvent extends LeadEvent {
   final String searchText;
+  final int limitStart;
+  final int limit;
 
-  SearchLeadEvent({required this.searchText});
+  SearchLeadEvent({required this.searchText,required this.limit,required this.limitStart});
 
   @override
-  List<Object> get props => [searchText];
+  List<Object> get props => [searchText,limit,limitStart];
 }
 
 class DeleteLeadEvent extends LeadEvent {

@@ -7,63 +7,41 @@ import 'package:crm_mobile_app/modules/crm/presentation/view_model/create_lead_b
 import 'package:crm_mobile_app/modules/crm/presentation/view_model/create_lead_bloc/create_lead_state.dart';
 
 class CreateLeadFormBloc
-    extends Bloc<CreateLeadFormEvent, CreateLeadFormState> {
+    extends Bloc<CreateLeadFormEvent, CreateLeadFormUpdate> {
   final CreateLeadUsecase createLeadUsecase;
   CreateLeadFormBloc(this.createLeadUsecase) : super(CreateLeadFormUpdate()) {
     on<SubmitLeadForm>(_onSubmitLeadForm);
     on<UpdateFormField>(_onUpdateFormField);
   }
 
-  String salutation = '';
-  String firstname = '';
-  String lastname = '';
-  String email = '';
-  String contact = '';
-  String organization = '';
-  String website = '';
-  String date = '';
-
   void _onUpdateFormField(
-      UpdateFormField event, Emitter<CreateLeadFormState> emit) {
-    if (state is CreateLeadFormUpdate) {
-      final currentState = state as CreateLeadFormUpdate;
-      emit(currentState.copyWith(
-        salutation: event.salutation,
-        firstName: event.firstName,
-        lastName: event.lastName,
-        email: event.email,
-        contact: event.contact,
-        organization: event.organization,
-        website: event.website,
-        date: event.date,
-      ));
-      salutation = event.salutation.toString();
-      firstname = event.firstName.toString();
-      lastname = event.lastName.toString();
-      email = event.email.toString();
-      contact = event.contact.toString();
-      organization = event.organization.toString();
-      website = event.website.toString();
-      date = event.date.toString();
-    }
+      UpdateFormField event, Emitter<CreateLeadFormUpdate> emit) {
+    emit(state.copyWith(
+      salutation: event.salutation ?? state.salutation,
+      firstName: event.firstName ?? state.firstName,
+      lastName: event.lastName ?? state.lastName,
+      email: event.email ?? state.email,
+      contact: event.contact ?? state.contact,
+      organization: event.organization ?? state.organization,
+      website: event.website ?? state.website,
+      date: event.date ?? state.date,
+    ));
   }
 
   void _onSubmitLeadForm(
-      SubmitLeadForm event, Emitter<CreateLeadFormState> emit) async {
-    emit(LeadFormSubmitting());
-
+      SubmitLeadForm event, Emitter<CreateLeadFormUpdate> emit) async {
+    emit(state.copyWith(createLeadStatus: CreateLeadStatus.createLeadLoading));
     final DataState<CreateLeadResponseModel> createLeadResponse =
         await createLeadUsecase.call(
       CreateLeadRequestParams(
         createLeadRequestModel: CreateLeadRequestModel(
-          salutation: salutation,
-          firstname: firstname,
-          lastname: lastname,
-          email: email,
-          contact: contact,
-          organization: organization,
-          website: website,
-          date: date,
+          salutation: state.salutation,
+          firstname: state.firstName,
+          lastname: state.lastName,
+          email: state.email,
+          contact: state.contact,
+          organization: state.organization,
+          website: state.website,
         ),
       ),
     );
@@ -71,13 +49,21 @@ class CreateLeadFormBloc
     if (createLeadResponse is DataSuccess) {
       final createLeadSuccessResponseData = createLeadResponse.data;
       if (createLeadSuccessResponseData is CreateLeadSuccessResponseModel) {
-        emit(LeadFormSuccess('Lead Created Successfully'));
+        emit(state.copyWith(
+            createLeadStatus: CreateLeadStatus.createLeadSuccess));
+        //emit(LeadFormSuccess('Lead Created Successfully'));
       } else if (createLeadSuccessResponseData
           is CreateLeadErrorResponseModel) {
-        emit(LeadFormFailure(' Lead Creation Failed'));
+        emit(state.copyWith(
+            createLeadStatus: CreateLeadStatus.createLeadFailure));
+
+        // emit(LeadFormFailure(' Lead Creation Failed'));
       }
     } else if (createLeadResponse is DataFailed) {
-      emit(LeadFormFailure(' Lead Creation Failed'));
+      emit(
+          state.copyWith(createLeadStatus: CreateLeadStatus.createLeadFailure));
+
+      //emit(LeadFormFailure(' Lead Creation Failed'));
     }
   }
 }

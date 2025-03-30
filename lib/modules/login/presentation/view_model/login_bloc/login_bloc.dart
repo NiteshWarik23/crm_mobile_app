@@ -17,10 +17,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   Future<void> onLoginClick(
       OnLoginClickEvent event, Emitter<LoginState> emit) async {
     if (event.userEmailId.isNotEmpty && event.password.isNotEmpty) {
-      print("onLoginClick triggered"); // Debugging
+      //print("onLoginClick triggered"); // Debugging
 
       emit(LoginLoadingState());
-      print("Emitting: LoginLoadingState");
+     // print("Emitting: LoginLoadingState");
 
       LoginDataRequestModel loginDataRequestModel =
           LoginDataRequestModel(usr: event.userEmailId, pwd: event.password);
@@ -31,27 +31,27 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       if (loginResponse is DataSuccess) {
         final loginSuccessReponseData = loginResponse.data;
         if (loginSuccessReponseData is LoginSuccessResponseModel) {
-          print("Success Response ${loginSuccessReponseData}");
-          print("Success Response ${loginSuccessReponseData.message}");
-          print("Success Response ${loginSuccessReponseData.homePage}");
-          print("Success Response ${loginSuccessReponseData.fullName}");
-          print("Emitting: LoginSuccessState");
+          // print("Success Response ${loginSuccessReponseData}");
+          // print("Success Response ${loginSuccessReponseData.message}");
+          // print("Success Response ${loginSuccessReponseData.homePage}");
+          // print("Success Response ${loginSuccessReponseData.fullName}");
+          // print("Emitting: LoginSuccessState");
 
           emit(LoginSuccessState(
               username: loginSuccessReponseData.fullName ?? ""));
         }
       } else if (loginResponse is DataFailed) {
-        print("Error 1 $loginResponse");
-        print("Error 2  ${loginResponse.error!.message}");
-        print("object Error ${loginResponse.data}");
-        final loginErrorReponseData = loginResponse.data;
+        // print("Error 1 $loginResponse");
+        // print("Error 2  ${loginResponse.error!.message}");
+        // print("object Error ${loginResponse.data}");
+        //final loginErrorReponseData = loginResponse.data;
         //if (loginErrorReponseData is LoginErrorResponseModel) {
-        print("Error 3 $loginErrorReponseData");
+        //print("Error 3 $loginErrorReponseData");
         //print("Login Error Message ${loginErrorReponseData.message}");
-        print("Emitting: LoginFailureState");
+        //print("Emitting: LoginFailureState");
         emit(LoginFailureState(
             errorMessage:
-                loginResponse.error!.message ?? Strings.defaultErrMsg));
+             loginResponse.error != null ?   loginResponse.error!.message : Strings.defaultErrMsg));
         // }
       }
     }

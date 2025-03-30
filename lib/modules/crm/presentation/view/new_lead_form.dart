@@ -5,6 +5,7 @@ import 'package:crm_mobile_app/modules/crm/presentation/view_model/create_lead_b
 import 'package:crm_mobile_app/modules/crm/presentation/view_model/create_lead_bloc/create_lead_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
@@ -25,13 +26,6 @@ class _LeadFormBottomSheetState extends State<LeadFormBottomSheet> {
 
   final _scrollController = ScrollController();
   final CreateLeadFormBloc createLeadFormBloc = locator<CreateLeadFormBloc>();
-
-  String? _selectedSalutation;
-  String? _selectedGender;
-  String? _selectedStatus;
-  String? _selectedEmployees;
-  String? _selectedIndustry;
-  String? _selectedLeadOwner;
 
   final List<String> _salutations = [
     "Dr",
@@ -67,6 +61,14 @@ class _LeadFormBottomSheetState extends State<LeadFormBottomSheet> {
     "Retail",
     "Manufacturing",
     "Other"
+  ];
+  final List<String> _leadStatus = [
+    "New",
+    "Contacted",
+    "Nurture",
+    "Qualified",
+    "Unqualified",
+    "Junk",
   ];
   final List<String> _leadOwners = ["Owner 1", "Owner 2", "Owner 3"];
 
@@ -109,210 +111,293 @@ class _LeadFormBottomSheetState extends State<LeadFormBottomSheet> {
     );
   }
 
-  void _saveLead() {
-    if (_formKey.currentState!.validate()) {
-      print("Lead Created:");
-      print("Salutation: $_selectedSalutation");
-      print("First Name: ${_firstNameController.text}");
-      print("Last Name: ${_lastNameController.text}");
-      print("Email: ${_emailController.text}");
-      print("Contact: ${_contactController.text}");
-      print("Organization: ${_organizationController.text}");
-      print("Website: ${_websiteController.text}");
-      print("Number of Employees: $_selectedEmployees");
-      print("Industry: $_selectedIndustry");
-      print("Lead Owner: $_selectedLeadOwner");
-      print("Date: ${_dateController.text}");
-      print("Status: $_selectedStatus");
-      Navigator.pop(context);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => createLeadFormBloc,
-      child: BlocConsumer<CreateLeadFormBloc, CreateLeadFormState>(
-        listener: (context, state) {},
+      child: BlocConsumer<CreateLeadFormBloc, CreateLeadFormUpdate>(
+        listener: (context, state) {
+          if (state.createLeadStatus == CreateLeadStatus.createLeadLoading) {
+            Fluttertoast.showToast(msg: 'Creating Lead.. Please wait');
+          } else if (state.createLeadStatus ==
+              CreateLeadStatus.createLeadSuccess) {
+            Fluttertoast.showToast(msg: 'Lead Created Successfully');
+            Navigator.pop(context);
+          } else if (state.createLeadStatus ==
+              CreateLeadStatus.createLeadFailure) {
+            Fluttertoast.showToast(msg: 'Lead Creation Failed');
+            Navigator.pop(context);
+          }
+        },
         builder: (context, state) {
-          if (state is CreateLeadFormUpdate) {
-            return Scaffold(
-              body: Padding(
-                padding: EdgeInsets.only(
-                  left: 15,
-                  right: 8,
-                  top: 10,
-                  bottom: MediaQuery.of(context).viewInsets.bottom + 20,
-                ),
-                child: Form(
-                  key: _formKey,
-                  child: Scrollbar(
-                    controller: _scrollController,
-                    thumbVisibility: true,
-                    thickness: 2.0,
-                    radius: Radius.circular(5.0),
-                    child: SingleChildScrollView(
-                      controller: _scrollController,
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 14.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Center(
-                              child: Text(
-                                "Create New Lead",
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                            SizedBox(height: 15),
-                            _buildLabel("Salutation"),
-                            DropdownButtonFormField(
-                              value: state.salutation,
-                              style: GoogleFonts.nunitoSans(
-                                  fontSize: 15, color: AppColors.greyshade500),
-                              items: _salutations.map((salutation) {
-                                return DropdownMenuItem(
-                                    value: salutation, child: Text(salutation));
-                              }).toList(),
-                              onChanged: (value) {
-                                createLeadFormBloc.add(UpdateFormField(
-                                    salutation: value.toString()));
-                              },
-
-                              // setState(() => _selectedSalutation = value),
-                              decoration: _inputDecoration("Select Salutation"),
-                            ),
-                            SizedBox(height: 10),
-                            _buildLabel("First Name *"),
-                            TextFormField(
-                              controller: _firstNameController,
-                              decoration: _inputDecoration("Enter First Name"),
-                              onChanged: (value) {
-                                createLeadFormBloc
-                                    .add(UpdateFormField(firstName: value));
-                              },
-                            ),
-                            SizedBox(height: 10),
-                            _buildLabel("Last Name"),
-                            TextFormField(
-                              controller: _lastNameController,
-                              decoration: _inputDecoration("Enter Last Name"),
-                              onChanged: (value) {
-                                createLeadFormBloc
-                                    .add(UpdateFormField(lastName: value));
-                              },
-                            ),
-                            SizedBox(height: 10),
-                            _buildLabel("Gender"),
-                            DropdownButtonFormField(
-                              value: _selectedGender,
-                              style: GoogleFonts.nunitoSans(
-                                  fontSize: 15, color: AppColors.greyshade500),
-                              items: _genders.map((gender) {
-                                return DropdownMenuItem(
-                                    value: gender, child: Text(gender));
-                              }).toList(),
-                              onChanged: (value) =>
-                                  setState(() => _selectedGender = value),
-                              decoration: _inputDecoration("Select Gender"),
-                            ),
-                            SizedBox(height: 10),
-                            _buildLabel("Organization"),
-                            TextFormField(
-                                controller: _organizationController,
-                                decoration: _inputDecoration(
-                                    "Enter Organization Name")),
-                            SizedBox(height: 10),
-                            _buildLabel("Website"),
-                            TextFormField(
-                                controller: _websiteController,
-                                decoration:
-                                    _inputDecoration("Enter Website URL")),
-                            SizedBox(height: 10),
-                            _buildLabel("Number of Employees"),
-                            DropdownButtonFormField(
-                              value: _selectedEmployees,
-                              style: GoogleFonts.nunitoSans(
-                                  fontSize: 15, color: AppColors.greyshade500),
-                              items: _employeeRanges.map((range) {
-                                return DropdownMenuItem(
-                                    value: range, child: Text(range));
-                              }).toList(),
-                              onChanged: (value) =>
-                                  setState(() => _selectedEmployees = value),
-                              decoration:
-                                  _inputDecoration("Select Employee Range"),
-                            ),
-                            SizedBox(height: 10),
-                            _buildLabel("Industry"),
-                            DropdownButtonFormField(
-                              value: _selectedIndustry,
-                              style: GoogleFonts.nunitoSans(
-                                  fontSize: 15, color: AppColors.greyshade500),
-                              items: _industries.map((industry) {
-                                return DropdownMenuItem(
-                                    value: industry, child: Text(industry));
-                              }).toList(),
-                              onChanged: (value) =>
-                                  setState(() => _selectedIndustry = value),
-                              decoration: _inputDecoration("Select Industry"),
-                            ),
-                            SizedBox(height: 10),
-                            _buildLabel("Lead Owner"),
-                            DropdownButtonFormField(
-                              value: _selectedLeadOwner,
-                              style: GoogleFonts.nunitoSans(
-                                  fontSize: 15, color: AppColors.greyshade500),
-                              items: _leadOwners.map((owner) {
-                                return DropdownMenuItem(
-                                    value: owner, child: Text(owner));
-                              }).toList(),
-                              onChanged: (value) =>
-                                  setState(() => _selectedLeadOwner = value),
-                              decoration: _inputDecoration("Select Lead Owner"),
-                            ),
-                            SizedBox(height: 10),
-                            _buildLabel("Date"),
-                            TextFormField(
-                              controller: _dateController,
-                              decoration: _inputDecoration(
-                                "Select Date",
-                                suffixIcon: IconButton(
-                                  icon: Icon(Icons.calendar_today),
-                                  onPressed: () => _pickDate(context),
+          return Scaffold(
+            resizeToAvoidBottomInset:
+                true, // Ensures the UI resizes when the keyboard appears
+            body: Scrollbar(
+              controller: _scrollController,
+              thumbVisibility: true,
+              thickness: 2.0,
+              radius: Radius.circular(5.0),
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.manual,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(
+                        left: 15,
+                        right: 8,
+                        top: 10,
+                        bottom: 20,
+                      ),
+                      child: Form(
+                        key: _formKey,
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 14.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Center(
+                                child: Text(
+                                  "Create New Lead",
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
-                              readOnly: true,
-                            ),
-                            SizedBox(
-                                height:
-                                    MediaQuery.sizeOf(context).height * 0.1),
-                          ],
+                              SizedBox(height: 15),
+                              _buildLabel("Salutation"),
+                              DropdownButtonFormField(
+                                value: state.salutation.isEmpty
+                                    ? null
+                                    : state.salutation,
+                                style: GoogleFonts.nunitoSans(
+                                    fontSize: 15,
+                                    color: AppColors.greyshade500),
+                                items: _salutations.map((salutation) {
+                                  return DropdownMenuItem(
+                                      value: salutation,
+                                      child: Text(salutation));
+                                }).toList(),
+                                onChanged: (value) {
+                                  createLeadFormBloc.add(UpdateFormField(
+                                      salutation: value.toString()));
+                                },
+
+                                // setState(() => _selectedSalutation = value),
+                                decoration:
+                                    _inputDecoration("Select Salutation"),
+                              ),
+                              SizedBox(height: 10),
+                              _buildLabel("First Name *"),
+                              TextFormField(
+                                controller: _firstNameController,
+                                decoration:
+                                    _inputDecoration("Enter First Name"),
+                                onChanged: (value) {
+                                  createLeadFormBloc
+                                      .add(UpdateFormField(firstName: value));
+                                },
+                              ),
+                              SizedBox(height: 10),
+                              _buildLabel("Last Name"),
+                              TextFormField(
+                                controller: _lastNameController,
+                                decoration: _inputDecoration("Enter Last Name"),
+                                onChanged: (value) {
+                                  createLeadFormBloc
+                                      .add(UpdateFormField(lastName: value));
+                                },
+                              ),
+                              SizedBox(height: 10),
+                              _buildLabel("Email"),
+                              TextFormField(
+                                  controller: _emailController,
+                                  onChanged: (value) {
+                                    createLeadFormBloc
+                                        .add(UpdateFormField(email: value));
+                                  },
+                                  decoration:
+                                      _inputDecoration("Enter Email Address")),
+                                       SizedBox(height: 10),
+                              _buildLabel("Mobile No"),
+                              TextFormField(
+                                  controller: _contactController,
+                                  onChanged: (value) {
+                                    createLeadFormBloc
+                                        .add(UpdateFormField(contact: value));
+                                  },
+                                  decoration:
+                                      _inputDecoration("Enter Mobile Number")),
+                              SizedBox(height: 10),
+                              _buildLabel("Gender"),
+                              DropdownButtonFormField(
+                                value:
+                                    state.gender.isEmpty ? null : state.gender,
+                                style: GoogleFonts.nunitoSans(
+                                    fontSize: 15,
+                                    color: AppColors.greyshade500),
+                                items: _genders.map((gender) {
+                                  return DropdownMenuItem(
+                                      value: gender, child: Text(gender));
+                                }).toList(),
+                                onChanged: (value) {
+                                  createLeadFormBloc
+                                      .add(UpdateFormField(gender: value));
+                                },
+                                decoration: _inputDecoration("Select Gender"),
+                              ),
+                              SizedBox(height: 10),
+                              _buildLabel("Organization"),
+                              TextFormField(
+                                  controller: _organizationController,
+                                  onChanged: (value) {
+                                    createLeadFormBloc.add(
+                                        UpdateFormField(organization: value));
+                                  },
+                                  decoration: _inputDecoration(
+                                      "Enter Organization Name")),
+                              SizedBox(height: 10),
+                              _buildLabel("Website"),
+                              TextFormField(
+                                  controller: _websiteController,
+                                  onChanged: (value) {
+                                    createLeadFormBloc
+                                        .add(UpdateFormField(website: value));
+                                  },
+                                  decoration:
+                                      _inputDecoration("Enter Website URL")),
+                              SizedBox(height: 10),
+                              _buildLabel("Number of Employees"),
+                              DropdownButtonFormField(
+                                value: state.numberOfEmployees.isEmpty
+                                    ? null
+                                    : state.numberOfEmployees,
+                                style: GoogleFonts.nunitoSans(
+                                    fontSize: 15,
+                                    color: AppColors.greyshade500),
+                                items: _employeeRanges.map((range) {
+                                  return DropdownMenuItem(
+                                      value: range, child: Text(range));
+                                }).toList(),
+                                onChanged: (value) {
+                                  createLeadFormBloc.add(UpdateFormField(
+                                      numberOfEmployees: value));
+                                },
+                                decoration:
+                                    _inputDecoration("Select Employee Range"),
+                              ),
+                              SizedBox(height: 10),
+                              _buildLabel("Industry"),
+                              DropdownButtonFormField(
+                                value: state.industry.isEmpty
+                                    ? null
+                                    : state.industry,
+                                style: GoogleFonts.nunitoSans(
+                                    fontSize: 15,
+                                    color: AppColors.greyshade500),
+                                items: _industries.map((industry) {
+                                  return DropdownMenuItem(
+                                      value: industry, child: Text(industry));
+                                }).toList(),
+                                onChanged: (value) {
+                                  createLeadFormBloc
+                                      .add(UpdateFormField(industry: value));
+                                },
+                                decoration: _inputDecoration("Select Industry"),
+                              ),
+                              SizedBox(height: 10),
+                              _buildLabel("Lead Status"),
+                              DropdownButtonFormField(
+                                value: state.leadStatus.isEmpty
+                                    ? _leadStatus.first.toString()
+                                    : state.leadStatus,
+                                style: GoogleFonts.nunitoSans(
+                                  fontSize: 15,
+                                  color: AppColors.greyshade500,
+                                ),
+                                items: _leadStatus.map((status) {
+                                  return DropdownMenuItem(
+                                      value: status,
+                                      child: Text(
+                                        status,
+                                      ));
+                                }).toList(),
+                                onChanged: (value) {
+                                  createLeadFormBloc
+                                      .add(UpdateFormField(leadOwner: value));
+                                },
+                                decoration:
+                                    _inputDecoration("Select Lead Status"),
+                              ),
+                              SizedBox(height: 10),
+                              _buildLabel("Lead Owner"),
+                              DropdownButtonFormField(
+                                value: state.leadOwner.isEmpty
+                                    ? null
+                                    : state.leadOwner,
+                                style: GoogleFonts.nunitoSans(
+                                    fontSize: 15,
+                                    color: AppColors.greyshade500),
+                                items: _leadOwners.map((owner) {
+                                  return DropdownMenuItem(
+                                      value: owner, child: Text(owner));
+                                }).toList(),
+                                onChanged: (value) {
+                                  createLeadFormBloc
+                                      .add(UpdateFormField(leadOwner: value));
+                                },
+                                decoration:
+                                    _inputDecoration("Select Lead Owner"),
+                              ),
+                              SizedBox(
+                                  height:
+                                      MediaQuery.sizeOf(context).height * 0.1),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
               ),
-              floatingActionButtonLocation:
-                  FloatingActionButtonLocation.centerFloat,
-              floatingActionButton: FloatingActionButton.extended(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.zero)),
-                backgroundColor: Colors.black,
-                enableFeedback: true,
-                onPressed: _saveLead,
-                icon: Icon(Icons.save_sharp, color: Colors.white),
-                label: Text("Create Lead",
-                    style: TextStyle(color: Colors.white, fontSize: 16)),
-              ),
-            );
-          }
-          return SizedBox();
+            ),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
+            floatingActionButton: createLeadButton(context, state),
+          );
         },
       ),
+    );
+  }
+
+  Widget createLeadButton(BuildContext context, CreateLeadFormUpdate state) {
+    return AnimatedSwitcher(
+      duration: Duration(milliseconds: 300),
+      transitionBuilder: (child, animation) {
+        return ScaleTransition(scale: animation, child: child);
+      },
+      child: MediaQuery.of(context).viewInsets.bottom == 0
+          ? FloatingActionButton.extended(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.zero)),
+              backgroundColor: state.firstName.isNotEmpty ? Colors.black : Colors.grey,
+              enableFeedback: true,
+              onPressed: state.firstName.isNotEmpty
+                  ? () {
+                      if (_formKey.currentState!.validate()) {
+                        createLeadFormBloc.add(SubmitLeadForm());
+                      }
+                    }
+                  : null,
+              icon: Icon(Icons.save_sharp, color: state.firstName.isNotEmpty ? Colors.white : Colors.white),
+              label: Text("Create Lead",
+                  style: TextStyle(color: state.firstName.isNotEmpty ? Colors.white : Colors.white, fontSize: 16)),
+            )
+          : SizedBox.shrink(),
     );
   }
 

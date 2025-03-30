@@ -54,7 +54,6 @@ class _LeadsListScreenState extends State<LeadsListScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
-    //leadBloc.add(ClearLeadsEvent()); // Reset the list when exiting
     super.dispose();
   }
 
@@ -69,6 +68,7 @@ class _LeadsListScreenState extends State<LeadsListScreen> {
         body: RefreshIndicator.adaptive(
           key: _refreshIndicatorKey,
           triggerMode: RefreshIndicatorTriggerMode.anywhere,
+          semanticsLabel: 'Pull to Refresh',
           onRefresh: () async {
             //return Future<void>.delayed(const Duration(seconds: 3));
             leadBloc.limitStart = 0;
@@ -208,7 +208,7 @@ class _LeadsListScreenState extends State<LeadsListScreen> {
       enableDrag: true,
       sheetAnimationStyle: AnimationStyle(
         duration: const Duration(
-          seconds: 4,
+          seconds: 3,
         ),
         reverseDuration: const Duration(seconds: 2),
       ),
