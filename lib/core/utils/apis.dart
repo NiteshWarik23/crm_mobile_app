@@ -12,4 +12,9 @@ class ApiEndPoints {
       "/api/method/frappe.desk.doctype.tag.tag.add_tag";
   static const String deleteTag =
       "/api/method/frappe.desk.doctype.tag.tag.remove_tag";
+  static const String createNote = "/api/method/frappe.client.insert";
+  static const String getNotes = "/api/resource/FCRM Note?";
+
+  //Deal API's
+  static const String deals = "api/resource/CRM Deal?";
 }

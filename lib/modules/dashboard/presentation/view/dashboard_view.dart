@@ -5,7 +5,7 @@ import 'package:crm_mobile_app/modules/dashboard/presentation/view/dashboard_hea
 import 'package:crm_mobile_app/modules/dashboard/presentation/view_model/bottom_bar_bloc/bottom_nav_bar_bloc.dart';
 import 'package:crm_mobile_app/modules/dashboard/presentation/view_model/bottom_bar_bloc/bottom_nav_bar_event.dart';
 import 'package:crm_mobile_app/modules/dashboard/presentation/view_model/bottom_bar_bloc/bottom_nav_bar_state.dart';
-import 'package:crm_mobile_app/modules/crm/presentation/view/leads_screen.dart';
+import 'package:crm_mobile_app/modules/crm/lead/presentation/view/leads_screen.dart';
 import 'package:crm_mobile_app/modules/markating/presentaion/view_model/markating_active_campaigns.dart';
 import 'package:crm_mobile_app/modules/marketing/presentation/view/campaign_detailed_view/view_campaign_detailed_view.dart';
 import 'package:crm_mobile_app/modules/profile/presentation/view/profile_view.dart';

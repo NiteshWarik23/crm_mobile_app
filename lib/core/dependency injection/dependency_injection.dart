@@ -1,19 +1,23 @@
 import 'package:crm_mobile_app/config/dio_client/dio_client.dart';
-import 'package:crm_mobile_app/modules/crm/data/repositories/lead_repository.dart';
-import 'package:crm_mobile_app/modules/crm/data/repositories/lead_repository_impl.dart';
-import 'package:crm_mobile_app/modules/crm/data/services/lead_api.dart';
-import 'package:crm_mobile_app/modules/crm/domain/usecase/convert_lead_to_deal_usecase.dart';
-import 'package:crm_mobile_app/modules/crm/domain/usecase/create_lead_usecase.dart';
-import 'package:crm_mobile_app/modules/crm/domain/usecase/create_tag_usecase.dart';
-import 'package:crm_mobile_app/modules/crm/domain/usecase/delete_lead_usecase.dart';
-import 'package:crm_mobile_app/modules/crm/domain/usecase/lead_usecase.dart';
-import 'package:crm_mobile_app/modules/crm/domain/usecase/search_lead_usecase.dart';
-import 'package:crm_mobile_app/modules/crm/domain/usecase/update_lead_status_usecase.dart';
-import 'package:crm_mobile_app/modules/crm/presentation/view_model/convert_to_deal_bloc/convert_to_deal_bloc.dart';
-import 'package:crm_mobile_app/modules/crm/presentation/view_model/create_lead_bloc/create_lead_bloc.dart';
-import 'package:crm_mobile_app/modules/crm/presentation/view_model/create_tag_bloc/create_tag_bloc.dart';
-import 'package:crm_mobile_app/modules/crm/presentation/view_model/dropdown_bloc/dropdown_bloc.dart';
-import 'package:crm_mobile_app/modules/crm/presentation/view_model/lead_bloc/lead_bloc.dart';
+import 'package:crm_mobile_app/modules/crm/lead/data/repositories/lead_repository.dart';
+import 'package:crm_mobile_app/modules/crm/lead/data/repositories/lead_repository_impl.dart';
+import 'package:crm_mobile_app/modules/crm/lead/data/services/lead_api.dart';
+import 'package:crm_mobile_app/modules/crm/lead/domain/usecase/convert_lead_to_deal_usecase.dart';
+import 'package:crm_mobile_app/modules/crm/lead/domain/usecase/create_lead_usecase.dart';
+import 'package:crm_mobile_app/modules/crm/lead/domain/usecase/create_note_usecase.dart';
+import 'package:crm_mobile_app/modules/crm/lead/domain/usecase/create_tag_usecase.dart';
+import 'package:crm_mobile_app/modules/crm/lead/domain/usecase/delete_lead_usecase.dart';
+import 'package:crm_mobile_app/modules/crm/lead/domain/usecase/get_notes_usecase.dart';
+import 'package:crm_mobile_app/modules/crm/lead/domain/usecase/lead_usecase.dart';
+import 'package:crm_mobile_app/modules/crm/lead/domain/usecase/search_lead_usecase.dart';
+import 'package:crm_mobile_app/modules/crm/lead/domain/usecase/update_lead_status_usecase.dart';
+import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/convert_to_deal_bloc/convert_to_deal_bloc.dart';
+import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/create_lead_bloc/create_lead_bloc.dart';
+import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/create_note_bloc/create_note_bloc.dart';
+import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/create_tag_bloc/create_tag_bloc.dart';
+import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/dropdown_bloc/dropdown_bloc.dart';
+import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/lead_bloc/lead_bloc.dart';
+import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/view_notes_bloc/view_notes_bloc.dart';
 import 'package:crm_mobile_app/modules/dashboard/presentation/view_model/bottom_bar_bloc/bottom_nav_bar_bloc.dart';
 import 'package:crm_mobile_app/modules/login/data/repositories/login_repository.dart';
 import 'package:crm_mobile_app/modules/login/data/repositories/login_repository_impl.dart';
@@ -100,17 +104,16 @@ void init() {
   locator.registerLazySingleton<UpdateLeadStatusUsecase>(
       () => UpdateLeadStatusUsecase(locator()));
 //SearchLeadUsecase
-locator.registerLazySingleton<SearchLeadUsecase>(
+  locator.registerLazySingleton<SearchLeadUsecase>(
       () => SearchLeadUsecase(locator()));
 //DeleteLeadUsecase
   locator.registerLazySingleton<DeleteLeadUsecase>(
       () => DeleteLeadUsecase(locator()));
 //Bloc or ViewModels
   locator.registerFactory<LeadBloc>(
-      () => LeadBloc(locator(), locator(), locator(),locator(),locator()));
+      () => LeadBloc(locator(), locator(), locator(), locator(), locator()));
 //Dropdown Bloc
-locator.registerFactory<DropdownBloc>(
-      () => DropdownBloc());
+  locator.registerFactory<DropdownBloc>(() => DropdownBloc());
 //Bloc or ViewModels
   locator.registerFactory<ConvertLeadToDealBloc>(
       () => ConvertLeadToDealBloc(locator()));
@@ -121,9 +124,18 @@ locator.registerFactory<DropdownBloc>(
   locator.registerLazySingleton<CreateTagUsecase>(
       () => CreateTagUsecase(locator()));
 //Create Lead Bloc
-  locator.registerFactory<CreateLeadFormBloc>(() => CreateLeadFormBloc(locator()));
+  locator
+      .registerFactory<CreateLeadFormBloc>(() => CreateLeadFormBloc(locator()));
+  //Create Tag Usecase
+  locator.registerLazySingleton<CreateNoteUsecase>(
+      () => CreateNoteUsecase(locator()));
+  //Get Notes Usecase
+  locator
+      .registerLazySingleton<GetNotesUsecase>(() => GetNotesUsecase(locator()));
+//Create Nte Bloc
+  locator.registerFactory<CreateNoteBloc>(() => CreateNoteBloc(locator()));
+  //Get Notes Bloc
+  locator.registerFactory<GetNotesBloc>(() => GetNotesBloc(locator()));
 //Create Tag Bloc
-//Bloc or ViewModels
-  locator.registerFactory<CreateTagBloc>(
-      () => CreateTagBloc(locator()));
+  locator.registerFactory<CreateTagBloc>(() => CreateTagBloc(locator()));
 }
