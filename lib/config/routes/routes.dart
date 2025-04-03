@@ -5,4 +5,5 @@ abstract final class AppRoutes {
   static const profileRoute = "/profile";
   static const viewCampaignDetailedRoute = "/view_campaign_detailed_route";
   static const leadProfileScreen = "/lead_profile_screen";
+  static const dealProfileScreen = "/deal_profile_screen";
 }

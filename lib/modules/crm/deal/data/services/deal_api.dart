@@ -271,7 +271,7 @@ class DealApiImpl implements DealApi {
       throw ServerException("Session ID is null or empty");
     }
     try {
-      Uri uri = Uri.parse(ApiEndPoints.leads);
+      Uri uri = Uri.parse(ApiEndPoints.deals);
       var headers = {
         'Cookie': 'sid=$sessionID;'
         //daec58a24b6104dc7c54e39b1c3b1a8defff48801ea1fa56a1e05ad7;'
@@ -412,11 +412,8 @@ class DealApiImpl implements DealApi {
         queryParameters: {
           "fields": jsonEncode(['*']),
           "filters": jsonEncode([
-            ["reference_doctype", "=", "CRM Dead"],
-            [
-              "reference_docname",
-              "=",
-              getNotesRequestModel.referenceDocname.toString()
+            ["reference_doctype", "=", "CRM Deal"],
+            ["reference_docname","=", getNotesRequestModel.referenceDocname.toString()
             ]
           ]),
           "limit_start": offsetLimitRequestModel.limitStart.toString(),

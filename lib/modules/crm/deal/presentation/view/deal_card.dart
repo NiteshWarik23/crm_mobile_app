@@ -1,7 +1,9 @@
+import 'package:crm_mobile_app/config/routes/arguments/deal_details_arguments.dart';
 import 'package:crm_mobile_app/config/routes/arguments/lead_details_arguments.dart';
 import 'package:crm_mobile_app/config/routes/routes.dart';
 import 'package:crm_mobile_app/core/dependency%20injection/dependency_injection.dart';
 import 'package:crm_mobile_app/modules/crm/deal/data/services/models/response/deal_response.dart';
+import 'package:crm_mobile_app/modules/crm/deal/presentation/view/deal_list_screen.dart';
 import 'package:crm_mobile_app/modules/crm/deal/presentation/view_model/deal_bloc/deal_bloc.dart';
 import 'package:crm_mobile_app/modules/crm/deal/presentation/view_model/deal_bloc/deal_event.dart';
 import 'package:crm_mobile_app/modules/crm/deal/presentation/view_model/deal_bloc/deal_state.dart';
@@ -39,6 +41,7 @@ class DealCard extends StatelessWidget {
           } else if (state.deleteDealStatus ==
               DeleteDealStatus.deleteDealSuccess) {
             Fluttertoast.showToast(msg: "Deal deleted Successfully");
+            refreshIndicatorKeyForDeals.currentState!.show();
           } else if (state.deleteDealStatus ==
               DeleteDealStatus.deleteDealFailure) {
             Fluttertoast.showToast(msg: "Failed to delete Deal.");
@@ -50,8 +53,8 @@ class DealCard extends StatelessWidget {
 
             Navigator.pushNamed(
               context,
-              AppRoutes.leadProfileScreen,
-              arguments: LeadDetailsArguments(
+              AppRoutes.dealProfileScreen,
+              arguments: DealDetailsArguments(
                 leadName: dealData.firstName,
                 leadEmailId: dealData.email,
                 leadContact: dealData.mobileNo,
@@ -148,7 +151,7 @@ class DealCard extends StatelessWidget {
                         onSelected: (Menu item) {
                           if (item == Menu.delete) {
                             dealBloc.add(
-                                DeleteDealEvent(leadID: dealData.name ?? ""));
+                                DeleteDealEvent(dealID: dealData.name ?? ""));
                           }
                         },
                         itemBuilder: (BuildContext context) =>

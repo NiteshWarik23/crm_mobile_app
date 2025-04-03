@@ -4,6 +4,7 @@ import 'package:crm_mobile_app/core/utils/app_colors.dart';
 import 'package:crm_mobile_app/core/utils/call_service.dart';
 import 'package:crm_mobile_app/core/utils/email_service.dart';
 import 'package:crm_mobile_app/core/utils/sms_service.dart';
+import 'package:crm_mobile_app/core/utils/whatsapp_service.dart';
 import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/lead_bloc/lead_bloc.dart';
 import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/lead_bloc/lead_state.dart';
 import 'package:crm_mobile_app/modules/crm/lead/presentation/widgets/create_note_widget.dart';
@@ -90,7 +91,12 @@ class LeadDetailsScreen extends StatelessWidget {
                           message: "Hello $leadName");
                     }),
                     _buildIconButton(
-                        Colors.amber[100]!, "assets/icons/whatsapp.svg", () {}),
+                        Colors.amber[100]!, "assets/icons/whatsapp.svg", () {
+                      WhatsAppService.openWhatsApp(
+                          phoneNumber: leadContact ?? "",
+                          message:
+                              "Hello, I want to inquire about your services.");
+                    }),
                     _buildIconButton(
                       Colors.amber[100]!,
                       "assets/icons/email.svg",

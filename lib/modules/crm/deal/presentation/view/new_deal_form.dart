@@ -1,22 +1,22 @@
 import 'package:crm_mobile_app/core/dependency%20injection/dependency_injection.dart';
 import 'package:crm_mobile_app/core/utils/app_colors.dart';
-import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/create_lead_bloc/create_lead_bloc.dart';
-import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/create_lead_bloc/create_lead_event.dart';
-import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/create_lead_bloc/create_lead_state.dart';
+import 'package:crm_mobile_app/modules/crm/deal/presentation/view_model/create_deal_bloc/create_deal_bloc.dart';
+import 'package:crm_mobile_app/modules/crm/deal/presentation/view_model/create_deal_bloc/create_deal_event.dart';
+import 'package:crm_mobile_app/modules/crm/deal/presentation/view_model/create_deal_bloc/create_deal_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-class LeadFormBottomSheet extends StatefulWidget {
-  const LeadFormBottomSheet({super.key});
+class DealFormBottomSheet extends StatefulWidget {
+  const DealFormBottomSheet({super.key});
 
   @override
-  _LeadFormBottomSheetState createState() => _LeadFormBottomSheetState();
+  _DealFormBottomSheetState createState() => _DealFormBottomSheetState();
 }
 
-class _LeadFormBottomSheetState extends State<LeadFormBottomSheet> {
+class _DealFormBottomSheetState extends State<DealFormBottomSheet> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
@@ -27,7 +27,7 @@ class _LeadFormBottomSheetState extends State<LeadFormBottomSheet> {
   final TextEditingController _dateController = TextEditingController();
 
   final _scrollController = ScrollController();
-  final CreateLeadFormBloc createLeadFormBloc = locator<CreateLeadFormBloc>();
+  final CreateDealFormBloc createDealFormBloc = locator<CreateDealFormBloc>();
 
   final List<String> _salutations = [
     "Dr",
@@ -41,12 +41,7 @@ class _LeadFormBottomSheetState extends State<LeadFormBottomSheet> {
     "Prof"
   ];
   final List<String> _genders = ["Male", "Female", "Other"];
-  final List<String> _leadStatuses = [
-    "New",
-    "In Progress",
-    "Converted",
-    "Lost"
-  ];
+
   final List<String> _employeeRanges = [
     "1-10",
     "11-50",
@@ -113,22 +108,21 @@ class _LeadFormBottomSheetState extends State<LeadFormBottomSheet> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => createLeadFormBloc,
-      child: BlocConsumer<CreateLeadFormBloc, CreateLeadFormUpdate>(
+      create: (context) => createDealFormBloc,
+      child: BlocConsumer<CreateDealFormBloc, CreateDealFormUpdate>(
         listener: (context, state) {
-          if (state.createLeadStatus == CreateLeadStatus.createLeadLoading) {
-            Fluttertoast.showToast(msg: 'Creating Lead.. Please wait');
-          } else if (state.createLeadStatus ==
-              CreateLeadStatus.createLeadSuccess) {
-            Fluttertoast.showToast(msg: 'Lead Created Successfully');
+          if (state.createDealStatus == CreateDealStatus.createDealLoading) {
+            Fluttertoast.showToast(msg: 'Creating Deal.. Please wait');
+          } else if (state.createDealStatus ==
+              CreateDealStatus.createDealSuccess) {
+            Fluttertoast.showToast(msg: 'Deal Created Successfully');
             Navigator.pop(context);
-          } else if (state.createLeadStatus ==
-              CreateLeadStatus.createLeadFailure) {
-            Fluttertoast.showToast(msg: 'Lead Creation Failed');
+          } else if (state.createDealStatus ==
+              CreateDealStatus.createDealFailure) {
+            Fluttertoast.showToast(msg: 'Deal Creation Failed');
             Navigator.pop(context);
           }
         },
@@ -185,7 +179,7 @@ class _LeadFormBottomSheetState extends State<LeadFormBottomSheet> {
                                       child: Text(salutation));
                                 }).toList(),
                                 onChanged: (value) {
-                                  createLeadFormBloc.add(UpdateFormField(
+                                  createDealFormBloc.add(UpdateDealFormField(
                                       salutation: value.toString()));
                                 },
 
@@ -200,8 +194,8 @@ class _LeadFormBottomSheetState extends State<LeadFormBottomSheet> {
                                 decoration:
                                     _inputDecoration("Enter First Name"),
                                 onChanged: (value) {
-                                  createLeadFormBloc
-                                      .add(UpdateFormField(firstName: value));
+                                  createDealFormBloc.add(
+                                      UpdateDealFormField(firstName: value));
                                 },
                               ),
                               SizedBox(height: 10),
@@ -210,8 +204,8 @@ class _LeadFormBottomSheetState extends State<LeadFormBottomSheet> {
                                 controller: _lastNameController,
                                 decoration: _inputDecoration("Enter Last Name"),
                                 onChanged: (value) {
-                                  createLeadFormBloc
-                                      .add(UpdateFormField(lastName: value));
+                                  createDealFormBloc.add(
+                                      UpdateDealFormField(lastName: value));
                                 },
                               ),
                               SizedBox(height: 10),
@@ -219,18 +213,18 @@ class _LeadFormBottomSheetState extends State<LeadFormBottomSheet> {
                               TextFormField(
                                   controller: _emailController,
                                   onChanged: (value) {
-                                    createLeadFormBloc
-                                        .add(UpdateFormField(email: value));
+                                    createDealFormBloc
+                                        .add(UpdateDealFormField(email: value));
                                   },
                                   decoration:
                                       _inputDecoration("Enter Email Address")),
-                                       SizedBox(height: 10),
+                              SizedBox(height: 10),
                               _buildLabel("Mobile No"),
                               TextFormField(
                                   controller: _contactController,
                                   onChanged: (value) {
-                                    createLeadFormBloc
-                                        .add(UpdateFormField(contact: value));
+                                    createDealFormBloc.add(
+                                        UpdateDealFormField(contact: value));
                                   },
                                   decoration:
                                       _inputDecoration("Enter Mobile Number")),
@@ -247,8 +241,8 @@ class _LeadFormBottomSheetState extends State<LeadFormBottomSheet> {
                                       value: gender, child: Text(gender));
                                 }).toList(),
                                 onChanged: (value) {
-                                  createLeadFormBloc
-                                      .add(UpdateFormField(gender: value));
+                                  createDealFormBloc
+                                      .add(UpdateDealFormField(gender: value));
                                 },
                                 decoration: _inputDecoration("Select Gender"),
                               ),
@@ -257,8 +251,8 @@ class _LeadFormBottomSheetState extends State<LeadFormBottomSheet> {
                               TextFormField(
                                   controller: _organizationController,
                                   onChanged: (value) {
-                                    createLeadFormBloc.add(
-                                        UpdateFormField(organization: value));
+                                    createDealFormBloc.add(UpdateDealFormField(
+                                        organization: value));
                                   },
                                   decoration: _inputDecoration(
                                       "Enter Organization Name")),
@@ -267,8 +261,8 @@ class _LeadFormBottomSheetState extends State<LeadFormBottomSheet> {
                               TextFormField(
                                   controller: _websiteController,
                                   onChanged: (value) {
-                                    createLeadFormBloc
-                                        .add(UpdateFormField(website: value));
+                                    createDealFormBloc.add(
+                                        UpdateDealFormField(website: value));
                                   },
                                   decoration:
                                       _inputDecoration("Enter Website URL")),
@@ -286,7 +280,7 @@ class _LeadFormBottomSheetState extends State<LeadFormBottomSheet> {
                                       value: range, child: Text(range));
                                 }).toList(),
                                 onChanged: (value) {
-                                  createLeadFormBloc.add(UpdateFormField(
+                                  createDealFormBloc.add(UpdateDealFormField(
                                       numberOfEmployees: value));
                                 },
                                 decoration:
@@ -306,17 +300,17 @@ class _LeadFormBottomSheetState extends State<LeadFormBottomSheet> {
                                       value: industry, child: Text(industry));
                                 }).toList(),
                                 onChanged: (value) {
-                                  createLeadFormBloc
-                                      .add(UpdateFormField(industry: value));
+                                  createDealFormBloc.add(
+                                      UpdateDealFormField(industry: value));
                                 },
                                 decoration: _inputDecoration("Select Industry"),
                               ),
                               SizedBox(height: 10),
                               _buildLabel("Lead Status"),
                               DropdownButtonFormField(
-                                value: state.leadStatus.isEmpty
+                                value: state.dealStatus.isEmpty
                                     ? _leadStatus.first.toString()
-                                    : state.leadStatus,
+                                    : state.dealStatus,
                                 style: GoogleFonts.nunitoSans(
                                   fontSize: 15,
                                   color: AppColors.greyshade500,
@@ -329,8 +323,8 @@ class _LeadFormBottomSheetState extends State<LeadFormBottomSheet> {
                                       ));
                                 }).toList(),
                                 onChanged: (value) {
-                                  createLeadFormBloc
-                                      .add(UpdateFormField(leadOwner: value));
+                                  createDealFormBloc.add(
+                                      UpdateDealFormField(leadOwner: value));
                                 },
                                 decoration:
                                     _inputDecoration("Select Lead Status"),
@@ -349,8 +343,8 @@ class _LeadFormBottomSheetState extends State<LeadFormBottomSheet> {
                                       value: owner, child: Text(owner));
                                 }).toList(),
                                 onChanged: (value) {
-                                  createLeadFormBloc
-                                      .add(UpdateFormField(leadOwner: value));
+                                  createDealFormBloc.add(
+                                      UpdateDealFormField(leadOwner: value));
                                 },
                                 decoration:
                                     _inputDecoration("Select Lead Owner"),
@@ -376,7 +370,7 @@ class _LeadFormBottomSheetState extends State<LeadFormBottomSheet> {
     );
   }
 
-  Widget createLeadButton(BuildContext context, CreateLeadFormUpdate state) {
+  Widget createLeadButton(BuildContext context, CreateDealFormUpdate state) {
     return AnimatedSwitcher(
       duration: Duration(milliseconds: 300),
       transitionBuilder: (child, animation) {
@@ -386,18 +380,25 @@ class _LeadFormBottomSheetState extends State<LeadFormBottomSheet> {
           ? FloatingActionButton.extended(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.zero)),
-              backgroundColor: state.firstName.isNotEmpty ? Colors.black : Colors.grey,
+              backgroundColor:
+                  state.firstName.isNotEmpty ? Colors.black : Colors.grey,
               enableFeedback: true,
               onPressed: state.firstName.isNotEmpty
                   ? () {
                       if (_formKey.currentState!.validate()) {
-                        createLeadFormBloc.add(SubmitLeadForm());
+                        createDealFormBloc.add(SubmitDealForm());
                       }
                     }
                   : null,
-              icon: Icon(Icons.save_sharp, color: state.firstName.isNotEmpty ? Colors.white : Colors.white),
+              icon: Icon(Icons.save_sharp,
+                  color:
+                      state.firstName.isNotEmpty ? Colors.white : Colors.white),
               label: Text("Create Lead",
-                  style: TextStyle(color: state.firstName.isNotEmpty ? Colors.white : Colors.white, fontSize: 16)),
+                  style: TextStyle(
+                      color: state.firstName.isNotEmpty
+                          ? Colors.white
+                          : Colors.white,
+                      fontSize: 16)),
             )
           : SizedBox.shrink(),
     );

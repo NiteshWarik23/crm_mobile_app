@@ -15,16 +15,19 @@ class GetDealNotesUsecase
 
   @override
   ResultFuture<GetDealNotesResponseModel> call(params) async {
-    return await dealRepository.getDealNotes(params.getDealNotesRequestModel,params.offsetLimitRequestModel);
+    return await dealRepository.getDealNotes(params.getDealNotesRequestModel,params.dealNotesoffsetLimitRequestModel
+);
   }
 }
 
 class GetDealNotesRequestParams extends Equatable {
   final GetDealNotesRequestModel getDealNotesRequestModel;
-  final OffsetLimitRequestModel offsetLimitRequestModel;
+  final OffsetLimitRequestModel dealNotesoffsetLimitRequestModel;
 
-  const GetDealNotesRequestParams({required this.getDealNotesRequestModel,required this.offsetLimitRequestModel});
+  const GetDealNotesRequestParams({required this.getDealNotesRequestModel,required this.dealNotesoffsetLimitRequestModel
+});
 
   @override
-  List<Object> get props => [getDealNotesRequestModel,offsetLimitRequestModel];
+  List<Object> get props => [getDealNotesRequestModel,dealNotesoffsetLimitRequestModel
+];
 }

@@ -1,14 +1,14 @@
 import 'package:equatable/equatable.dart';
 
 
-enum CreateLeadStatus {
-  createLeadInitial,
-  createLeadLoading,
-  createLeadSuccess,
-  createLeadFailure
+enum CreateDealStatus {
+  createDealInitial,
+  createDealLoading,
+  createDealSuccess,
+  createDealFailure
 }
 
-class CreateLeadFormUpdate extends Equatable {
+class CreateDealFormUpdate extends Equatable {
   final String salutation;
   final String firstName;
   final String lastName;
@@ -16,15 +16,15 @@ class CreateLeadFormUpdate extends Equatable {
   final String numberOfEmployees;
   final String industry;
   final String leadOwner;
-  final String leadStatus;
+  final String dealStatus;
   final String email;
   final String contact;
   final String organization;
   final String website;
   final String date;
-  final CreateLeadStatus createLeadStatus;
+  final CreateDealStatus createDealStatus;
 
-  const CreateLeadFormUpdate({
+  const CreateDealFormUpdate({
     this.salutation = '',
     this.firstName = '',
     this.lastName = '',
@@ -32,16 +32,16 @@ class CreateLeadFormUpdate extends Equatable {
     this.numberOfEmployees = '',
     this.industry = '',
     this.leadOwner = '',
-    this.leadStatus = 'New',
+    this.dealStatus = 'Qualification',
     this.email = '',
     this.contact = '',
     this.organization = '',
     this.website = '',
     this.date = '',
-    this.createLeadStatus = CreateLeadStatus.createLeadInitial,
+    this.createDealStatus = CreateDealStatus.createDealInitial,
   });
 
-  CreateLeadFormUpdate copyWith({
+  CreateDealFormUpdate copyWith({
     String? salutation,
     String? firstName,
     String? lastName,
@@ -49,15 +49,15 @@ class CreateLeadFormUpdate extends Equatable {
     String? numberOfEmployees,
     String? industry,
     String? leadOwner,
-    String? leadStatus,
+    String? dealStatus,
     String? email,
     String? contact,
     String? organization,
     String? website,
     String? date,
-    CreateLeadStatus? createLeadStatus,
+    CreateDealStatus? createDealStatus,
   }) {
-    return CreateLeadFormUpdate(
+    return CreateDealFormUpdate(
       salutation: salutation ?? this.salutation,
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
@@ -65,13 +65,13 @@ class CreateLeadFormUpdate extends Equatable {
       numberOfEmployees: numberOfEmployees ?? this.numberOfEmployees,
       industry: industry ?? this.industry,
       leadOwner: leadOwner ?? this.leadOwner,
-      leadStatus: leadStatus ?? this.leadStatus,
+      dealStatus: dealStatus ?? this.dealStatus,
       email: email ?? this.email,
       contact: contact ?? this.contact,
       organization: organization ?? this.organization,
       website: website ?? this.website,
       date: date ?? this.date,
-      createLeadStatus: createLeadStatus ?? this.createLeadStatus,
+      createDealStatus: createDealStatus ?? this.createDealStatus,
     );
   }
 
@@ -84,13 +84,13 @@ class CreateLeadFormUpdate extends Equatable {
         numberOfEmployees,
         industry,
         leadOwner,
-        leadStatus,
+        dealStatus,
         email,
         contact,
         organization,
         website,
         date,
-        createLeadStatus,
+        createDealStatus,
       ];
 }
 

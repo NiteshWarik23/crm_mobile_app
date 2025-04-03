@@ -85,7 +85,7 @@ class TabBarViewBody extends StatelessWidget {
               LeadsListScreen(),
            // ),
           ),
-          Center(child: DealssListScreen()),
+          Center(child: DealsListScreen()),
           Center(child: AppointmentScreen()),
         ],
       ),

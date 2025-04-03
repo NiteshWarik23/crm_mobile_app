@@ -2,11 +2,19 @@ import 'package:crm_mobile_app/config/dio_client/dio_client.dart';
 import 'package:crm_mobile_app/modules/crm/deal/data/repositories/deal_repository.dart';
 import 'package:crm_mobile_app/modules/crm/deal/data/repositories/deal_repository_impl.dart';
 import 'package:crm_mobile_app/modules/crm/deal/data/services/deal_api.dart';
+import 'package:crm_mobile_app/modules/crm/deal/domain/usecase/create_deal_note_usecase.dart';
+import 'package:crm_mobile_app/modules/crm/deal/domain/usecase/create_deal_tag_usecase.dart';
+import 'package:crm_mobile_app/modules/crm/deal/domain/usecase/create_deal_usecase.dart';
 import 'package:crm_mobile_app/modules/crm/deal/domain/usecase/deal_usecase.dart';
 import 'package:crm_mobile_app/modules/crm/deal/domain/usecase/delete_deal_usecase.dart';
+import 'package:crm_mobile_app/modules/crm/deal/domain/usecase/get_deal_notes_usecase.dart';
 import 'package:crm_mobile_app/modules/crm/deal/domain/usecase/search_deal_usecase.dart';
 import 'package:crm_mobile_app/modules/crm/deal/domain/usecase/update_deal_status_usecase.dart';
+import 'package:crm_mobile_app/modules/crm/deal/presentation/view_model/create_deal_bloc/create_deal_bloc.dart';
+import 'package:crm_mobile_app/modules/crm/deal/presentation/view_model/create_deal_note_bloc/create_deal_note_bloc.dart';
+import 'package:crm_mobile_app/modules/crm/deal/presentation/view_model/create_deal_tag_bloc/create_deal_tag_bloc.dart';
 import 'package:crm_mobile_app/modules/crm/deal/presentation/view_model/deal_bloc/deal_bloc.dart';
+import 'package:crm_mobile_app/modules/crm/deal/presentation/view_model/view_deal_notes_bloc/view_deal_notes_bloc.dart';
 import 'package:crm_mobile_app/modules/crm/lead/data/repositories/lead_repository.dart';
 import 'package:crm_mobile_app/modules/crm/lead/data/repositories/lead_repository_impl.dart';
 import 'package:crm_mobile_app/modules/crm/lead/data/services/lead_api.dart';
@@ -163,9 +171,29 @@ void init() {
 //DeleteLeadUsecase
   locator.registerLazySingleton<DeleteDealUsecase>(
       () => DeleteDealUsecase(locator()));
+//DeleteLeadUsecase
+  locator.registerLazySingleton<CreateDealUsecase>(
+      () => CreateDealUsecase(locator()));
 // Deal Use Cases
   locator.registerLazySingleton<DealUsecase>(() => DealUsecase(locator()));
+  // Get Notes Use Cases
+  locator.registerLazySingleton<GetDealNotesUsecase>(() => GetDealNotesUsecase(locator()));
+    //Get Deal Notes Bloc
+  locator
+      .registerFactory<GetDealNotesBloc>(() => GetDealNotesBloc(locator()));
   //Get Deals  Bloc
   locator.registerFactory<DealBloc>(
       () => DealBloc(locator(), locator(), locator(), locator()));
+      //DeleteLeadUsecase
+  locator.registerLazySingleton<CreateDealNoteUsecase>(
+      () => CreateDealNoteUsecase(locator()));
+  //Create Deal Note Bloc
+  locator.registerFactory<CreateDealNoteBloc>(() => CreateDealNoteBloc(locator()));
+  //Create Deal Bloc
+  locator.registerFactory<CreateDealFormBloc>(() => CreateDealFormBloc(locator()));
+   // Get Notes Use Cases
+  locator.registerLazySingleton<CreateDealTagUsecase>(
+      () => CreateDealTagUsecase(locator()));
+  //Get Deal Notes Bloc
+  locator.registerFactory<CreateDealTagBloc>(() => CreateDealTagBloc(locator()));
 }

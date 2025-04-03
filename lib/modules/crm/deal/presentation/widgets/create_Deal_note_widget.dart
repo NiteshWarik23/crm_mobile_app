@@ -1,5 +1,8 @@
 import 'package:crm_mobile_app/core/dependency%20injection/dependency_injection.dart';
 import 'package:crm_mobile_app/core/utils/app_colors.dart';
+import 'package:crm_mobile_app/modules/crm/deal/presentation/view_model/create_deal_note_bloc/create_deal_note_bloc.dart';
+import 'package:crm_mobile_app/modules/crm/deal/presentation/view_model/create_deal_note_bloc/create_deal_note_event.dart';
+import 'package:crm_mobile_app/modules/crm/deal/presentation/view_model/create_deal_note_bloc/create_deal_note_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/create_note_bloc/create_note_bloc.dart';
@@ -8,7 +11,7 @@ import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/create_n
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-void showCreateNoteBottomSheet(BuildContext context, String leadID) {
+void showCreateDealNoteBottomSheet(BuildContext context, String dealID) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -20,26 +23,26 @@ void showCreateNoteBottomSheet(BuildContext context, String leadID) {
     builder: (context) {
       return FractionallySizedBox(
           heightFactor: 0.7,
-          child: CreateNoteScreen(
-            leadId: leadID,
+          child: CreateDealNoteScreen(
+            dealId: dealID,
           ));
     },
   );
 }
 
-class CreateNoteScreen extends StatefulWidget {
-  final String leadId; // Lead ID for associating the note
+class CreateDealNoteScreen extends StatefulWidget {
+  final String dealId; // Lead ID for associating the note
 
-  const CreateNoteScreen({super.key, required this.leadId});
+  const CreateDealNoteScreen({super.key, required this.dealId});
 
   @override
-  State<CreateNoteScreen> createState() => _CreateNoteScreenState();
+  State<CreateDealNoteScreen> createState() => _CreateDealNoteScreenState();
 }
 
-class _CreateNoteScreenState extends State<CreateNoteScreen> {
+class _CreateDealNoteScreenState extends State<CreateDealNoteScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
-  final CreateNoteBloc createNoteBloc = locator<CreateNoteBloc>();
+  final CreateDealNoteBloc createDealNoteBloc = locator<CreateDealNoteBloc>();
 
   InputDecoration _inputDecoration(String hint, {Widget? suffixIcon}) {
     return InputDecoration(
@@ -84,7 +87,7 @@ class _CreateNoteScreenState extends State<CreateNoteScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => createNoteBloc, // Providing the BLoC
+      create: (context) => createDealNoteBloc, // Providing the BLoC
       child: Padding(
         padding: const EdgeInsets.only(
             right: 16.0, left: 16.0, bottom: 16.0, top: 00.0),
@@ -113,17 +116,14 @@ class _CreateNoteScreenState extends State<CreateNoteScreen> {
             //SizedBox(height: 16),
             Spacer(),
             // Bloc Listener for State Handling
-            BlocListener<CreateNoteBloc, CreateNoteState>(
+            BlocListener<CreateDealNoteBloc, CreateDealNoteState>(
               listener: (context, state) {
-                if (state is CreateNoteSuccessState) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Note added successfully")),
-                  );
+                if (state is CreateDealNoteSuccessState) {
+                  Fluttertoast.showToast(msg: "Note added successfully");
+
                   Navigator.pop(context, true); // Return success
-                } else if (state is CreateNoteFailureState) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Failed to add note")),
-                  );
+                } else if (state is CreateDealNoteFailureState) {
+                  Fluttertoast.showToast(msg: "Failed to add note");
                 }
               },
               child: Align(
@@ -140,11 +140,11 @@ class _CreateNoteScreenState extends State<CreateNoteScreen> {
                   onPressed: () {
                     if (_titleController.text.isNotEmpty &&
                         _titleController.text.isNotEmpty) {
-                      createNoteBloc.add(
-                        SubmitCreatedNoteEvent(
+                      createDealNoteBloc.add(
+                        SubmitCreatedDealNoteEvent(
                           title: _titleController.text.toString().trim(),
                           content: _contentController.text.toString().trim(),
-                          leadId: widget.leadId,
+                          dealId: widget.dealId,
                         ),
                       );
                     } else {

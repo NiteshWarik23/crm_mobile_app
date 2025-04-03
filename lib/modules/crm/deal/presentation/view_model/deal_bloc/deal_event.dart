@@ -27,13 +27,13 @@ class FABVisibilityEvent extends DealEvent {
 class ClearDealsEvent extends DealEvent {}
 
 class UpdateDealStatusEvent extends DealEvent {
-  final String leadID;
+  final String dealID;
   final String status;
 
-  UpdateDealStatusEvent({required this.leadID, required this.status});
+  UpdateDealStatusEvent({required this.dealID, required this.status});
 
   @override
-  List<Object> get props => [leadID, status];
+  List<Object> get props => [dealID, status];
 }
 
 class SearchDealEvent extends DealEvent {
@@ -48,10 +48,10 @@ class SearchDealEvent extends DealEvent {
 }
 
 class DeleteDealEvent extends DealEvent {
-  final String leadID;
+  final String dealID;
 
-  DeleteDealEvent({required this.leadID});
+  DeleteDealEvent({required this.dealID});
 
   @override
-  List<Object> get props => [leadID];
+  List<Object> get props => [dealID];
 }

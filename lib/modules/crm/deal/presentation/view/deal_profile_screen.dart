@@ -4,7 +4,12 @@ import 'package:crm_mobile_app/core/utils/app_colors.dart';
 import 'package:crm_mobile_app/core/utils/call_service.dart';
 import 'package:crm_mobile_app/core/utils/email_service.dart';
 import 'package:crm_mobile_app/core/utils/sms_service.dart';
+import 'package:crm_mobile_app/core/utils/whatsapp_service.dart';
+import 'package:crm_mobile_app/modules/crm/deal/presentation/view/deal_list_screen.dart';
+import 'package:crm_mobile_app/modules/crm/deal/presentation/widgets/create_Deal_note_widget.dart';
+import 'package:crm_mobile_app/modules/crm/deal/presentation/widgets/create_deal_tag_widget.dart';
 import 'package:crm_mobile_app/modules/crm/deal/presentation/widgets/dropdown_bottom_sheet.dart';
+import 'package:crm_mobile_app/modules/crm/deal/presentation/widgets/view_deal_notes.dart';
 import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/lead_bloc/lead_bloc.dart';
 import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/lead_bloc/lead_state.dart';
 import 'package:crm_mobile_app/modules/crm/lead/presentation/widgets/create_note_widget.dart';
@@ -15,22 +20,22 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class LeadDetailsScreen extends StatelessWidget {
-  final String? leadName;
-  final String? leadEmailId;
-  final String? leadContact;
-  final String? leadStatus;
-  final String? leadChannel;
-  final String? leadID;
+class DealDetailsScreen extends StatelessWidget {
+  final String? dealName;
+  final String? dealEmailId;
+  final String? dealContact;
+  final String? dealStatus;
+  final String? dealChannel;
+  final String? dealID;
 
-  LeadDetailsScreen(
+  DealDetailsScreen(
       {super.key,
-      this.leadName,
-      this.leadEmailId,
-      this.leadContact,
-      this.leadStatus,
-      this.leadChannel,
-      this.leadID});
+      this.dealName,
+      this.dealEmailId,
+      this.dealContact,
+      this.dealStatus,
+      this.dealChannel,
+      this.dealID});
 
   final LeadBloc leadBloc = locator<LeadBloc>();
 
@@ -56,7 +61,9 @@ class LeadDetailsScreen extends StatelessWidget {
                 content: Text("Lead Status Updated"),
               ),
             );
+
             Navigator.pop(context);
+           
           } else if (state.updateLeadStatus ==
               UpdateLeadStatus.updateLeadStatusFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -82,21 +89,27 @@ class LeadDetailsScreen extends StatelessWidget {
                   children: [
                     _buildIconButton(
                         Colors.amber[100]!, "assets/icons/call.svg", () {
-                      CallService.makePhoneCall(leadContact ?? "");
+                      CallService.makePhoneCall(dealContact ?? "");
                     }),
                     _buildIconButton(
                         Colors.amber[100]!, "assets/icons/messageSms.svg", () {
-                      SmsService.sendSms(leadContact ?? "",
-                          message: "Hello $leadName");
+                      SmsService.sendSms(dealContact ?? "",
+                          message: "Hello $dealName");
                     }),
                     _buildIconButton(
-                        Colors.amber[100]!, "assets/icons/whatsapp.svg", () {}),
+                        Colors.amber[100]!, "assets/icons/whatsapp.svg", () {
+                          WhatsAppService.openWhatsApp(
+                          phoneNumber: dealContact ?? "",
+                          message:
+                              "Hello, I want to inquire about your services.");
+
+                        }),
                     _buildIconButton(
                       Colors.amber[100]!,
                       "assets/icons/email.svg",
                       () {
                         MailService.sendEmail(
-                          email: "$leadEmailId",
+                          email: "$dealEmailId",
                           subject: "Hello",
                           body: "This is a test email",
                         );
@@ -129,21 +142,23 @@ class LeadDetailsScreen extends StatelessWidget {
         ),
         _buildTaskButton("assets/icons/note.svg", 'Add Note', Icons.add,
             onPressed: () {
-          showCreateNoteBottomSheet(context, leadID ?? "");
+          showCreateDealNoteBottomSheet(context, dealID ?? "");
+        }, onPressed1: () {
+          showViewDealNotesBottomSheet(context, dealID ?? "");
         }),
         _buildTaskButton(
             "assets/icons/updateStatus.svg", 'Update Status', Icons.add,
             onPressed: () {
-          showDealDropdownBottomSheet(context, leadID ?? "");
+          showDealDropdownBottomSheet(context, dealID ?? "");
         }),
         _buildTaskButton("assets/icons/addTag.svg", 'Add Tag', Icons.add,
             onPressed: () {
-          showCreateTagBottomSheet(context, leadID ?? "");
+          showCreateDealTagBottomSheet(context, dealID ?? "");
         }),
         _buildTaskButton(
             "assets/icons/followUp.svg", 'Schedule Follow Up', Icons.add,
             onPressed: () {
-          showDropdownBottomSheet(context, leadID ?? "");
+          showDropdownBottomSheet(context, dealID ?? "");
         }),
       ],
     );
@@ -202,7 +217,7 @@ class LeadDetailsScreen extends StatelessWidget {
                   fontWeight: FontWeight.w400),
             ),
             Text(
-              leadEmailId ?? "NA",
+              dealEmailId ?? "NA",
               style: GoogleFonts.nunitoSans(
                   fontSize: 16,
                   color: Colors.black,
@@ -223,7 +238,7 @@ class LeadDetailsScreen extends StatelessWidget {
                   fontWeight: FontWeight.w400),
             ),
             Text(
-              leadContact ?? "NA",
+              dealContact ?? "NA",
               style: GoogleFonts.nunitoSans(
                   fontSize: 16,
                   color: Colors.black,
@@ -245,7 +260,7 @@ class LeadDetailsScreen extends StatelessWidget {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(
-              color: getStatusColor(leadStatus ?? ""), // Border color
+              color: getStatusColor(dealStatus ?? ""), // Border color
               width: 3.0, // Border width
             ),
           ),
@@ -257,7 +272,7 @@ class LeadDetailsScreen extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         Text(
-          leadName?.toUpperCase() ?? "NA",
+          dealName?.toUpperCase() ?? "NA",
           style:
               GoogleFonts.nunitoSans(fontSize: 18, fontWeight: FontWeight.w700),
         ),
@@ -343,7 +358,8 @@ class LeadDetailsScreen extends StatelessWidget {
       String svgAssetString,
       String label,
       IconData icon2,
-      {GestureTapCallback? onPressed}) {
+      {GestureTapCallback? onPressed,
+      onPressed1}) {
     return Row(
       children: [
         //Icon(icon, color: Colors.black54),
@@ -366,7 +382,7 @@ class LeadDetailsScreen extends StatelessWidget {
             ? Padding(
                 padding: const EdgeInsets.only(right: 15.0),
                 child: GestureDetector(
-                  onTap: onPressed,
+                  onTap: onPressed1,
                   child: Container(
                     height: 30,
                     width: 30,

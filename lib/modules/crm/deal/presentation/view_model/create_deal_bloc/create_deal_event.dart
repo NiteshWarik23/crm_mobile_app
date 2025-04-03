@@ -1,67 +1,67 @@
 import 'package:equatable/equatable.dart';
 
-abstract class CreateLeadFormEvent extends Equatable {
+abstract class CreateDealFormEvent extends Equatable {
   @override
   List<Object?> get props => [];
 }
 
-class UpdateSalutation extends CreateLeadFormEvent {
+class UpdateSalutation extends CreateDealFormEvent {
   final String salutation;
   UpdateSalutation(this.salutation);
   @override
   List<Object?> get props => [salutation];
 }
 
-class UpdateFirstName extends CreateLeadFormEvent {
+class UpdateFirstName extends CreateDealFormEvent {
   final String firstName;
   UpdateFirstName(this.firstName);
   @override
   List<Object?> get props => [firstName];
 }
 
-class UpdateLastName extends CreateLeadFormEvent {
+class UpdateLastName extends CreateDealFormEvent {
   final String lastName;
   UpdateLastName(this.lastName);
   @override
   List<Object?> get props => [lastName];
 }
 
-class UpdateEmail extends CreateLeadFormEvent {
+class UpdateEmail extends CreateDealFormEvent {
   final String email;
   UpdateEmail(this.email);
   @override
   List<Object?> get props => [email];
 }
 
-class UpdateContact extends CreateLeadFormEvent {
+class UpdateContact extends CreateDealFormEvent {
   final String contact;
   UpdateContact(this.contact);
   @override
   List<Object?> get props => [contact];
 }
 
-class UpdateOrganization extends CreateLeadFormEvent {
+class UpdateOrganization extends CreateDealFormEvent {
   final String organization;
   UpdateOrganization(this.organization);
   @override
   List<Object?> get props => [organization];
 }
 
-class UpdateWebsite extends CreateLeadFormEvent {
+class UpdateWebsite extends CreateDealFormEvent {
   final String website;
   UpdateWebsite(this.website);
   @override
   List<Object?> get props => [website];
 }
 
-class UpdateDate extends CreateLeadFormEvent {
+class UpdateDate extends CreateDealFormEvent {
   final String date;
   UpdateDate(this.date);
   @override
   List<Object?> get props => [date];
 }
 
-class UpdateFormField extends CreateLeadFormEvent {
+class UpdateDealFormField extends CreateDealFormEvent {
   final String? salutation;
   final String? firstName;
   final String? lastName;
@@ -76,7 +76,7 @@ class UpdateFormField extends CreateLeadFormEvent {
   final String? website;
   final String? date;
 
-  UpdateFormField({
+  UpdateDealFormField({
     this.salutation,
     this.firstName,
     this.lastName,
@@ -110,7 +110,7 @@ class UpdateFormField extends CreateLeadFormEvent {
       ];
 }
 
-class SubmitLeadForm extends CreateLeadFormEvent {
+class SubmitDealForm extends CreateDealFormEvent {
   final String? salutation;
   final String? firstName;
   final String? lastName;
@@ -124,7 +124,7 @@ class SubmitLeadForm extends CreateLeadFormEvent {
   final String? organization;
   final String? website;
 
-  SubmitLeadForm({
+  SubmitDealForm({
     this.salutation,
     this.firstName,
     this.lastName,

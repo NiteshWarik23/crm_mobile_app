@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:crm_mobile_app/core/dependency%20injection/dependency_injection.dart';
 import 'package:crm_mobile_app/modules/crm/deal/presentation/view/deal_card.dart';
+import 'package:crm_mobile_app/modules/crm/deal/presentation/view/new_deal_form.dart';
 import 'package:crm_mobile_app/modules/crm/deal/presentation/view_model/deal_bloc/deal_bloc.dart';
 import 'package:crm_mobile_app/modules/crm/deal/presentation/view_model/deal_bloc/deal_event.dart';
 import 'package:crm_mobile_app/modules/crm/deal/presentation/view_model/deal_bloc/deal_state.dart';
@@ -15,16 +16,18 @@ import 'package:crm_mobile_app/modules/crm/lead/presentation/widgets/overlay_toa
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class DealssListScreen extends StatefulWidget {
-  const DealssListScreen({super.key});
+final GlobalKey<RefreshIndicatorState> refreshIndicatorKeyForDeals =
+    GlobalKey<RefreshIndicatorState>();
+
+class DealsListScreen extends StatefulWidget {
+  const DealsListScreen({super.key});
 
   @override
-  State<DealssListScreen> createState() => _LeadsListScreenState();
+  State<DealsListScreen> createState() => _DealsListScreenState();
 }
 
-class _LeadsListScreenState extends State<DealssListScreen> {
-  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
-      GlobalKey<RefreshIndicatorState>();
+class _DealsListScreenState extends State<DealsListScreen> {
+
   final ValueNotifier<bool> _isFabVisible = ValueNotifier<bool>(true);
 
   final DealBloc dealBloc = locator<DealBloc>();
@@ -70,7 +73,7 @@ class _LeadsListScreenState extends State<DealssListScreen> {
       ],
       child: Scaffold(
         body: RefreshIndicator.adaptive(
-          key: _refreshIndicatorKey,
+          key: refreshIndicatorKeyForDeals,
           triggerMode: RefreshIndicatorTriggerMode.anywhere,
           semanticsLabel: 'Pull to Refresh',
           onRefresh: () async {
@@ -89,6 +92,10 @@ class _LeadsListScreenState extends State<DealssListScreen> {
                     state.status == DealListStatus.failure)
                 .then((_) {
               completer.complete();
+            }).timeout(const Duration(seconds: 5), onTimeout: () {
+              if (!completer.isCompleted) {
+                completer.complete();
+              }
             });
 
             return completer.future; // Ensure UI waits for refresh to complete
@@ -114,9 +121,10 @@ class _LeadsListScreenState extends State<DealssListScreen> {
                     //thumbVisibility: true,
                     trackVisibility: true,
                     child: ListView.builder(
+                      physics: AlwaysScrollableScrollPhysics(),
                       controller: _scrollController,
-                      itemCount: state.dealData.length +
-                          (state.hasReachedMax ? 0 : 1),
+                      itemCount:
+                          state.dealData.length + (state.hasReachedMax ? 0 : 1),
                       itemBuilder: (context, index) {
                         return index >= state.dealData.length
                             ? const BottomLoader()
@@ -169,7 +177,7 @@ class _LeadsListScreenState extends State<DealssListScreen> {
                   ? FloatingActionButton(
                       key: ValueKey(
                           "fab_visible"), // Helps AnimatedSwitcher differentiate between old & new FAB
-                      onPressed: () => newLeadFormBottomSheetWidget(context),
+                      onPressed: () => newDealFormBottomSheetWidget(context),
                       child: Icon(Icons.add),
                     )
                   : SizedBox.shrink(
@@ -205,7 +213,7 @@ class _LeadsListScreenState extends State<DealssListScreen> {
     );
   }
 
-  Future<dynamic> newLeadFormBottomSheetWidget(BuildContext context) {
+  Future<dynamic> newDealFormBottomSheetWidget(BuildContext context) {
     return showModalBottomSheet(
       context: context,
       showDragHandle: true,
@@ -222,7 +230,7 @@ class _LeadsListScreenState extends State<DealssListScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) =>
-          FractionallySizedBox(heightFactor: 0.8, child: LeadFormBottomSheet()),
+          FractionallySizedBox(heightFactor: 0.8, child: DealFormBottomSheet()),
     );
   }
 }

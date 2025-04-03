@@ -1,10 +1,10 @@
 class CreateDealNoteRequestModel {
-  Doc? doc;
+  DealDoc? doc;
 
   CreateDealNoteRequestModel({this.doc});
 
   CreateDealNoteRequestModel.fromJson(Map<String, dynamic> json) {
-    doc = json['doc'] != null ? Doc.fromJson(json['doc']) : null;
+    doc = json['doc'] != null ? DealDoc.fromJson(json['doc']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -16,21 +16,21 @@ class CreateDealNoteRequestModel {
   }
 }
 
-class Doc {
+class DealDoc {
   String? doctype;
   String? title;
   String? content;
   String? referenceDoctype;
   String? referenceDocname;
 
-  Doc(
+  DealDoc(
       {this.doctype,
       this.title,
       this.content,
       this.referenceDoctype,
       this.referenceDocname});
 
-  Doc.fromJson(Map<String, dynamic> json) {
+  DealDoc.fromJson(Map<String, dynamic> json) {
     doctype = json['doctype'];
     title = json['title'];
     content = json['content'];

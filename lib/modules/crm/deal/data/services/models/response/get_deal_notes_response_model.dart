@@ -1,15 +1,15 @@
 sealed class GetDealNotesResponseModel {}
 
 class GetDealNotesSuccessResponseModel extends GetDealNotesResponseModel {
-  List<Data>? data;
+  List<DealNotesData>? data;
 
   GetDealNotesSuccessResponseModel({this.data});
 
   GetDealNotesSuccessResponseModel.fromJson(Map<String, dynamic> json) {
     if (json['data'] != null) {
-      data = <Data>[];
+      data = <DealNotesData>[];
       json['data'].forEach((v) {
-        data!.add(Data.fromJson(v));
+        data!.add(DealNotesData.fromJson(v));
       });
     }
   }
@@ -23,7 +23,7 @@ class GetDealNotesSuccessResponseModel extends GetDealNotesResponseModel {
   }
 }
 
-class Data {
+class DealNotesData {
   String? name;
   String? owner;
   String? creation;
@@ -36,7 +36,7 @@ class Data {
   String? referenceDoctype;
   String? referenceDocname;
 
-  Data(
+  DealNotesData(
       {this.name,
       this.owner,
       this.creation,
@@ -49,7 +49,7 @@ class Data {
       this.referenceDoctype,
       this.referenceDocname});
 
-  Data.fromJson(Map<String, dynamic> json) {
+  DealNotesData.fromJson(Map<String, dynamic> json) {
     name = json['name'];
     owner = json['owner'];
     creation = json['creation'];

@@ -138,8 +138,8 @@ class DealBloc extends Bloc<DealEvent, DealState> {
         await updateDealStatusUsecase.call(
       UpdateDealStatusRequestParams(
         updateDealStatusRequestModel: UpdateDealStatusRequestModel(
-          doctype: "CRM Lead",
-          name: event.leadID,
+          doctype: "CRM Deal",
+          name: event.dealID,
           fieldname: "status",
           value: event.status,
         ),
@@ -228,7 +228,7 @@ class DealBloc extends Bloc<DealEvent, DealState> {
         await deleteDealUsecase.call(
       DeleteDealRequestParams(
           deleteDealRequestModel: DeleteDealRequestModel(
-              items: "[\"${event.leadID}\"]", doctype: "CRM Lead")),
+              items: "[\"${event.dealID}\"]", doctype: "CRM Deal")),
     );
 
     if (deleteDealResponse is DataSuccess) {

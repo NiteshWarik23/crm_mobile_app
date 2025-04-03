@@ -1,4 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:crm_mobile_app/modules/crm/deal/presentation/view/deal_list_screen.dart';
+import 'package:crm_mobile_app/modules/crm/deal/presentation/view_model/deal_bloc/deal_bloc.dart';
+import 'package:crm_mobile_app/modules/crm/deal/presentation/view_model/deal_bloc/deal_event.dart';
+import 'package:crm_mobile_app/modules/crm/deal/presentation/view_model/deal_bloc/deal_state.dart';
 import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/lead_bloc/lead_state.dart';
 import 'package:crm_mobile_app/modules/crm/lead/presentation/widgets/overlay_toast_widget.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +17,7 @@ import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/dropdown
 import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/lead_bloc/lead_bloc.dart';
 import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/lead_bloc/lead_event.dart';
 
-void showDealDropdownBottomSheet(BuildContext context, String leadID) {
+void showDealDropdownBottomSheet(BuildContext context, String dealID) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -21,21 +25,21 @@ void showDealDropdownBottomSheet(BuildContext context, String leadID) {
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
     builder: (context) {
-      return DropDownBottomSheet(
-        leadIDValue: leadID,
+      return DealDropDownBottomSheet(
+        dealIDValue: dealID,
       );
     },
   );
 }
 
-class DropDownBottomSheet extends StatelessWidget {
-  final String leadIDValue;
-  DropDownBottomSheet({
+class DealDropDownBottomSheet extends StatelessWidget {
+  final String dealIDValue;
+  DealDropDownBottomSheet({
     super.key,
-    required this.leadIDValue,
+    required this.dealIDValue,
   });
 
-  final LeadBloc leadBloc = locator<LeadBloc>();
+  final DealBloc dealBloc = locator<DealBloc>();
   final DropdownBloc dropdownBloc = locator<DropdownBloc>();
 
   @override
@@ -45,26 +49,29 @@ class DropDownBottomSheet extends StatelessWidget {
         BlocProvider(
           create: (context) => DropdownBloc(),
         ),
-        BlocProvider(create: (context) => leadBloc)
+        BlocProvider(create: (context) => dealBloc)
       ],
-      child: BlocListener<LeadBloc, LeadState>(
-        listener: (BuildContext context, LeadState state) {
+      child: BlocListener<DealBloc, DealState>(
+        listener: (BuildContext context, DealState state) {
           print("Listening");
-          if (state.updateLeadStatus ==
-              UpdateLeadStatus.updateLeadStatusLoading) {
-            Fluttertoast.showToast(msg: "Updating Lead Status...Please Wait");
+          if (state.updateDealStatus ==
+              UpdateDealStatus.updateDealStatusLoading) {
+            Fluttertoast.showToast(msg: "Updating Deal Status...Please Wait");
             // Navigator.pop(context);
-          } else if (state.updateLeadStatus ==
-              UpdateLeadStatus.updateLeadStatusSuccess) {
-            Fluttertoast.showToast(msg: "Lead Status Updated");
+          } else if (state.updateDealStatus ==
+              UpdateDealStatus.updateDealStatusSuccess) {
+            Fluttertoast.showToast(msg: "Deal Status Updated");
             Navigator.pop(context);
+             Navigator.pop(context);
+
+            refreshIndicatorKeyForDeals.currentState!.show();
             //   showCustomToast(
             //   overlayState: Overlay.of(context),
             //   leadBloc: leadBloc,
             // );
-          } else if (state.updateLeadStatus ==
-              UpdateLeadStatus.updateLeadStatusFailure) {
-            Fluttertoast.showToast(msg: "Failed to update Lead Status");
+          } else if (state.updateDealStatus ==
+              UpdateDealStatus.updateDealStatusFailure) {
+            Fluttertoast.showToast(msg: "Failed to update Deal Status");
             Navigator.pop(context);
           }
         },
@@ -182,19 +189,13 @@ class DropDownBottomSheet extends StatelessWidget {
                         ElevatedButton(
                           onPressed: state.selectedOption.isNotEmpty
                               ? () {
-                                  // ScaffoldMessenger.of(context).showSnackBar(
-                                  //   SnackBar(
-                                  //     content: Text(
-                                  //         "Selected: ${state.selectedOption}"),
-                                  //   ),
-                                  // );
-                                  leadBloc.add(UpdateLeadStatusEvent(
-                                      leadID: leadIDValue,
+                                  dealBloc.add(UpdateDealStatusEvent(
+                                      dealID: dealIDValue,
                                       status: state.selectedOption));
                                 }
                               : null,
                           child: Text(
-                            "Update Lead Status",
+                            "Update Deal Status",
                             style: GoogleFonts.nunitoSans(
                               fontSize: 16,
                             ),

@@ -114,6 +114,7 @@ class _LeadsListScreenState extends State<LeadsListScreen> {
                     //thumbVisibility: true,
                     trackVisibility: true,
                     child: ListView.builder(
+                      physics: AlwaysScrollableScrollPhysics(),
                       controller: _scrollController,
                       itemCount:
                           state.leadData.length + (state.hasReachedMax ? 0 : 1),
@@ -161,29 +162,29 @@ class _LeadsListScreenState extends State<LeadsListScreen> {
           mainAxisAlignment: MainAxisAlignment.end,
           spacing: 10,
           children: [
-            ValueListenableBuilder<bool>(
-              valueListenable: _isFabVisible,
-              builder: (context, isVisible, child) {
-                return AnimatedSwitcher(
-                  duration: Duration(milliseconds: 300),
-                  transitionBuilder: (child, animation) {
-                    return ScaleTransition(scale: animation, child: child);
-                  },
-                  child: isVisible
-                      ? FloatingActionButton(
-                          key: ValueKey(
-                              "refreshfab_visible"), // Helps AnimatedSwitcher differentiate between old & new FAB
-                          onPressed: () async{
-                           await _onRefresh();
-                          },
-                          child: Icon(Icons.refresh),
-                        )
-                      : SizedBox.shrink(
-                          key: ValueKey(
-                              "refreshfab_hidden")), // Replaces FAB with an empty widget
-                );
-              },
-            ),
+            // ValueListenableBuilder<bool>(
+            //   valueListenable: _isFabVisible,
+            //   builder: (context, isVisible, child) {
+            //     return AnimatedSwitcher(
+            //       duration: Duration(milliseconds: 300),
+            //       transitionBuilder: (child, animation) {
+            //         return ScaleTransition(scale: animation, child: child);
+            //       },
+            //       child: isVisible
+            //           ? FloatingActionButton(
+            //               key: ValueKey(
+            //                   "refreshfab_visible"), // Helps AnimatedSwitcher differentiate between old & new FAB
+            //               onPressed: () async {
+            //                 await _onRefresh();
+            //               },
+            //               child: Icon(Icons.refresh),
+            //             )
+            //           : SizedBox.shrink(
+            //               key: ValueKey(
+            //                   "refreshfab_hidden")), // Replaces FAB with an empty widget
+            //     );
+            //   },
+            // ),
             ValueListenableBuilder<bool>(
               valueListenable: _isFabVisible,
               builder: (context, isVisible, child) {

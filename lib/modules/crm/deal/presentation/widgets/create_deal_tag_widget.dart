@@ -1,4 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:crm_mobile_app/modules/crm/deal/presentation/view_model/create_deal_tag_bloc/create_deal_tag_bloc.dart';
+import 'package:crm_mobile_app/modules/crm/deal/presentation/view_model/create_deal_tag_bloc/create_deal_tag_event.dart';
+import 'package:crm_mobile_app/modules/crm/deal/presentation/view_model/create_deal_tag_bloc/create_deal_tag_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -8,7 +11,7 @@ import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/create_t
 import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/create_tag_bloc/create_tag_state.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-void showCreateTagBottomSheet(BuildContext context, String leadID) {
+void showCreateDealTagBottomSheet(BuildContext context, String dealID) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -18,26 +21,26 @@ void showCreateTagBottomSheet(BuildContext context, String leadID) {
     builder: (context) {
       return FractionallySizedBox(
           heightFactor: 0.7,
-          child: AddTagBottomSheet(
-            leadIDValue: leadID,
+          child: AddDealTagBottomSheet(
+            dealIDValue: dealID,
           ));
     },
   );
 }
 
-class AddTagBottomSheet extends StatefulWidget {
-  final String leadIDValue;
+class AddDealTagBottomSheet extends StatefulWidget {
+  final String dealIDValue;
 
-  AddTagBottomSheet({
-    Key? key,
-    required this.leadIDValue,
-  }) : super(key: key);
+  const AddDealTagBottomSheet({
+    super.key,
+    required this.dealIDValue,
+  });
 
   @override
-  State<AddTagBottomSheet> createState() => _AddTagBottomSheetState();
+  State<AddDealTagBottomSheet> createState() => _AddDealTagBottomSheetState();
 }
 
-class _AddTagBottomSheetState extends State<AddTagBottomSheet> {
+class _AddDealTagBottomSheetState extends State<AddDealTagBottomSheet> {
   final TextEditingController _tagController = TextEditingController();
 
   final List<String> predefinedTags = [
@@ -49,20 +52,20 @@ class _AddTagBottomSheetState extends State<AddTagBottomSheet> {
 
   List<String> selectedTags = [];
   String? selectedTag; // Track the selected tag (Single Selection)
-  final CreateTagBloc createTagBloc = locator<CreateTagBloc>();
+  final CreateDealTagBloc createDealTagBloc = locator<CreateDealTagBloc>();
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => createTagBloc,
-      child: BlocListener<CreateTagBloc,CreateTagState>(
+      create: (context) => createDealTagBloc,
+      child: BlocListener<CreateDealTagBloc,CreateDealTagState>(
         listener: (context, state) {
-          if (state is CreateTagLoadingState) {
+          if (state is CreateDealTagLoadingState) {
             Fluttertoast.showToast(msg: "Adding Tag...Please Wait");
-          } else if (state is CreateTagSuccessState) {
+          } else if (state is CreateDealTagSuccessState) {
             Fluttertoast.showToast(msg: "Tag Added Succesfully.");
             Navigator.pop(context);
-          } else if (state is CreateTagFailureState) {
+          } else if (state is CreateDealTagFailureState) {
             Fluttertoast.showToast(msg: "Failed To Add Tag");
             Navigator.pop(context);
           }
@@ -158,17 +161,17 @@ class _AddTagBottomSheetState extends State<AddTagBottomSheet> {
               SizedBox(height: 10),
               Spacer(),
               // Save Button
-              BlocBuilder<CreateTagBloc, CreateTagState>(
+              BlocBuilder<CreateDealTagBloc, CreateDealTagState>(
                 builder: (context, state) {
                   return Align(
                     alignment: Alignment.bottomRight,
                     child: ElevatedButton(
                       onPressed: selectedTag != null
                           ? () {
-                              createTagBloc.add(
-                                SaveOneCreatedOrSelectedTagsEvent(
-                                  createdOrSelectedTags: selectedTag ?? '',
-                                  leadIdValue: widget.leadIDValue,
+                              createDealTagBloc.add(
+                                SaveOneCreatedOrSelectedDealTagsEvent(
+                                  createdOrSelectedDealTags: selectedTag ?? '',
+                                  dealIdValue: widget.dealIDValue,
                                 ),
                               );
                             }

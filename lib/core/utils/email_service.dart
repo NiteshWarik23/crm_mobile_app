@@ -8,6 +8,12 @@ class MailService {
     String subject = '',
     String body = '',
   }) async {
+      if (email.isEmpty) {
+      scaffoldMessengerKey.currentState?.showSnackBar(
+        const SnackBar(content: Text("Email ID is empty.")),
+      );
+      return;
+    }
     final Uri emailUri = Uri(
       scheme: 'mailto',
       path: email,

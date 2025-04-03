@@ -1,6 +1,8 @@
+import 'package:crm_mobile_app/config/routes/arguments/deal_details_arguments.dart';
 import 'package:crm_mobile_app/config/routes/arguments/lead_details_arguments.dart';
 import 'package:crm_mobile_app/config/routes/error_route.dart';
 import 'package:crm_mobile_app/config/routes/routes.dart';
+import 'package:crm_mobile_app/modules/crm/deal/presentation/view/deal_profile_screen.dart';
 import 'package:crm_mobile_app/modules/dashboard/presentation/view/dashboard_view.dart';
 import 'package:crm_mobile_app/modules/crm/lead/presentation/view/lead_profile_screen.dart';
 import 'package:crm_mobile_app/modules/login/presentation/view/login_screen.dart';
@@ -34,7 +36,18 @@ class AppRouter {
                   leadChannel: leadDetailsArguments.leadChannel,
                   leadID: leadDetailsArguments.leadID,
                 ));
-
+      case AppRoutes.dealProfileScreen:
+        DealDetailsArguments dealDetailsArguments =
+            settings.arguments as DealDetailsArguments;
+        return MaterialPageRoute(
+            builder: (_) => DealDetailsScreen(
+                  dealName: dealDetailsArguments.leadName,
+                  dealEmailId: dealDetailsArguments.leadEmailId,
+                  dealContact: dealDetailsArguments.leadContact,
+                  dealStatus: dealDetailsArguments.leadStatus,
+                  dealChannel: dealDetailsArguments.leadChannel,
+                  dealID: dealDetailsArguments.leadID,
+                ));
       default:
         return MaterialPageRoute(
           builder: (_) => ErrorScreen(
