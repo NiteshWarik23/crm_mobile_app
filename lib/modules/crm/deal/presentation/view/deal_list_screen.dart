@@ -1,7 +1,10 @@
 import 'dart:async';
 
 import 'package:crm_mobile_app/core/dependency%20injection/dependency_injection.dart';
-import 'package:crm_mobile_app/modules/crm/lead/presentation/view/lead_card.dart';
+import 'package:crm_mobile_app/modules/crm/deal/presentation/view/deal_card.dart';
+import 'package:crm_mobile_app/modules/crm/deal/presentation/view_model/deal_bloc/deal_bloc.dart';
+import 'package:crm_mobile_app/modules/crm/deal/presentation/view_model/deal_bloc/deal_event.dart';
+import 'package:crm_mobile_app/modules/crm/deal/presentation/view_model/deal_bloc/deal_state.dart';
 import 'package:crm_mobile_app/modules/crm/lead/presentation/view/new_lead_form.dart';
 import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/convert_to_deal_bloc/convert_to_deal_bloc.dart';
 import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/lead_bloc/lead_bloc.dart';
@@ -24,7 +27,7 @@ class _LeadsListScreenState extends State<DealssListScreen> {
       GlobalKey<RefreshIndicatorState>();
   final ValueNotifier<bool> _isFabVisible = ValueNotifier<bool>(true);
 
-  final LeadBloc leadBloc = locator<LeadBloc>();
+  final DealBloc dealBloc = locator<DealBloc>();
   final ConvertLeadToDealBloc convertLeadToDealBloc =
       locator<ConvertLeadToDealBloc>();
 
@@ -36,7 +39,7 @@ class _LeadsListScreenState extends State<DealssListScreen> {
     _scrollController.addListener(_onScroll);
 
     // Fetch initial leads
-    leadBloc.add(FetchLeadsEvent(limitStart: 0, limit: 10));
+    dealBloc.add(FetchDealsEvent(limitStart: 0, limit: 10));
   }
 
   void _onScroll() {
@@ -44,8 +47,8 @@ class _LeadsListScreenState extends State<DealssListScreen> {
         _scrollController.position.maxScrollExtent) {
       // If scrolled to bottom, hide FAB
       _isFabVisible.value = false;
-      leadBloc.add(FetchLeadsEvent(
-          limitStart: leadBloc.limitStart, limit: leadBloc.limit));
+      dealBloc.add(FetchDealsEvent(
+          limitStart: dealBloc.limitStart, limit: dealBloc.limit));
     } else {
       // If scrolled up, show FAB
       _isFabVisible.value = true;
@@ -62,7 +65,7 @@ class _LeadsListScreenState extends State<DealssListScreen> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => leadBloc),
+        BlocProvider(create: (context) => dealBloc),
         BlocProvider(create: (context) => convertLeadToDealBloc)
       ],
       child: Scaffold(
@@ -72,38 +75,38 @@ class _LeadsListScreenState extends State<DealssListScreen> {
           semanticsLabel: 'Pull to Refresh',
           onRefresh: () async {
             //return Future<void>.delayed(const Duration(seconds: 3));
-            leadBloc.limitStart = 0;
-            leadBloc.hasReachedMax = false;
+            dealBloc.limitStart = 0;
+            dealBloc.hasReachedMax = false;
 
             final Completer<void> completer = Completer<void>();
-            leadBloc.add(ClearLeadsEvent());
-            leadBloc.add(FetchLeadsEvent(limitStart: 0, limit: 10));
+            dealBloc.add(ClearDealsEvent());
+            dealBloc.add(FetchDealsEvent(limitStart: 0, limit: 10));
 
             // Listen for state change and complete when done
-            leadBloc.stream
+            dealBloc.stream
                 .firstWhere((state) =>
-                    state.status == LeadListStatus.success ||
-                    state.status == LeadListStatus.failure)
+                    state.status == DealListStatus.success ||
+                    state.status == DealListStatus.failure)
                 .then((_) {
               completer.complete();
             });
 
             return completer.future; // Ensure UI waits for refresh to complete
           },
-          child: BlocBuilder<LeadBloc, LeadState>(
+          child: BlocBuilder<DealBloc, DealState>(
             builder: (context, state) {
               //TODO : show different list when user searches
               if (state.isUserSearching) {
               } else {}
               switch (state.status) {
-                case LeadListStatus.initial:
+                case DealListStatus.initial:
                   return LeadShimmerList(
                     itemCount: 8,
                   );
                 //const Center(child: CircularProgressIndicator());
-                case LeadListStatus.failure:
+                case DealListStatus.failure:
                   return const Center(child: Text("Failed to load leads"));
-                case LeadListStatus.success:
+                case DealListStatus.success:
                   return Scrollbar(
                     controller: _scrollController,
                     thickness: 5.0,
@@ -112,16 +115,16 @@ class _LeadsListScreenState extends State<DealssListScreen> {
                     trackVisibility: true,
                     child: ListView.builder(
                       controller: _scrollController,
-                      itemCount: state.leadData.length +
+                      itemCount: state.dealData.length +
                           (state.hasReachedMax ? 0 : 1),
                       itemBuilder: (context, index) {
-                        return index >= state.leadData.length
+                        return index >= state.dealData.length
                             ? const BottomLoader()
                             : Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 10.0),
                                 child:
-                                    LeadCard(leadData: state.leadData[index]),
+                                    DealCard(dealData: state.dealData[index]),
                                 // Dismissible(
                                 //   key: Key(state.leadData[index].toString()),
                                 //   direction: DismissDirection.endToStart,

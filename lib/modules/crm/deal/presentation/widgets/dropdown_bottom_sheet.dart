@@ -13,7 +13,7 @@ import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/dropdown
 import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/lead_bloc/lead_bloc.dart';
 import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/lead_bloc/lead_event.dart';
 
-void showDropdownBottomSheet(BuildContext context, String leadID) {
+void showDealDropdownBottomSheet(BuildContext context, String leadID) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -129,12 +129,13 @@ class DropDownBottomSheet extends StatelessWidget {
                         style: GoogleFonts.nunitoSans(fontSize: 16),
                       ),
                       items: [
-                        "New",
-                        "Contacted",
-                        "Nurture",
-                        "Qualified",
-                        "Unqualified",
-                        "Junk",
+                        "Qualification",
+                        "Demo/Making",
+                        "Proposal/Quotation",
+                        "Negotiation",
+                        "Ready to Close",
+                        "Won",
+                        "Lost",
                       ]
                           .map((option) => DropdownMenuItem(
                                 value: option,

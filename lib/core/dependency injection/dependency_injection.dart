@@ -1,4 +1,12 @@
 import 'package:crm_mobile_app/config/dio_client/dio_client.dart';
+import 'package:crm_mobile_app/modules/crm/deal/data/repositories/deal_repository.dart';
+import 'package:crm_mobile_app/modules/crm/deal/data/repositories/deal_repository_impl.dart';
+import 'package:crm_mobile_app/modules/crm/deal/data/services/deal_api.dart';
+import 'package:crm_mobile_app/modules/crm/deal/domain/usecase/deal_usecase.dart';
+import 'package:crm_mobile_app/modules/crm/deal/domain/usecase/delete_deal_usecase.dart';
+import 'package:crm_mobile_app/modules/crm/deal/domain/usecase/search_deal_usecase.dart';
+import 'package:crm_mobile_app/modules/crm/deal/domain/usecase/update_deal_status_usecase.dart';
+import 'package:crm_mobile_app/modules/crm/deal/presentation/view_model/deal_bloc/deal_bloc.dart';
 import 'package:crm_mobile_app/modules/crm/lead/data/repositories/lead_repository.dart';
 import 'package:crm_mobile_app/modules/crm/lead/data/repositories/lead_repository_impl.dart';
 import 'package:crm_mobile_app/modules/crm/lead/data/services/lead_api.dart';
@@ -138,4 +146,26 @@ void init() {
   locator.registerFactory<GetNotesBloc>(() => GetNotesBloc(locator()));
 //Create Tag Bloc
   locator.registerFactory<CreateTagBloc>(() => CreateTagBloc(locator()));
+
+
+
+  //API Services
+  locator.registerLazySingleton<DealApi>(() => DealApiImpl(locator()));
+//Repositories
+  locator.registerLazySingleton<DealRepository>(
+      () => DealRepositoryImpl(locator()));
+//Update Lead Status Usecase
+  locator.registerLazySingleton<UpdateDealStatusUsecase>(
+      () => UpdateDealStatusUsecase(locator()));
+//SearchLeadUsecase
+  locator.registerLazySingleton<SearchDealUsecase>(
+      () => SearchDealUsecase(locator()));
+//DeleteLeadUsecase
+  locator.registerLazySingleton<DeleteDealUsecase>(
+      () => DeleteDealUsecase(locator()));
+// Deal Use Cases
+  locator.registerLazySingleton<DealUsecase>(() => DealUsecase(locator()));
+  //Get Deals  Bloc
+  locator.registerFactory<DealBloc>(
+      () => DealBloc(locator(), locator(), locator(), locator()));
 }
