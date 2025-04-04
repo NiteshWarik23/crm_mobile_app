@@ -6,6 +6,11 @@ enum LeadListStatus {
   initial,
   success,
   failure,
+  contectedFilter,
+  nutureFilter,
+  qualifiedFilter,
+  unqualifiedFilter,
+  junkFilter,
   // convertToDealSuccess,
   // convertToDealFailure,
   // updateLeadStatusSuccess,
@@ -40,6 +45,8 @@ enum UpdateLeadStatus {
   updateLeadStatusFailure
 }
 
+enum LeadFilter { all, contacted, nurture, qualified, unqualified, junk }
+
 final class LeadState extends Equatable {
   final LeadListStatus status;
   final ConvertToDealStatus convertToDealStatus;
@@ -50,6 +57,7 @@ final class LeadState extends Equatable {
   final List<SearchLeadData> searchLeadData;
   final bool hasReachedMax;
   final bool isUserSearching;
+  final LeadFilter selectedFilter;
 
   const LeadState({
     this.status = LeadListStatus.initial,
@@ -61,6 +69,7 @@ final class LeadState extends Equatable {
     this.searchLeadData = const <SearchLeadData>[],
     this.hasReachedMax = false,
     this.isUserSearching = false,
+    this.selectedFilter = LeadFilter.all,
   });
 
   LeadState copyWith({
@@ -73,6 +82,7 @@ final class LeadState extends Equatable {
     List<SearchLeadData>? searchLeadData,
     bool? hasReachedMax,
     bool? isUserSearching,
+    LeadFilter? selectedFilter,
   }) {
     final newState = LeadState(
       status: status ?? this.status,
@@ -84,6 +94,7 @@ final class LeadState extends Equatable {
       searchLeadData: searchLeadData ?? this.searchLeadData,
       hasReachedMax: hasReachedMax ?? this.hasReachedMax,
       isUserSearching: isUserSearching ?? this.isUserSearching,
+      selectedFilter: selectedFilter ?? this.selectedFilter,
     );
     print("New State Emitted: $newState"); // Debug log
 
@@ -92,7 +103,7 @@ final class LeadState extends Equatable {
 
   @override
   String toString() {
-    return '''PostState { status: $status,convertToDealStatus: $convertToDealStatus,updateLeadStatus: $updateLeadStatus,searchLeadStatus: $searchLeadStatus,deleteLeadStatus: $deleteLeadStatus,  hasReachedMax: $hasReachedMax,isUserSearching: $isUserSearching, posts: ${leadData.length}, searchLeadData: ${searchLeadData.length} }''';
+    return '''PostState { status: $status,convertToDealStatus: $convertToDealStatus,updateLeadStatus: $updateLeadStatus,searchLeadStatus: $searchLeadStatus,deleteLeadStatus: $deleteLeadStatus,  hasReachedMax: $hasReachedMax,isUserSearching: $isUserSearching, posts: ${leadData.length}, searchLeadData: ${searchLeadData.length},selectedFilter: $selectedFilter }''';
   }
 
   @override
@@ -106,5 +117,6 @@ final class LeadState extends Equatable {
         searchLeadData,
         hasReachedMax,
         isUserSearching,
+        selectedFilter,
       ];
 }

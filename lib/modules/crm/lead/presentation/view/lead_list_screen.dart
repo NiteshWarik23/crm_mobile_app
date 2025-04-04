@@ -11,6 +11,7 @@ import 'package:crm_mobile_app/modules/crm/lead/presentation/widgets/bottom_load
 import 'package:crm_mobile_app/modules/crm/lead/presentation/widgets/overlay_toast_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class LeadsListScreen extends StatefulWidget {
   const LeadsListScreen({super.key});
@@ -24,9 +25,9 @@ class _LeadsListScreenState extends State<LeadsListScreen> {
       GlobalKey<RefreshIndicatorState>();
   final ValueNotifier<bool> _isFabVisible = ValueNotifier<bool>(true);
 
-  final LeadBloc leadBloc = locator<LeadBloc>();
-  final ConvertLeadToDealBloc convertLeadToDealBloc =
-      locator<ConvertLeadToDealBloc>();
+  // final LeadBloc leadBloc = locator<LeadBloc>();
+  // final ConvertLeadToDealBloc convertLeadToDealBloc =
+  //     locator<ConvertLeadToDealBloc>();
 
   final _scrollController = ScrollController();
 
@@ -36,10 +37,11 @@ class _LeadsListScreenState extends State<LeadsListScreen> {
     _scrollController.addListener(_onScroll);
 
     // Fetch initial leads
-    leadBloc.add(FetchLeadsEvent(limitStart: 0, limit: 10));
+    context.read<LeadBloc>().add(FetchLeadsEvent(limitStart: 0, limit: 10));
   }
 
   void _onScroll() {
+    final leadBloc = context.read<LeadBloc>();
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
       // If scrolled to bottom, hide FAB
@@ -53,6 +55,7 @@ class _LeadsListScreenState extends State<LeadsListScreen> {
   }
 
   Future<void> _onRefresh() async {
+    final leadBloc = context.read<LeadBloc>();
     leadBloc.limitStart = 0;
     leadBloc.hasReachedMax = false;
 
@@ -80,13 +83,58 @@ class _LeadsListScreenState extends State<LeadsListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (context) => leadBloc),
-        BlocProvider(create: (context) => convertLeadToDealBloc)
-      ],
-      child: Scaffold(
-        body: RefreshIndicator.adaptive(
+    return Scaffold(
+      body: BlocListener<LeadBloc, LeadState>(
+        listener: (BuildContext context, LeadState state) {
+          print("Listening ${state}");
+          if (state.convertToDealStatus ==
+              ConvertToDealStatus.convertToDealLoading) {
+            Fluttertoast.showToast(
+                msg: "Converting Lead To Deal...Please Wait");
+          } else if (state.convertToDealStatus ==
+              ConvertToDealStatus.convertToDealSuccess) {
+            Fluttertoast.showToast(msg: "Lead Converted To Deal Successfully");
+          } else if (state.convertToDealStatus ==
+              ConvertToDealStatus.convertToDealFailure) {
+            Fluttertoast.showToast(msg: "Failed to convert Lead To Deal");
+          } else if (state.deleteLeadStatus ==
+              DeleteLeadStatus.deleteLeadLoading) {
+            Fluttertoast.showToast(msg: "Deleting Lead...Please Wait");
+          } else if (state.deleteLeadStatus ==
+              DeleteLeadStatus.deleteLeadSuccess) {
+            Fluttertoast.showToast(msg: "Lead deleted Successfully");
+          } else if (state.deleteLeadStatus ==
+              DeleteLeadStatus.deleteLeadFailure) {
+            Fluttertoast.showToast(msg: "Failed to delete Lead.");
+          }
+          // if (state is ConvertToDealLoadingState) {
+          //   print("Listening ${state}");
+
+          //   scaffoldMessengerKey.currentState?.showSnackBar(
+          //     SnackBar(
+          //       content: Text("Converting Lead To Deal...Please Wait"),
+          //     ),
+          //   );
+          // } else if (state is ConvertToDealStateSuccessState) {
+          //   print("Listening ${state}");
+
+          //   Fluttertoast.showToast(
+          //       gravity: ToastGravity.TOP,
+          //       msg: "Lead Converted To Deal Successfully");
+          //   scaffoldMessengerKey.currentState?.showSnackBar(
+          //     SnackBar(
+          //       content: Text("Lead Converted To Deal Successfully"),
+          //     ),
+          //   );
+          // } else if (state is ConvertToDealFailureState) {
+          //   scaffoldMessengerKey.currentState?.showSnackBar(
+          //     SnackBar(
+          //       content: Text("Failed to convert Lead To Deal"),
+          //     ),
+          //   );
+          // }
+        },
+        child: RefreshIndicator.adaptive(
           key: _refreshIndicatorKey,
           triggerMode: RefreshIndicatorTriggerMode.anywhere,
           semanticsLabel: 'Pull to Refresh',
@@ -94,10 +142,24 @@ class _LeadsListScreenState extends State<LeadsListScreen> {
             await _onRefresh();
           },
           child: BlocBuilder<LeadBloc, LeadState>(
+            buildWhen: (previous, current) =>
+                previous.leadData !=
+                    current.leadData || // Rebuild when leadData changes
+                previous.selectedFilter != current.selectedFilter,
             builder: (context, state) {
+              // print(
+              //     "Filter: ${state.selectedFilter}, Leads Count: ${state.leadData.length}");
+              // return ListView.builder(
+              //   key: ValueKey(
+              //       state.selectedFilter), // Force rebuild when filter changes
+              //   itemCount: state.leadData.length,
+              //   itemBuilder: (context, index) {
+              //     return Text(state.leadData[index].toString());
+              //   },
+              // );
               //TODO : show different list when user searches
-              if (state.isUserSearching) {
-              } else {}
+              // if (state.isUserSearching) {
+              // } else {}
               switch (state.status) {
                 case LeadListStatus.initial:
                   return LeadShimmerList(
@@ -154,79 +216,200 @@ class _LeadsListScreenState extends State<LeadsListScreen> {
                       },
                     ),
                   );
+                case LeadListStatus.contectedFilter:
+                  return Scrollbar(
+                    key: ValueKey(state
+                        .selectedFilter), // Force rebuild when filter changes
+                    controller: _scrollController,
+                    thickness: 5.0,
+                    radius: Radius.circular(5.0),
+                    //thumbVisibility: true,
+                    trackVisibility: true,
+                    child: ListView.builder(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      controller: _scrollController,
+                      itemCount:
+                          state.leadData.length + (state.hasReachedMax ? 0 : 1),
+                      itemBuilder: (context, index) {
+                        return index >= state.leadData.length
+                            ? const BottomLoader()
+                            : Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10.0),
+                                child:
+                                    LeadCard(leadData: state.leadData[index]),
+                              );
+                      },
+                    ),
+                  );
+                case LeadListStatus.nutureFilter:
+                  return Scrollbar(
+                    controller: _scrollController,
+                    thickness: 5.0,
+                    radius: Radius.circular(5.0),
+                    //thumbVisibility: true,
+                    trackVisibility: true,
+                    child: ListView.builder(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      controller: _scrollController,
+                      itemCount:
+                          state.leadData.length + (state.hasReachedMax ? 0 : 1),
+                      itemBuilder: (context, index) {
+                        return index >= state.leadData.length
+                            ? const BottomLoader()
+                            : Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10.0),
+                                child:
+                                    LeadCard(leadData: state.leadData[index]),
+                              );
+                      },
+                    ),
+                  );
+                case LeadListStatus.qualifiedFilter:
+                  return Scrollbar(
+                    controller: _scrollController,
+                    thickness: 5.0,
+                    radius: Radius.circular(5.0),
+                    //thumbVisibility: true,
+                    trackVisibility: true,
+                    child: ListView.builder(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      controller: _scrollController,
+                      itemCount:
+                          state.leadData.length + (state.hasReachedMax ? 0 : 1),
+                      itemBuilder: (context, index) {
+                        return index >= state.leadData.length
+                            ? const BottomLoader()
+                            : Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10.0),
+                                child:
+                                    LeadCard(leadData: state.leadData[index]),
+                              );
+                      },
+                    ),
+                  );
+                case LeadListStatus.unqualifiedFilter:
+                  return Scrollbar(
+                    controller: _scrollController,
+                    thickness: 5.0,
+                    radius: Radius.circular(5.0),
+                    //thumbVisibility: true,
+                    trackVisibility: true,
+                    child: ListView.builder(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      controller: _scrollController,
+                      itemCount:
+                          state.leadData.length + (state.hasReachedMax ? 0 : 1),
+                      itemBuilder: (context, index) {
+                        return index >= state.leadData.length
+                            ? const BottomLoader()
+                            : Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10.0),
+                                child:
+                                    LeadCard(leadData: state.leadData[index]),
+                              );
+                      },
+                    ),
+                  );
+                case LeadListStatus.junkFilter:
+                  return Scrollbar(
+                    controller: _scrollController,
+                    thickness: 5.0,
+                    radius: Radius.circular(5.0),
+                    //thumbVisibility: true,
+                    trackVisibility: true,
+                    child: ListView.builder(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      controller: _scrollController,
+                      itemCount:
+                          state.leadData.length + (state.hasReachedMax ? 0 : 1),
+                      itemBuilder: (context, index) {
+                        return index >= state.leadData.length
+                            ? const BottomLoader()
+                            : Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10.0),
+                                child:
+                                    LeadCard(leadData: state.leadData[index]),
+                              );
+                      },
+                    ),
+                  );
               }
             },
           ),
         ),
-        floatingActionButton: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          spacing: 10,
-          children: [
-            // ValueListenableBuilder<bool>(
-            //   valueListenable: _isFabVisible,
-            //   builder: (context, isVisible, child) {
-            //     return AnimatedSwitcher(
-            //       duration: Duration(milliseconds: 300),
-            //       transitionBuilder: (child, animation) {
-            //         return ScaleTransition(scale: animation, child: child);
-            //       },
-            //       child: isVisible
-            //           ? FloatingActionButton(
-            //               key: ValueKey(
-            //                   "refreshfab_visible"), // Helps AnimatedSwitcher differentiate between old & new FAB
-            //               onPressed: () async {
-            //                 await _onRefresh();
-            //               },
-            //               child: Icon(Icons.refresh),
-            //             )
-            //           : SizedBox.shrink(
-            //               key: ValueKey(
-            //                   "refreshfab_hidden")), // Replaces FAB with an empty widget
-            //     );
-            //   },
-            // ),
-            ValueListenableBuilder<bool>(
-              valueListenable: _isFabVisible,
-              builder: (context, isVisible, child) {
-                return AnimatedSwitcher(
-                  duration: Duration(milliseconds: 300),
-                  transitionBuilder: (child, animation) {
-                    return ScaleTransition(scale: animation, child: child);
-                  },
-                  child: isVisible
-                      ? FloatingActionButton(
-                          key: ValueKey(
-                              "fab_visible"), // Helps AnimatedSwitcher differentiate between old & new FAB
-                          onPressed: () =>
-                              newLeadFormBottomSheetWidget(context),
-                          child: Icon(Icons.add),
-                        )
-                      : SizedBox.shrink(
-                          key: ValueKey(
-                              "fab_hidden")), // Replaces FAB with an empty widget
-                );
-              },
-            ),
-          ],
-        ),
-        // ValueListenableBuilder(
-        //   valueListenable: _isFabVisible,
-        //   builder: (context, value, child) {
-        //     return AnimatedSlide(
-        //       duration: Duration(milliseconds: 300),
-        //       offset: value ? Offset(0, 0) : Offset(0, 2),
-        //       child: FloatingActionButton(
-        //         onPressed: () {
-        //           newLeadFormBottomSheetWidget(context);
-        //         },
-        //         child: Icon(
-        //           Icons.add,
-        //         ),
-        //       ),
-        //     );
-        //   },
-        // ),
       ),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        spacing: 10,
+        children: [
+          // ValueListenableBuilder<bool>(
+          //   valueListenable: _isFabVisible,
+          //   builder: (context, isVisible, child) {
+          //     return AnimatedSwitcher(
+          //       duration: Duration(milliseconds: 300),
+          //       transitionBuilder: (child, animation) {
+          //         return ScaleTransition(scale: animation, child: child);
+          //       },
+          //       child: isVisible
+          //           ? FloatingActionButton(
+          //               key: ValueKey(
+          //                   "refreshfab_visible"), // Helps AnimatedSwitcher differentiate between old & new FAB
+          //               onPressed: () async {
+          //                 await _onRefresh();
+          //               },
+          //               child: Icon(Icons.refresh),
+          //             )
+          //           : SizedBox.shrink(
+          //               key: ValueKey(
+          //                   "refreshfab_hidden")), // Replaces FAB with an empty widget
+          //     );
+          //   },
+          // ),
+          ValueListenableBuilder<bool>(
+            valueListenable: _isFabVisible,
+            builder: (context, isVisible, child) {
+              return AnimatedSwitcher(
+                duration: Duration(milliseconds: 300),
+                transitionBuilder: (child, animation) {
+                  return ScaleTransition(scale: animation, child: child);
+                },
+                child: isVisible
+                    ? FloatingActionButton(
+                        key: ValueKey(
+                            "fab_visible"), // Helps AnimatedSwitcher differentiate between old & new FAB
+                        onPressed: () => newLeadFormBottomSheetWidget(context),
+                        child: Icon(Icons.add),
+                      )
+                    : SizedBox.shrink(
+                        key: ValueKey(
+                            "fab_hidden")), // Replaces FAB with an empty widget
+              );
+            },
+          ),
+        ],
+      ),
+      // ValueListenableBuilder(
+      //   valueListenable: _isFabVisible,
+      //   builder: (context, value, child) {
+      //     return AnimatedSlide(
+      //       duration: Duration(milliseconds: 300),
+      //       offset: value ? Offset(0, 0) : Offset(0, 2),
+      //       child: FloatingActionButton(
+      //         onPressed: () {
+      //           newLeadFormBottomSheetWidget(context);
+      //         },
+      //         child: Icon(
+      //           Icons.add,
+      //         ),
+      //       ),
+      //     );
+      //   },
+      // ),
     );
   }
 

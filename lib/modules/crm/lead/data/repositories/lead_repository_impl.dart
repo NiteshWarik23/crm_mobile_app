@@ -30,9 +30,9 @@ class LeadRepositoryImpl implements LeadRepository {
 
   @override
   ResultFuture<LeadResponse> getLeads(
-      OffsetLimitRequestModel offsetLimitRequestModel) async {
+      OffsetLimitRequestModel offsetLimitRequestModel,String filterType) async {
     try {
-      final leadResponse = await leadApi.getLeads(offsetLimitRequestModel);
+      final leadResponse = await leadApi.getLeads(offsetLimitRequestModel,filterType);
 
       if (leadResponse is LeadsListSuccessResponseModel) {
         return DataSuccess(leadResponse);

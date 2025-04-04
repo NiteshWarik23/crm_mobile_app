@@ -27,7 +27,7 @@ import 'package:flutter/foundation.dart';
 
 abstract class LeadApi {
   Future<LeadResponse> getLeads(
-      OffsetLimitRequestModel offsetLimitRequestModel);
+      OffsetLimitRequestModel offsetLimitRequestModel, String filter);
   Future<ConvertLeadToDealResponse> convertLeadToDeal(
       ConvertLeadToDealRequestModel convertLeadToDealRequestModel);
   Future<UpdateLeadStatusResponse> updateLeadStatus(
@@ -37,11 +37,11 @@ abstract class LeadApi {
       DeleteLeadRequestModel deleteLeadRequestModel);
   Future<CreateLeadResponseModel> createLead(
       CreateLeadRequestModel createLeadRequestModel);
-   Future<CreateTagResponseModel> createLeadTag(
+  Future<CreateTagResponseModel> createLeadTag(
       CreateTagRequestModel createTagRequestModel);
-    Future<CreateNoteResponseModel> createNote(
+  Future<CreateNoteResponseModel> createNote(
       CreateNoteRequestModel createNoteRequestModel);
-    Future<GetNotesResponseModel> getNotes(
+  Future<GetNotesResponseModel> getNotes(
       GetNotesRequestModel getNotesRequestModel,
       OffsetLimitRequestModel offsetLimitRequestModel);
 }
@@ -53,7 +53,7 @@ class LeadApiImpl implements LeadApi {
 
   @override
   Future<LeadResponse> getLeads(
-      OffsetLimitRequestModel offsetLimitRequestModel) async {
+      OffsetLimitRequestModel offsetLimitRequestModel, String filter) async {
     String? sessionID = await SecureStorage.instance
         .readSecureData(SecureStorageKeys.sid_cookie);
 
@@ -61,6 +61,7 @@ class LeadApiImpl implements LeadApi {
       throw ServerException("Session ID is null or empty");
     }
     try {
+      print("Filter Type ${filter}");
       // LeadsQueryParamsRequestModel leadsQueryParamsRequestModel =
       //     LeadsQueryParamsRequestModel(fields: [
       //   "name",
@@ -96,6 +97,13 @@ class LeadApiImpl implements LeadApi {
       //   //...offsetLimitRequestModel.toJson(),
       // };
 
+      // Define filter conditions based on selected filter
+      List<dynamic> filters = [];
+      if (filter != "all") {
+        filters.add(["status", "=", filter]);
+      }
+      filters.add(["converted", "like", "%0%"]); // Ensure unconverted leads
+
       Uri uri = Uri.parse(ApiEndPoints.leads).replace(
         queryParameters: {
           "fields": jsonEncode([
@@ -115,9 +123,10 @@ class LeadApiImpl implements LeadApi {
           "limit_start": offsetLimitRequestModel.limitStart.toString(),
           "limit": offsetLimitRequestModel.limit.toString(),
           "order_by": 'modified desc',
-          "filters": jsonEncode([
-            ["converted", "like", "%0%"]
-          ])
+          "filters": jsonEncode(filters), // Pass filters dynamically
+          // jsonEncode([
+          //   ["converted", "like", "%0%"]
+          // ])
         },
       );
       var headers = {
@@ -390,8 +399,6 @@ class LeadApiImpl implements LeadApi {
     }
   }
 
-
-  
   @override
   Future<CreateTagResponseModel> createLeadTag(
       CreateTagRequestModel createTagRequestModel) async {
@@ -403,9 +410,7 @@ class LeadApiImpl implements LeadApi {
     }
     try {
       Uri uri = Uri.parse(ApiEndPoints.createTag);
-      var headers = {
-        'Cookie': 'sid=$sessionID;'
-      };
+      var headers = {'Cookie': 'sid=$sessionID;'};
       var formData = FormData.fromMap({
         'tag': createTagRequestModel.tag,
         'dt': createTagRequestModel.dt,
@@ -437,7 +442,6 @@ class LeadApiImpl implements LeadApi {
       throw handleDioClientError(e);
     }
   }
-
 
   @override
   Future<CreateNoteResponseModel> createNote(
@@ -491,20 +495,20 @@ class LeadApiImpl implements LeadApi {
     try {
       Uri uri = Uri.parse(ApiEndPoints.getNotes).replace(
         queryParameters: {
-          "fields": jsonEncode([
-           '*'
-          ]),
+          "fields": jsonEncode(['*']),
           "filters": jsonEncode([
             ["reference_doctype", "=", "CRM Lead"],
-            ["reference_docname", "=", getNotesRequestModel.referenceDocname.toString()]
+            [
+              "reference_docname",
+              "=",
+              getNotesRequestModel.referenceDocname.toString()
+            ]
           ]),
-           "limit_start": offsetLimitRequestModel.limitStart.toString(),
+          "limit_start": offsetLimitRequestModel.limitStart.toString(),
           "limit": offsetLimitRequestModel.limit.toString(),
         },
       );
-      var headers = {
-        'Cookie': 'sid=$sessionID;'
-      };
+      var headers = {'Cookie': 'sid=$sessionID;'};
       print("Url String $uri");
       final response = await dioClient.dio.getUri(
         uri,
@@ -532,5 +536,4 @@ class LeadApiImpl implements LeadApi {
       throw handleDioClientError(e);
     }
   }
-
 }

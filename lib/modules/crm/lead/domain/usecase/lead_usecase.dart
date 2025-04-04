@@ -6,21 +6,24 @@ import 'package:crm_mobile_app/modules/crm/lead/data/services/models/response/le
 import 'package:equatable/equatable.dart';
 
 class LeadUsecase
-    implements UsecaseWithParams<LeadResponse, LeadDataOffsetLimitRequestParams> {
+    implements
+        UsecaseWithParams<LeadResponse, LeadDataOffsetLimitRequestParams> {
   final LeadRepository leadRepository;
   LeadUsecase(this.leadRepository);
 
   @override
   ResultFuture<LeadResponse> call(params) async {
-    return await leadRepository.getLeads(params.offsetLimitRequestModel);
+    return await leadRepository.getLeads(params.offsetLimitRequestModel,params.filterType);
   }
 }
 
 class LeadDataOffsetLimitRequestParams extends Equatable {
-  final  OffsetLimitRequestModel offsetLimitRequestModel;
+  final OffsetLimitRequestModel offsetLimitRequestModel;
+  final String filterType;
 
-  const LeadDataOffsetLimitRequestParams({required this.offsetLimitRequestModel});
+  const LeadDataOffsetLimitRequestParams(
+      {required this.offsetLimitRequestModel,required this.filterType});
 
   @override
-  List<Object> get props => [offsetLimitRequestModel];
+  List<Object> get props => [offsetLimitRequestModel,this.filterType];
 }

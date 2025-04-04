@@ -1,3 +1,4 @@
+import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/lead_bloc/lead_state.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class LeadEvent extends Equatable {
@@ -8,11 +9,20 @@ abstract class LeadEvent extends Equatable {
 class FetchLeadsEvent extends LeadEvent {
   final int limitStart;
   final int limit;
+  final LeadFilter filter;
 
-  FetchLeadsEvent({required this.limitStart, required this.limit});
+  FetchLeadsEvent({required this.limitStart, required this.limit, this.filter = LeadFilter.all});
 
   @override
-  List<Object> get props => [limitStart, limit];
+  List<Object> get props => [limitStart, limit,filter];
+}
+
+class FilterLeadsEvent extends LeadEvent {
+  final LeadFilter filter;
+  FilterLeadsEvent(this.filter);
+
+  @override
+  List<Object> get props => [filter];
 }
 
 class FABVisibilityEvent extends LeadEvent {
@@ -50,10 +60,13 @@ class SearchLeadEvent extends LeadEvent {
   final int limitStart;
   final int limit;
 
-  SearchLeadEvent({required this.searchText,required this.limit,required this.limitStart});
+  SearchLeadEvent(
+      {required this.searchText,
+      required this.limit,
+      required this.limitStart});
 
   @override
-  List<Object> get props => [searchText,limit,limitStart];
+  List<Object> get props => [searchText, limit, limitStart];
 }
 
 class DeleteLeadEvent extends LeadEvent {

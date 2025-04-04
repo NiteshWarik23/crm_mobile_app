@@ -51,6 +51,10 @@ class LeadBloc extends Bloc<LeadEvent, LeadState> {
       fetchLeads,
       transformer: throttleDroppable(throttleDuration),
     );
+    on<FilterLeadsEvent>(
+      fetchFilteredLeads,
+      transformer: throttleDroppable(throttleDuration),
+    );
     on<ClearLeadsEvent>(clearLeads);
     on<ConvertLeadToDealEvent>(convertLeadToDeal);
     on<UpdateLeadStatusEvent>(updateLeadStatus);
@@ -77,8 +81,10 @@ class LeadBloc extends Bloc<LeadEvent, LeadState> {
           status: LeadListStatus.initial,
           leadData: [], // Clear old leads when refreshing
           hasReachedMax: false, // Reset pagination
+          //selectedFilter: event.filter,
         ));
       }
+      print("Filter Selected ${event.filter.name}");
 
       final DataState<LeadResponse> leadResponse = await leadUsecase.call(
         LeadDataOffsetLimitRequestParams(
@@ -86,6 +92,7 @@ class LeadBloc extends Bloc<LeadEvent, LeadState> {
             limitStart: event.limitStart,
             limit: event.limit,
           ),
+          filterType: event.filter.name,
         ),
       );
 
@@ -95,7 +102,7 @@ class LeadBloc extends Bloc<LeadEvent, LeadState> {
           List<LeadData> newLeads = leadSuccessResponseData.data ?? [];
           // Stop pagination if no new data is returned
           bool reachedMax = newLeads.isEmpty || newLeads.length < 10;
-          //print("Lead Count ${newLeads.length}");
+          print("Lead Count ${newLeads.length}");
           // if (newLeads.isEmpty) {
           //   return emit(state.copyWith(hasReachedMax: true));
           // }
@@ -104,15 +111,85 @@ class LeadBloc extends Bloc<LeadEvent, LeadState> {
             emit(state.copyWith(hasReachedMax: true));
             return;
           }
+          print("Event Filter on success ${event.filter}");
 
-          emit(state.copyWith(
-            status: LeadListStatus.success,
-            leadData: event.limitStart == 0
-                ? newLeads
-                : // If refreshing, replace data
-                state.leadData + newLeads, // Append new posts
-            hasReachedMax: reachedMax,
-          ));
+          switch (event.filter) {
+            case LeadFilter.all:
+              emit(state.copyWith(
+                status: LeadListStatus.success,
+                leadData: event.limitStart == 0
+                    ? newLeads
+                    : // If refreshing, replace data
+                    state.leadData + newLeads, // Append new posts
+                hasReachedMax: reachedMax,
+                selectedFilter: event.filter, // ✅ include this
+              ));
+              break;
+            case LeadFilter.contacted:
+              emit(state.copyWith(
+                status: LeadListStatus.contectedFilter,
+                leadData: event.limitStart == 0
+                    ? newLeads
+                    : // If refreshing, replace data
+                    state.leadData + newLeads, // Append new posts
+                hasReachedMax: reachedMax,
+                selectedFilter: event.filter, // ✅ include this
+              ));
+              break;
+            case LeadFilter.nurture:
+              emit(state.copyWith(
+                status: LeadListStatus.nutureFilter,
+                leadData: event.limitStart == 0
+                    ? newLeads
+                    : // If refreshing, replace data
+                    state.leadData + newLeads, // Append new posts
+                hasReachedMax: reachedMax,
+                selectedFilter: event.filter, // ✅ include this
+              ));
+              break;
+            case LeadFilter.qualified:
+              emit(state.copyWith(
+                status: LeadListStatus.qualifiedFilter,
+                leadData: event.limitStart == 0
+                    ? newLeads
+                    : // If refreshing, replace data
+                    state.leadData + newLeads, // Append new posts
+                hasReachedMax: reachedMax,
+                selectedFilter: event.filter, // ✅ include this
+              ));
+              break;
+            case LeadFilter.unqualified:
+              emit(state.copyWith(
+                status: LeadListStatus.unqualifiedFilter,
+                leadData: event.limitStart == 0
+                    ? newLeads
+                    : // If refreshing, replace data
+                    state.leadData + newLeads, // Append new posts
+                hasReachedMax: reachedMax,
+                selectedFilter: event.filter, // ✅ include this
+              ));
+              break;
+            case LeadFilter.junk:
+              emit(state.copyWith(
+                status: LeadListStatus.junkFilter,
+                leadData: event.limitStart == 0
+                    ? newLeads
+                    : // If refreshing, replace data
+                    state.leadData + newLeads, // Append new posts
+                hasReachedMax: reachedMax,
+                selectedFilter: event.filter, // ✅ include this
+              ));
+              break;
+          }
+          // emit(state.copyWith(
+          //   status: LeadListStatus.success,
+          //   leadData: event.limitStart == 0
+          //       ? newLeads
+          //       : // If refreshing, replace data
+          //       state.leadData + newLeads, // Append new posts
+          //   hasReachedMax: reachedMax,
+          //   selectedFilter: event.filter, // ✅ include this
+          // ));
 
           //limitStart += limit; // Increase offset for next fetch
           // Update pagination offset only if new data exists
@@ -133,6 +210,14 @@ class LeadBloc extends Bloc<LeadEvent, LeadState> {
     limitStart = 0; // Reset pagination
     hasReachedMax = false;
     emit(LeadState(status: LeadListStatus.initial, leadData: []));
+  }
+
+  Future<void> fetchFilteredLeads(
+      FilterLeadsEvent event, Emitter<LeadState> emit) async {
+    emit(state.copyWith(selectedFilter: event.filter, leadData: []));
+    // limitStart = 0;
+    add(ClearLeadsEvent());
+    add(FetchLeadsEvent(limitStart: 0, limit: 10));
   }
 
   Future<void> convertLeadToDeal(

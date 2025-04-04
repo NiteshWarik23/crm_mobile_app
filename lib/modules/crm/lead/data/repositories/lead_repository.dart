@@ -20,7 +20,7 @@ import 'package:crm_mobile_app/modules/crm/lead/data/services/models/response/up
 
 abstract class LeadRepository {
   ResultFuture<LeadResponse> getLeads(
-      OffsetLimitRequestModel offsetLimitRequestModel);
+      OffsetLimitRequestModel offsetLimitRequestModel,String filterType);
   ResultFuture<ConvertLeadToDealResponse> convertLeadToDeal(
       ConvertLeadToDealRequestModel convertLeadToDealRequestModel);
   ResultFuture<UpdateLeadStatusResponse> updateLeadStatus(
