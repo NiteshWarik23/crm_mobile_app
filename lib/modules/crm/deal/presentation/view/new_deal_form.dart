@@ -60,12 +60,13 @@ class _DealFormBottomSheetState extends State<DealFormBottomSheet> {
     "Other"
   ];
   final List<String> _leadStatus = [
-    "New",
-    "Contacted",
-    "Nurture",
-    "Qualified",
-    "Unqualified",
-    "Junk",
+    "Qualification",
+    "Demo/Making",
+    "Proosal/Quotation",
+    "Negotiation",
+    "Ready To Close",
+    "Won",
+    "Lost"
   ];
   final List<String> _leadOwners = ["Owner 1", "Owner 2", "Owner 3"];
 
@@ -158,7 +159,7 @@ class _DealFormBottomSheetState extends State<DealFormBottomSheet> {
                             children: [
                               Center(
                                 child: Text(
-                                  "Create New Lead",
+                                  "Create New Deal",
                                   style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold),
@@ -306,7 +307,7 @@ class _DealFormBottomSheetState extends State<DealFormBottomSheet> {
                                 decoration: _inputDecoration("Select Industry"),
                               ),
                               SizedBox(height: 10),
-                              _buildLabel("Lead Status"),
+                              _buildLabel("Deal Status"),
                               DropdownButtonFormField(
                                 value: state.dealStatus.isEmpty
                                     ? _leadStatus.first.toString()
@@ -327,10 +328,10 @@ class _DealFormBottomSheetState extends State<DealFormBottomSheet> {
                                       UpdateDealFormField(leadOwner: value));
                                 },
                                 decoration:
-                                    _inputDecoration("Select Lead Status"),
+                                    _inputDecoration("Select Deal Status"),
                               ),
                               SizedBox(height: 10),
-                              _buildLabel("Lead Owner"),
+                              _buildLabel("Deal Owner"),
                               DropdownButtonFormField(
                                 value: state.leadOwner.isEmpty
                                     ? null
@@ -347,7 +348,7 @@ class _DealFormBottomSheetState extends State<DealFormBottomSheet> {
                                       UpdateDealFormField(leadOwner: value));
                                 },
                                 decoration:
-                                    _inputDecoration("Select Lead Owner"),
+                                    _inputDecoration("Select Deal Owner"),
                               ),
                               SizedBox(
                                   height:
@@ -393,7 +394,7 @@ class _DealFormBottomSheetState extends State<DealFormBottomSheet> {
               icon: Icon(Icons.save_sharp,
                   color:
                       state.firstName.isNotEmpty ? Colors.white : Colors.white),
-              label: Text("Create Lead",
+              label: Text("Create Deal",
                   style: TextStyle(
                       color: state.firstName.isNotEmpty
                           ? Colors.white

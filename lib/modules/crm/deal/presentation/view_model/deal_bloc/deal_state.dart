@@ -6,6 +6,13 @@ enum DealListStatus {
   initial,
   success,
   failure,
+  qualificationFilter,
+  demoMakingFilter,
+  proposalQuotationFilter,
+  negotiationFilter,
+  readyToCloseFilter,
+  wonFilter,
+  lostFilter
 }
 
 enum DeleteDealStatus {
@@ -22,12 +29,22 @@ enum SearchDealStatus {
   searchDealFailure
 }
 
-
 enum UpdateDealStatus {
   updateDealStatusInitial,
   updateDealStatusLoading,
   updateDealStatusSuccess,
   updateDealStatusFailure
+}
+
+enum DealFilter {
+  all,
+  qualification,
+  demoMaking,
+  proposalQuotation,
+  negotiation,
+  readyToClose,
+  won,
+  lost
 }
 
 final class DealState extends Equatable {
@@ -39,6 +56,7 @@ final class DealState extends Equatable {
   final List<SearchDealData> searchDealData;
   final bool hasReachedMax;
   final bool isUserSearching;
+  final DealFilter selectedFilter;
 
   const DealState({
     this.status = DealListStatus.initial,
@@ -49,6 +67,7 @@ final class DealState extends Equatable {
     this.searchDealData = const <SearchDealData>[],
     this.hasReachedMax = false,
     this.isUserSearching = false,
+    this.selectedFilter = DealFilter.all,
   });
 
   DealState copyWith({
@@ -60,6 +79,7 @@ final class DealState extends Equatable {
     List<SearchDealData>? searchDealData,
     bool? hasReachedMax,
     bool? isUserSearching,
+    DealFilter? selectedFilter,
   }) {
     final newState = DealState(
       status: status ?? this.status,
@@ -70,12 +90,12 @@ final class DealState extends Equatable {
       searchDealData: searchDealData ?? this.searchDealData,
       hasReachedMax: hasReachedMax ?? this.hasReachedMax,
       isUserSearching: isUserSearching ?? this.isUserSearching,
+      selectedFilter: selectedFilter ?? this.selectedFilter,
     );
     print("New State Emitted: $newState"); // Debug log
 
     return newState;
   }
-
 
   @override
   List<Object> get props => [
@@ -87,5 +107,6 @@ final class DealState extends Equatable {
         searchDealData,
         hasReachedMax,
         isUserSearching,
+        selectedFilter
       ];
 }

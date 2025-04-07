@@ -36,11 +36,8 @@ class DealBloc extends Bloc<DealEvent, DealState> {
   final SearchDealUsecase searchDealUsecase;
   final DeleteDealUsecase deleteDealUsecase;
 
-  DealBloc(
-      this.dealUsecase,
-      this.updateDealStatusUsecase,
-      this.searchDealUsecase,
-      this.deleteDealUsecase)
+  DealBloc(this.dealUsecase, this.updateDealStatusUsecase,
+      this.searchDealUsecase, this.deleteDealUsecase)
       : super(DealState()) {
     on<FetchDealsEvent>(
       fetchDeals,
@@ -80,6 +77,7 @@ class DealBloc extends Bloc<DealEvent, DealState> {
             limitStart: event.limitStart,
             limit: event.limit,
           ),
+          dealFilterType: event.dealFilter.name,
         ),
       );
 
@@ -99,14 +97,107 @@ class DealBloc extends Bloc<DealEvent, DealState> {
             return;
           }
 
-          emit(state.copyWith(
-            status: DealListStatus.success,
-            dealData: event.limitStart == 0
-                ? newDeals
-                : // If refreshing, replace data
-                state.dealData + newDeals, // Append new posts
-            hasReachedMax: reachedMax,
-          ));
+          print("Event Filter on success ${event.dealFilter}");
+
+          switch (event.dealFilter) {
+            case DealFilter.all:
+              emit(state.copyWith(
+                status: DealListStatus.success,
+                dealData: event.limitStart == 0
+                    ? newDeals
+                    : // If refreshing, replace data
+                    state.dealData + newDeals, // Append new posts
+                hasReachedMax: reachedMax,
+                selectedFilter: event.dealFilter, // ✅ include this
+              ));
+              break;
+            case DealFilter.qualification:
+              emit(state.copyWith(
+                status: DealListStatus.qualificationFilter,
+                dealData: event.limitStart == 0
+                    ? newDeals
+                    : // If refreshing, replace data
+                    state.dealData + newDeals, // Append new posts
+                hasReachedMax: reachedMax,
+                selectedFilter: event.dealFilter, // ✅ include this
+              ));
+              break;
+            case DealFilter.demoMaking:
+              emit(state.copyWith(
+                status: DealListStatus.demoMakingFilter,
+                dealData: event.limitStart == 0
+                    ? newDeals
+                    : // If refreshing, replace data
+                    state.dealData + newDeals, // Append new posts
+                hasReachedMax: reachedMax,
+                selectedFilter: event.dealFilter, // ✅ include this
+              ));
+              break;
+            case DealFilter.proposalQuotation:
+              emit(state.copyWith(
+                status: DealListStatus.proposalQuotationFilter,
+                dealData: event.limitStart == 0
+                    ? newDeals
+                    : // If refreshing, replace data
+                    state.dealData + newDeals, // Append new posts
+                hasReachedMax: reachedMax,
+                selectedFilter: event.dealFilter, // ✅ include this
+              ));
+              break;
+            case DealFilter.negotiation:
+              emit(state.copyWith(
+                status: DealListStatus.negotiationFilter,
+                dealData: event.limitStart == 0
+                    ? newDeals
+                    : // If refreshing, replace data
+                    state.dealData + newDeals, // Append new posts
+                hasReachedMax: reachedMax,
+                selectedFilter: event.dealFilter, // ✅ include this
+              ));
+              break;
+            case DealFilter.readyToClose:
+              emit(state.copyWith(
+                status: DealListStatus.readyToCloseFilter,
+                dealData: event.limitStart == 0
+                    ? newDeals
+                    : // If refreshing, replace data
+                    state.dealData + newDeals, // Append new posts
+                hasReachedMax: reachedMax,
+                selectedFilter: event.dealFilter, // ✅ include this
+              ));
+              break;
+            case DealFilter.won:
+              emit(state.copyWith(
+                status: DealListStatus.wonFilter,
+                dealData: event.limitStart == 0
+                    ? newDeals
+                    : // If refreshing, replace data
+                    state.dealData + newDeals, // Append new posts
+                hasReachedMax: reachedMax,
+                selectedFilter: event.dealFilter, // ✅ include this
+              ));
+              break;
+            case DealFilter.lost:
+              emit(state.copyWith(
+                status: DealListStatus.lostFilter,
+                dealData: event.limitStart == 0
+                    ? newDeals
+                    : // If refreshing, replace data
+                    state.dealData + newDeals, // Append new posts
+                hasReachedMax: reachedMax,
+                selectedFilter: event.dealFilter, // ✅ include this
+              ));
+              break;
+          }
+
+          // emit(state.copyWith(
+          //   status: DealListStatus.success,
+          //   dealData: event.limitStart == 0
+          //       ? newDeals
+          //       : // If refreshing, replace data
+          //       state.dealData + newDeals, // Append new posts
+          //   hasReachedMax: reachedMax,
+          // ));
 
           //limitStart += limit; // Increase offset for next fetch
           // Update pagination offset only if new data exists

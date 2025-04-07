@@ -30,7 +30,7 @@ class LeadCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         print("-->Lead Card Lead CRM ID ${leadData.name}");
-    
+
         Navigator.pushNamed(
           context,
           AppRoutes.leadProfileScreen,
@@ -47,8 +47,7 @@ class LeadCard extends StatelessWidget {
       child: Card(
         margin: EdgeInsets.only(bottom: 18.0),
         elevation: 1,
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: Padding(
           padding: EdgeInsets.all(8.0),
           child: Column(
@@ -64,8 +63,7 @@ class LeadCard extends StatelessWidget {
                       CircleAvatar(
                         radius: 24,
                         backgroundColor: Colors.grey.shade300,
-                        child:
-                            Icon(Icons.person, size: 30, color: Colors.grey),
+                        child: Icon(Icons.person, size: 30, color: Colors.grey),
                       ),
                       // SizedBox(
                       //   height: 20,
@@ -78,8 +76,7 @@ class LeadCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         FittedBox(
-                          fit:
-                              BoxFit.scaleDown, // Scales the text down to fit
+                          fit: BoxFit.scaleDown, // Scales the text down to fit
                           child: Text(
                             leadData.firstName ?? "NA",
                             overflow: TextOverflow.ellipsis,
@@ -91,8 +88,7 @@ class LeadCard extends StatelessWidget {
                         ),
                         SizedBox(height: 4),
                         FittedBox(
-                          fit:
-                              BoxFit.scaleDown, // Scales the text down to fit
+                          fit: BoxFit.scaleDown, // Scales the text down to fit
                           child: Text(
                             "Email : ${leadData.email ?? "NA"}",
                             maxLines: 1, // Restrict to a single line
@@ -102,8 +98,7 @@ class LeadCard extends StatelessWidget {
                           ),
                         ),
                         FittedBox(
-                          fit:
-                              BoxFit.scaleDown, // Scales the text down to fit
+                          fit: BoxFit.scaleDown, // Scales the text down to fit
                           child: Text(
                             "Contact : ${leadData.mobileNo ?? "NA"}",
                             maxLines: 1, // Restrict to a single line
@@ -112,8 +107,7 @@ class LeadCard extends StatelessWidget {
                           ),
                         ),
                         FittedBox(
-                          fit:
-                              BoxFit.scaleDown, // Scales the text down to fit
+                          fit: BoxFit.scaleDown, // Scales the text down to fit
                           child: Text(
                             "Campaign Name",
                             maxLines: 1, // Restrict to a single line
@@ -130,8 +124,8 @@ class LeadCard extends StatelessWidget {
                     icon: const Icon(Icons.more_vert),
                     onSelected: (Menu item) {
                       if (item == Menu.delete) {
-                        leadBloc.add(
-                            DeleteLeadEvent(leadID: leadData.name ?? ""));
+                        leadBloc
+                            .add(DeleteLeadEvent(leadID: leadData.name ?? ""));
                       } else if (item == Menu.convertToDeal) {
                         leadBloc.add(ConvertLeadToDealEvent(
                             leadID: leadData.name ?? ""));
@@ -208,8 +202,7 @@ class LeadCard extends StatelessWidget {
                               ? SizedBox(
                                   height: 12,
                                   width: 12,
-                                  child:
-                                      Image.asset("assets/icons/insta.png"),
+                                  child: Image.asset("assets/icons/insta.png"),
                                 )
                               : SizedBox()
                           : SizedBox(),
@@ -217,15 +210,15 @@ class LeadCard extends StatelessWidget {
                   ),
                   // Add a SizedBox with height to make the VerticalDivider visible
                   SizedBox(
-                    height: screenHeight *
-                        0.02, // Set height to match the content
+                    height:
+                        screenHeight * 0.02, // Set height to match the content
                     child: VerticalDivider(
                       width: 16, // Space before and after the divider
                       thickness: 1, // Thickness of the divider
                       color: Colors.black26, // Color of the divider
                     ),
                   ),
-    
+
                   //View Details Text Button
                   // GestureDetector(
                   //   onTap: () {

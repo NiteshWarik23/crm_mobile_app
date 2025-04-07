@@ -29,9 +29,10 @@ class DealRepositoryImpl implements DealRepository {
 
   @override
   ResultFuture<DealResponse> getDeals(
-      OffsetLimitRequestModel offsetLimitRequestModel) async {
+      OffsetLimitRequestModel offsetLimitRequestModel,
+      String dealFilterType) async {
     try {
-      final dealResponse = await dealApi.getDeals(offsetLimitRequestModel);
+      final dealResponse = await dealApi.getDeals(offsetLimitRequestModel,dealFilterType);
 
       if (dealResponse is DealsListSuccessResponseModel) {
         return DataSuccess(dealResponse);

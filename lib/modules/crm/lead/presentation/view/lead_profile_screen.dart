@@ -14,6 +14,7 @@ import 'package:crm_mobile_app/modules/crm/lead/presentation/widgets/view_notes_
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class LeadDetailsScreen extends StatelessWidget {
@@ -33,90 +34,74 @@ class LeadDetailsScreen extends StatelessWidget {
       this.leadChannel,
       this.leadID});
 
-  final LeadBloc leadBloc = locator<LeadBloc>();
+  //final LeadBloc leadBloc = locator<LeadBloc>();
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => leadBloc,
-      child: BlocListener<LeadBloc, LeadState>(
-        listener: (BuildContext context, LeadState state) {
-          print("Listening");
-          if (state.updateLeadStatus ==
-              UpdateLeadStatus.updateLeadStatusLoading) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text("Updating Lead Status...Please Wait"),
-              ),
-            );
-            //Navigator.pop(context);
-          } else if (state.updateLeadStatus ==
-              UpdateLeadStatus.updateLeadStatusSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text("Lead Status Updated"),
-              ),
-            );
-            Navigator.pop(context);
-          } else if (state.updateLeadStatus ==
-              UpdateLeadStatus.updateLeadStatusFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text("Failed to update Lead Status"),
-              ),
-            );
-          }
-        },
-        child: Scaffold(
-          appBar: appBarWidget(context),
-          body: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                leadImageAndNameWidget(),
-                const SizedBox(height: 10),
-                contactInformationWidget(),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildIconButton(
-                        Colors.amber[100]!, "assets/icons/call.svg", () {
-                      CallService.makePhoneCall(leadContact ?? "");
-                    }),
-                    _buildIconButton(
-                        Colors.amber[100]!, "assets/icons/messageSms.svg", () {
-                      SmsService.sendSms(leadContact ?? "",
-                          message: "Hello $leadName");
-                    }),
-                    _buildIconButton(
-                        Colors.amber[100]!, "assets/icons/whatsapp.svg", () {
-                      WhatsAppService.openWhatsApp(
-                          phoneNumber: leadContact ?? "",
-                          message:
-                              "Hello, I want to inquire about your services.");
-                    }),
-                    _buildIconButton(
-                      Colors.amber[100]!,
-                      "assets/icons/email.svg",
+    return BlocListener<LeadBloc, LeadState>(
+      listener: (BuildContext context, LeadState state) {
+        // print("Listening");
+        // if (state.updateLeadStatus ==
+        //     UpdateLeadStatus.updateLeadStatusLoading) {
+        //   Fluttertoast.showToast(msg: "Updating Lead Status...Please Wait");
+        // } else if (state.updateLeadStatus ==
+        //     UpdateLeadStatus.updateLeadStatusSuccess) {
+        //   Fluttertoast.showToast(msg: "Lead Status Updated");
+        //   //Navigator.pop(context);
+        // } else if (state.updateLeadStatus ==
+        //     UpdateLeadStatus.updateLeadStatusFailure) {
+        //   Fluttertoast.showToast(msg: "Failed to update Lead Status");
+        // }
+      },
+      child: Scaffold(
+        appBar: appBarWidget(context),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              leadImageAndNameWidget(),
+              const SizedBox(height: 10),
+              contactInformationWidget(),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildIconButton(Colors.amber[100]!, "assets/icons/call.svg",
                       () {
-                        MailService.sendEmail(
-                          email: "$leadEmailId",
-                          subject: "Hello",
-                          body: "This is a test email",
-                        );
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 30),
-                campaignDetailsWidget(),
-                const SizedBox(height: 20),
-                const SizedBox(height: 10),
-                taskSectionWidget(context),
-              ],
-            ),
+                    CallService.makePhoneCall(leadContact ?? "");
+                  }),
+                  _buildIconButton(
+                      Colors.amber[100]!, "assets/icons/messageSms.svg", () {
+                    SmsService.sendSms(leadContact ?? "",
+                        message: "Hello $leadName");
+                  }),
+                  _buildIconButton(
+                      Colors.amber[100]!, "assets/icons/whatsapp.svg", () {
+                    WhatsAppService.openWhatsApp(
+                        phoneNumber: leadContact ?? "",
+                        message:
+                            "Hello, I want to inquire about your services.");
+                  }),
+                  _buildIconButton(
+                    Colors.amber[100]!,
+                    "assets/icons/email.svg",
+                    () {
+                      MailService.sendEmail(
+                        email: "$leadEmailId",
+                        subject: "Hello",
+                        body: "This is a test email",
+                      );
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 30),
+              campaignDetailsWidget(),
+              const SizedBox(height: 20),
+              const SizedBox(height: 10),
+              taskSectionWidget(context),
+            ],
           ),
         ),
       ),

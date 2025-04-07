@@ -1,3 +1,4 @@
+import 'package:crm_mobile_app/modules/crm/deal/presentation/view_model/deal_bloc/deal_state.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class DealEvent extends Equatable {
@@ -8,11 +9,23 @@ abstract class DealEvent extends Equatable {
 class FetchDealsEvent extends DealEvent {
   final int limitStart;
   final int limit;
+  final DealFilter dealFilter;
 
-  FetchDealsEvent({required this.limitStart, required this.limit});
+  FetchDealsEvent(
+      {required this.limitStart,
+      required this.limit,
+      this.dealFilter = DealFilter.all});
 
   @override
-  List<Object> get props => [limitStart, limit];
+  List<Object> get props => [limitStart, limit,dealFilter];
+}
+
+class FilterDealsEvent extends DealEvent {
+  final DealFilter filter;
+  FilterDealsEvent(this.filter);
+
+  @override
+  List<Object> get props => [filter];
 }
 
 class FABVisibilityEvent extends DealEvent {
@@ -41,10 +54,13 @@ class SearchDealEvent extends DealEvent {
   final int limitStart;
   final int limit;
 
-  SearchDealEvent({required this.searchText,required this.limit,required this.limitStart});
+  SearchDealEvent(
+      {required this.searchText,
+      required this.limit,
+      required this.limitStart});
 
   @override
-  List<Object> get props => [searchText,limit,limitStart];
+  List<Object> get props => [searchText, limit, limitStart];
 }
 
 class DeleteDealEvent extends DealEvent {

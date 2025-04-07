@@ -122,8 +122,9 @@ class LeadApiImpl implements LeadApi {
           // Ensure fields are treated as strings
           "limit_start": offsetLimitRequestModel.limitStart.toString(),
           "limit": offsetLimitRequestModel.limit.toString(),
-          "order_by": 'modified desc',
           "filters": jsonEncode(filters), // Pass filters dynamically
+          "order_by": 'first_name asc', //'modified desc'
+
           // jsonEncode([
           //   ["converted", "like", "%0%"]
           // ])

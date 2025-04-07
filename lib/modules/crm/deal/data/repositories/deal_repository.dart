@@ -18,7 +18,7 @@ import 'package:crm_mobile_app/modules/crm/deal/data/services/models/response/up
 
 abstract class DealRepository {
   ResultFuture<DealResponse> getDeals(
-      OffsetLimitRequestModel offsetLimitRequestModel);
+      OffsetLimitRequestModel offsetLimitRequestModel, String dealFilterType);
   ResultFuture<UpdateDealStatusResponse> updateDealStatus(
       UpdateDealStatusRequestModel updateDealStatusRequestModel);
   ResultFuture<SearchDealResponse> searchDeals(String enteredSearchText);

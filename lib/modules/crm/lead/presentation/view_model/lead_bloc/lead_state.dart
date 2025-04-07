@@ -11,10 +11,6 @@ enum LeadListStatus {
   qualifiedFilter,
   unqualifiedFilter,
   junkFilter,
-  // convertToDealSuccess,
-  // convertToDealFailure,
-  // updateLeadStatusSuccess,
-  // updateLeadStatusFailure
 }
 
 enum DeleteLeadStatus {

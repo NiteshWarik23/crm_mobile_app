@@ -8,21 +8,24 @@ import 'package:crm_mobile_app/modules/crm/lead/data/services/models/response/le
 import 'package:equatable/equatable.dart';
 
 class DealUsecase
-    implements UsecaseWithParams<DealResponse, DealDataOffsetLimitRequestParams> {
+    implements
+        UsecaseWithParams<DealResponse, DealDataOffsetLimitRequestParams> {
   final DealRepository dealRepository;
   DealUsecase(this.dealRepository);
 
   @override
   ResultFuture<DealResponse> call(params) async {
-    return await dealRepository.getDeals(params.offsetLimitRequestModel);
+    return await dealRepository.getDeals(params.offsetLimitRequestModel,params.dealFilterType);
   }
 }
 
 class DealDataOffsetLimitRequestParams extends Equatable {
-  final  OffsetLimitRequestModel offsetLimitRequestModel;
+  final OffsetLimitRequestModel offsetLimitRequestModel;
+  final String dealFilterType;
 
-  const DealDataOffsetLimitRequestParams({required this.offsetLimitRequestModel});
+  const DealDataOffsetLimitRequestParams(
+      {required this.offsetLimitRequestModel, required this.dealFilterType});
 
   @override
-  List<Object> get props => [offsetLimitRequestModel];
+  List<Object> get props => [offsetLimitRequestModel,dealFilterType];
 }

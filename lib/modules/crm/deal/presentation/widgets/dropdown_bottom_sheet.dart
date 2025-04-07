@@ -18,6 +18,8 @@ import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/lead_blo
 import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/lead_bloc/lead_event.dart';
 
 void showDealDropdownBottomSheet(BuildContext context, String dealID) {
+  final dealBlocValue = BlocProvider.of<DealBloc>(context); // Get parent BLoC
+
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -25,8 +27,11 @@ void showDealDropdownBottomSheet(BuildContext context, String dealID) {
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
     builder: (context) {
-      return DealDropDownBottomSheet(
-        dealIDValue: dealID,
+      return BlocProvider.value(
+        value: dealBlocValue,
+        child: DealDropDownBottomSheet(
+          dealIDValue: dealID,
+        ),
       );
     },
   );
@@ -39,21 +44,15 @@ class DealDropDownBottomSheet extends StatelessWidget {
     required this.dealIDValue,
   });
 
-  final DealBloc dealBloc = locator<DealBloc>();
+  //final DealBloc dealBloc = locator<DealBloc>();
   final DropdownBloc dropdownBloc = locator<DropdownBloc>();
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (context) => DropdownBloc(),
-        ),
-        BlocProvider(create: (context) => dealBloc)
-      ],
+    return BlocProvider(
+      create: (context) => DropdownBloc(),
       child: BlocListener<DealBloc, DealState>(
         listener: (BuildContext context, DealState state) {
-          print("Listening");
           if (state.updateDealStatus ==
               UpdateDealStatus.updateDealStatusLoading) {
             Fluttertoast.showToast(msg: "Updating Deal Status...Please Wait");
@@ -62,8 +61,6 @@ class DealDropDownBottomSheet extends StatelessWidget {
               UpdateDealStatus.updateDealStatusSuccess) {
             Fluttertoast.showToast(msg: "Deal Status Updated");
             Navigator.pop(context);
-             Navigator.pop(context);
-
             refreshIndicatorKeyForDeals.currentState!.show();
             //   showCustomToast(
             //   overlayState: Overlay.of(context),
@@ -189,9 +186,10 @@ class DealDropDownBottomSheet extends StatelessWidget {
                         ElevatedButton(
                           onPressed: state.selectedOption.isNotEmpty
                               ? () {
-                                  dealBloc.add(UpdateDealStatusEvent(
-                                      dealID: dealIDValue,
-                                      status: state.selectedOption));
+                                  context.read<DealBloc>().add(
+                                      UpdateDealStatusEvent(
+                                          dealID: dealIDValue,
+                                          status: state.selectedOption));
                                 }
                               : null,
                           child: Text(

@@ -1,4 +1,5 @@
 import 'package:crm_mobile_app/core/dependency%20injection/dependency_injection.dart';
+import 'package:crm_mobile_app/modules/crm/deal/presentation/view_model/deal_bloc/deal_bloc.dart';
 import 'package:crm_mobile_app/modules/crm/lead/presentation/view/crm_tabs_widget.dart';
 import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/lead_bloc/lead_bloc.dart';
 import 'package:crm_mobile_app/modules/crm/lead/presentation/widgets/leads_filter_chips_widget.dart';
@@ -18,7 +19,7 @@ class _LeadsScreenState extends State<LeadsScreen>
   int currentPageIndex = 0;
   late TabController _tabController;
   final LeadBloc leadBloc = locator<LeadBloc>();
-
+  final DealBloc dealBloc = locator<DealBloc>();
 
   @override
   void initState() {
@@ -28,19 +29,27 @@ class _LeadsScreenState extends State<LeadsScreen>
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => leadBloc,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider.value(
+          value: leadBloc,
+        ),
+        BlocProvider.value(
+          value: dealBloc,
+        )
+      ],
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Leads",
-            style:
-                GoogleFonts.nunitoSans(fontSize: 18, fontWeight: FontWeight.w700),
+          title: Text(
+            "Leads",
+            style: GoogleFonts.nunitoSans(
+                fontSize: 18, fontWeight: FontWeight.w700),
           ),
           centerTitle: true,
           automaticallyImplyLeading: false,
         ),
         body: Column(
-          spacing: 20.0,
+          spacing: 15.0,
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -50,19 +59,21 @@ class _LeadsScreenState extends State<LeadsScreen>
               children: [
                 SizedBox(
                   width: MediaQuery.sizeOf(context).width * 0.8,
-                  height: MediaQuery.sizeOf(context).height * 0.05,
+                  height: MediaQuery.sizeOf(context).height * 0.055,
                   child: SearchBar(
                     hintText: "Search...",
                     hintStyle: WidgetStateProperty.all(
-                      TextStyle(fontSize: 16),
+                      GoogleFonts.nunitoSans(
+                          fontSize: 16, color: Colors.grey.shade600),
                     ),
+                    elevation: WidgetStateProperty.all(0.0),
                     textInputAction: TextInputAction.search,
                     padding: WidgetStateProperty.all(
                         EdgeInsets.symmetric(horizontal: 10)),
                     backgroundColor: WidgetStateProperty.all(Colors.white),
                     shape: WidgetStateProperty.all(
                       RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(40),
+                        borderRadius: BorderRadius.circular(20),
                         side: BorderSide(
                             color: Colors.grey.shade400,
                             width: 1.5), // Border Color & Width
@@ -71,19 +82,19 @@ class _LeadsScreenState extends State<LeadsScreen>
                     leading: Container(
                       height: 25,
                       width: 25,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(50),
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.grey.shade200,
-                                // Shadow color
-                                spreadRadius: 0.5,
-                                // Reduce spread for a smaller shadow
-                                blurRadius: 5,
-                                // Soften the shadow
-                                offset: const Offset(0, 2))
-                          ]),
+                      // decoration: BoxDecoration(
+                      //     color: Colors.white,
+                      //     borderRadius: BorderRadius.circular(50),
+                      //     boxShadow: [
+                      //       BoxShadow(
+                      //           color: Colors.grey.shade200,
+                      //           // Shadow color
+                      //           spreadRadius: 0.5,
+                      //           // Reduce spread for a smaller shadow
+                      //           blurRadius: 5,
+                      //           // Soften the shadow
+                      //           offset: const Offset(0, 2))
+                      //     ]),
                       child: Icon(
                         Icons.search,
                         size: 22.0,
@@ -113,7 +124,7 @@ class _LeadsScreenState extends State<LeadsScreen>
                             offset: const Offset(0, 2))
                       ]),
                   child: Icon(
-                    Icons.filter_list_sharp,
+                    Icons.swap_vert,
                     size: 30.0,
                   ),
                 ),
@@ -123,12 +134,11 @@ class _LeadsScreenState extends State<LeadsScreen>
               tabController: _tabController,
             ),
             //SingleChoice(),
-            LeadFilterScreen(),
+           // LeadFilterScreen(),
             Expanded(
                 child: TabBarViewBody(
               tabController: _tabController,
             )),
-          
           ],
         ),
         // bottomNavigationBar: NavigationBar(

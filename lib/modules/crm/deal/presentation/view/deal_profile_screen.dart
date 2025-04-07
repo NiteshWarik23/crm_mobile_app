@@ -45,33 +45,33 @@ class DealDetailsScreen extends StatelessWidget {
       create: (context) => leadBloc,
       child: BlocListener<LeadBloc, LeadState>(
         listener: (BuildContext context, LeadState state) {
-          print("Listening");
-          if (state.updateLeadStatus ==
-              UpdateLeadStatus.updateLeadStatusLoading) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text("Updating Lead Status...Please Wait"),
-              ),
-            );
-            //Navigator.pop(context);
-          } else if (state.updateLeadStatus ==
-              UpdateLeadStatus.updateLeadStatusSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text("Lead Status Updated"),
-              ),
-            );
+          // print("Listening");
+          // if (state.updateLeadStatus ==
+          //     UpdateLeadStatus.updateLeadStatusLoading) {
+          //   ScaffoldMessenger.of(context).showSnackBar(
+          //     SnackBar(
+          //       content: Text("Updating Lead Status...Please Wait"),
+          //     ),
+          //   );
+          //   //Navigator.pop(context);
+          // } else if (state.updateLeadStatus ==
+          //     UpdateLeadStatus.updateLeadStatusSuccess) {
+          //   ScaffoldMessenger.of(context).showSnackBar(
+          //     SnackBar(
+          //       content: Text("Lead Status Updated"),
+          //     ),
+          //   );
 
-            Navigator.pop(context);
+          //   Navigator.pop(context);
            
-          } else if (state.updateLeadStatus ==
-              UpdateLeadStatus.updateLeadStatusFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text("Failed to update Lead Status"),
-              ),
-            );
-          }
+          // } else if (state.updateLeadStatus ==
+          //     UpdateLeadStatus.updateLeadStatusFailure) {
+          //   ScaffoldMessenger.of(context).showSnackBar(
+          //     SnackBar(
+          //       content: Text("Failed to update Lead Status"),
+          //     ),
+          //   );
+          // }
         },
         child: Scaffold(
           appBar: appBarWidget(context),

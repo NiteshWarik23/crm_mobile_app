@@ -1,8 +1,10 @@
 import 'package:crm_mobile_app/core/utils/app_colors.dart';
 import 'package:crm_mobile_app/modules/crm/deal/presentation/view/deal_list_screen.dart';
+import 'package:crm_mobile_app/modules/crm/deal/presentation/widgets/deals_filter_chips_widget.dart';
 import 'package:crm_mobile_app/modules/crm/lead/presentation/view/lead_card.dart';
 import 'package:crm_mobile_app/modules/crm/lead/presentation/view/lead_list_screen.dart';
 import 'package:crm_mobile_app/modules/crm/lead/presentation/view/leads_screen.dart';
+import 'package:crm_mobile_app/modules/crm/lead/presentation/widgets/leads_filter_chips_widget.dart';
 import 'package:crm_mobile_app/modules/dashboard/presentation/view/dashboard_bar_graph_widget.dart';
 import 'package:crm_mobile_app/modules/crm/lead/presentation/view/calender_screen.dart';
 import 'package:crm_mobile_app/modules/splash/graph.dart';
@@ -79,13 +81,22 @@ class TabBarViewBody extends StatelessWidget {
         controller: _tabController,
         children: [
           Center(
-            child: 
-            // Expanded(
-            //   child: 
-              LeadsListScreen(),
-           // ),
+            child: Column(
+              spacing: 15.0,
+              children: [
+                LeadFilterScreen(),
+                Expanded(child: LeadsListScreen()),
+              ],
+            ),
           ),
-          Center(child: DealsListScreen()),
+          Center(
+              child: Column(
+            spacing: 15.0,
+            children: [
+              DealFilterScreen(),
+              Expanded(child: DealsListScreen()),
+            ],
+          )),
           Center(child: AppointmentScreen()),
         ],
       ),

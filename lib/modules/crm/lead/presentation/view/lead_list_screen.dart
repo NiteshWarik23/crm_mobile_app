@@ -13,6 +13,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+final GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
+    GlobalKey<RefreshIndicatorState>();
+
 class LeadsListScreen extends StatefulWidget {
   const LeadsListScreen({super.key});
 
@@ -21,8 +24,6 @@ class LeadsListScreen extends StatefulWidget {
 }
 
 class _LeadsListScreenState extends State<LeadsListScreen> {
-  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
-      GlobalKey<RefreshIndicatorState>();
   final ValueNotifier<bool> _isFabVisible = ValueNotifier<bool>(true);
 
   // final LeadBloc leadBloc = locator<LeadBloc>();
@@ -135,7 +136,7 @@ class _LeadsListScreenState extends State<LeadsListScreen> {
           // }
         },
         child: RefreshIndicator.adaptive(
-          key: _refreshIndicatorKey,
+          key: refreshIndicatorKey,
           triggerMode: RefreshIndicatorTriggerMode.anywhere,
           semanticsLabel: 'Pull to Refresh',
           onRefresh: () async {
@@ -147,16 +148,6 @@ class _LeadsListScreenState extends State<LeadsListScreen> {
                     current.leadData || // Rebuild when leadData changes
                 previous.selectedFilter != current.selectedFilter,
             builder: (context, state) {
-              // print(
-              //     "Filter: ${state.selectedFilter}, Leads Count: ${state.leadData.length}");
-              // return ListView.builder(
-              //   key: ValueKey(
-              //       state.selectedFilter), // Force rebuild when filter changes
-              //   itemCount: state.leadData.length,
-              //   itemBuilder: (context, index) {
-              //     return Text(state.leadData[index].toString());
-              //   },
-              // );
               //TODO : show different list when user searches
               // if (state.isUserSearching) {
               // } else {}
@@ -165,7 +156,6 @@ class _LeadsListScreenState extends State<LeadsListScreen> {
                   return LeadShimmerList(
                     itemCount: 8,
                   );
-                //const Center(child: CircularProgressIndicator());
                 case LeadListStatus.failure:
                   return const Center(child: Text("Failed to load leads"));
                 case LeadListStatus.success:

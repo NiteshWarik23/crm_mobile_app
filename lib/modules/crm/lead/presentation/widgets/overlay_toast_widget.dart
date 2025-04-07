@@ -33,9 +33,10 @@ void showCustomToast({
                 onPressed: () {
                   overlayEntry.remove();
                   // Undo action logic here
+                   Navigator.pop(context);
                   leadBloc.add(ClearLeadsEvent());
                   leadBloc.add(FetchLeadsEvent(limitStart: 0, limit: 10));
-                  Navigator.pop(context);
+                 
                 },
                 child: Text("Undo", style: TextStyle(color: Colors.orange)),
               ),

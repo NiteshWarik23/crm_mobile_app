@@ -25,7 +25,7 @@ import 'package:flutter/foundation.dart';
 
 abstract class DealApi {
   Future<DealResponse> getDeals(
-      OffsetLimitRequestModel offsetLimitRequestModel);
+      OffsetLimitRequestModel offsetLimitRequestModel, String dealFilter);
   Future<UpdateDealStatusResponse> updateDealStatus(
       UpdateDealStatusRequestModel updateDealStatusRequestModel);
   Future<SearchDealResponse> searchDeal(String enteredSearchText);
@@ -48,8 +48,8 @@ class DealApiImpl implements DealApi {
   DealApiImpl(this.dioClient);
 
   @override
-  Future<DealResponse> getDeals(
-      OffsetLimitRequestModel offsetLimitRequestModel) async {
+  Future<DealResponse> getDeals(OffsetLimitRequestModel offsetLimitRequestModel,
+      String dealFilter) async {
     String? sessionID = await SecureStorage.instance
         .readSecureData(SecureStorageKeys.sid_cookie);
 
@@ -57,6 +57,19 @@ class DealApiImpl implements DealApi {
       throw ServerException("Session ID is null or empty");
     }
     try {
+      List<dynamic> filters = [];
+      if (dealFilter != "all") {
+        if (dealFilter == "demoMaking") {
+          filters.add(["status", "like", "demo/Making"]);
+        } else if (dealFilter == "proposalQuatation") {
+          filters.add(["status", "like", "proposal/Quotation"]);
+        } else if (dealFilter == "readyToClose") {
+          filters.add(["status", "like", "ready to close"]);
+        } else {
+          filters.add(["status", "=", dealFilter]);
+        }
+      }
+
       Uri uri = Uri.parse(ApiEndPoints.deals).replace(
         queryParameters: {
           "fields": jsonEncode([
@@ -75,12 +88,15 @@ class DealApiImpl implements DealApi {
           // Ensure fields are treated as strings
           "limit_start": offsetLimitRequestModel.limitStart.toString(),
           "limit": offsetLimitRequestModel.limit.toString(),
+          "filters": jsonEncode(filters), // Pass filters dynamically
           "order_by": 'modified desc',
           // "filters": jsonEncode([
           //   ["converted", "like", "%0%"]
           // ])
         },
       );
+      print("Encoded Filters: ${jsonEncode(filters)}");
+      print("Final URL: $uri");
       var headers = {
         'Cookie': 'sid=$sessionID;'
         //daec58a24b6104dc7c54e39b1c3b1a8defff48801ea1fa56a1e05ad7;'
@@ -117,7 +133,6 @@ class DealApiImpl implements DealApi {
   // LeadResponse parseLeadsList(dynamic responseBody) {
   //   return LeadsListSuccessResponseModel.fromJson(responseBody);
   // }
-
 
   @override
   Future<UpdateDealStatusResponse> updateDealStatus(
@@ -368,9 +383,7 @@ class DealApiImpl implements DealApi {
     }
     try {
       Uri uri = Uri.parse(ApiEndPoints.createNote);
-      var headers = {
-        'Cookie': 'sid=$sessionID;'
-      };
+      var headers = {'Cookie': 'sid=$sessionID;'};
       final response = await dioClient.dio.postUri(
         uri,
         data: createNoteRequestModel.toJson(),
@@ -413,7 +426,10 @@ class DealApiImpl implements DealApi {
           "fields": jsonEncode(['*']),
           "filters": jsonEncode([
             ["reference_doctype", "=", "CRM Deal"],
-            ["reference_docname","=", getNotesRequestModel.referenceDocname.toString()
+            [
+              "reference_docname",
+              "=",
+              getNotesRequestModel.referenceDocname.toString()
             ]
           ]),
           "limit_start": offsetLimitRequestModel.limitStart.toString(),

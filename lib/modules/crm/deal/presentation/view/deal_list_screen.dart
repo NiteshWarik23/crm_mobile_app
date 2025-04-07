@@ -15,6 +15,7 @@ import 'package:crm_mobile_app/modules/crm/lead/presentation/widgets/bottom_load
 import 'package:crm_mobile_app/modules/crm/lead/presentation/widgets/overlay_toast_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 final GlobalKey<RefreshIndicatorState> refreshIndicatorKeyForDeals =
     GlobalKey<RefreshIndicatorState>();
@@ -27,12 +28,9 @@ class DealsListScreen extends StatefulWidget {
 }
 
 class _DealsListScreenState extends State<DealsListScreen> {
-
   final ValueNotifier<bool> _isFabVisible = ValueNotifier<bool>(true);
 
-  final DealBloc dealBloc = locator<DealBloc>();
-  final ConvertLeadToDealBloc convertLeadToDealBloc =
-      locator<ConvertLeadToDealBloc>();
+  //final DealBloc dealBloc = locator<DealBloc>();
 
   final _scrollController = ScrollController();
 
@@ -42,10 +40,11 @@ class _DealsListScreenState extends State<DealsListScreen> {
     _scrollController.addListener(_onScroll);
 
     // Fetch initial leads
-    dealBloc.add(FetchDealsEvent(limitStart: 0, limit: 10));
+    context.read<DealBloc>().add(FetchDealsEvent(limitStart: 0, limit: 10));
   }
 
   void _onScroll() {
+    final dealBloc = context.read<DealBloc>();
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
       // If scrolled to bottom, hide FAB
@@ -58,6 +57,31 @@ class _DealsListScreenState extends State<DealsListScreen> {
     }
   }
 
+  Future<void> _onRefresh() async {
+    final dealBloc = context.read<DealBloc>();
+    dealBloc.limitStart = 0;
+    dealBloc.hasReachedMax = false;
+
+    final Completer<void> completer = Completer<void>();
+    dealBloc.add(ClearDealsEvent());
+    dealBloc.add(FetchDealsEvent(limitStart: 0, limit: 10));
+
+    // Listen for state change and complete when done
+    dealBloc.stream
+        .firstWhere((state) =>
+            state.status == DealListStatus.success ||
+            state.status == DealListStatus.failure)
+        .then((_) {
+      completer.complete();
+    }).timeout(const Duration(seconds: 5), onTimeout: () {
+      if (!completer.isCompleted) {
+        completer.complete();
+      }
+    });
+
+    return completer.future; // Ensure UI waits for refresh to complete
+  }
+
   @override
   void dispose() {
     _scrollController.dispose();
@@ -66,39 +90,26 @@ class _DealsListScreenState extends State<DealsListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (context) => dealBloc),
-        BlocProvider(create: (context) => convertLeadToDealBloc)
-      ],
-      child: Scaffold(
-        body: RefreshIndicator.adaptive(
+    return Scaffold(
+      body: BlocListener<DealBloc, DealState>(
+        listener: (BuildContext context, DealState state) {
+          if (state.deleteDealStatus == DeleteDealStatus.deleteDealLoading) {
+            Fluttertoast.showToast(msg: "Deleting Deal...Please Wait");
+          } else if (state.deleteDealStatus ==
+              DeleteDealStatus.deleteDealSuccess) {
+            Fluttertoast.showToast(msg: "Deal deleted Successfully");
+            refreshIndicatorKeyForDeals.currentState!.show();
+          } else if (state.deleteDealStatus ==
+              DeleteDealStatus.deleteDealFailure) {
+            Fluttertoast.showToast(msg: "Failed to delete Deal.");
+          }
+        },
+        child: RefreshIndicator.adaptive(
           key: refreshIndicatorKeyForDeals,
           triggerMode: RefreshIndicatorTriggerMode.anywhere,
           semanticsLabel: 'Pull to Refresh',
           onRefresh: () async {
-            //return Future<void>.delayed(const Duration(seconds: 3));
-            dealBloc.limitStart = 0;
-            dealBloc.hasReachedMax = false;
-
-            final Completer<void> completer = Completer<void>();
-            dealBloc.add(ClearDealsEvent());
-            dealBloc.add(FetchDealsEvent(limitStart: 0, limit: 10));
-
-            // Listen for state change and complete when done
-            dealBloc.stream
-                .firstWhere((state) =>
-                    state.status == DealListStatus.success ||
-                    state.status == DealListStatus.failure)
-                .then((_) {
-              completer.complete();
-            }).timeout(const Duration(seconds: 5), onTimeout: () {
-              if (!completer.isCompleted) {
-                completer.complete();
-              }
-            });
-
-            return completer.future; // Ensure UI waits for refresh to complete
+            await _onRefresh();
           },
           child: BlocBuilder<DealBloc, DealState>(
             builder: (context, state) {
@@ -161,49 +172,217 @@ class _DealsListScreenState extends State<DealsListScreen> {
                       },
                     ),
                   );
+                case DealListStatus.qualificationFilter:
+                  return Scrollbar(
+                    controller: _scrollController,
+                    thickness: 5.0,
+                    radius: Radius.circular(5.0),
+                    //thumbVisibility: true,
+                    trackVisibility: true,
+                    child: ListView.builder(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      controller: _scrollController,
+                      itemCount:
+                          state.dealData.length + (state.hasReachedMax ? 0 : 1),
+                      itemBuilder: (context, index) {
+                        return index >= state.dealData.length
+                            ? const BottomLoader()
+                            : Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10.0),
+                                child:
+                                    DealCard(dealData: state.dealData[index]),
+                              );
+                      },
+                    ),
+                  );
+                case DealListStatus.demoMakingFilter:
+                  return Scrollbar(
+                    controller: _scrollController,
+                    thickness: 5.0,
+                    radius: Radius.circular(5.0),
+                    //thumbVisibility: true,
+                    trackVisibility: true,
+                    child: ListView.builder(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      controller: _scrollController,
+                      itemCount:
+                          state.dealData.length + (state.hasReachedMax ? 0 : 1),
+                      itemBuilder: (context, index) {
+                        return index >= state.dealData.length
+                            ? const BottomLoader()
+                            : Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10.0),
+                                child:
+                                    DealCard(dealData: state.dealData[index]),
+                              );
+                      },
+                    ),
+                  );
+                case DealListStatus.proposalQuotationFilter:
+                  return Scrollbar(
+                    controller: _scrollController,
+                    thickness: 5.0,
+                    radius: Radius.circular(5.0),
+                    //thumbVisibility: true,
+                    trackVisibility: true,
+                    child: ListView.builder(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      controller: _scrollController,
+                      itemCount:
+                          state.dealData.length + (state.hasReachedMax ? 0 : 1),
+                      itemBuilder: (context, index) {
+                        return index >= state.dealData.length
+                            ? const BottomLoader()
+                            : Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10.0),
+                                child:
+                                    DealCard(dealData: state.dealData[index]),
+                              );
+                      },
+                    ),
+                  );
+                case DealListStatus.negotiationFilter:
+                  return Scrollbar(
+                    controller: _scrollController,
+                    thickness: 5.0,
+                    radius: Radius.circular(5.0),
+                    //thumbVisibility: true,
+                    trackVisibility: true,
+                    child: ListView.builder(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      controller: _scrollController,
+                      itemCount:
+                          state.dealData.length + (state.hasReachedMax ? 0 : 1),
+                      itemBuilder: (context, index) {
+                        return index >= state.dealData.length
+                            ? const BottomLoader()
+                            : Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10.0),
+                                child:
+                                    DealCard(dealData: state.dealData[index]),
+                              );
+                      },
+                    ),
+                  );
+                case DealListStatus.readyToCloseFilter:
+                  return Scrollbar(
+                    controller: _scrollController,
+                    thickness: 5.0,
+                    radius: Radius.circular(5.0),
+                    //thumbVisibility: true,
+                    trackVisibility: true,
+                    child: ListView.builder(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      controller: _scrollController,
+                      itemCount:
+                          state.dealData.length + (state.hasReachedMax ? 0 : 1),
+                      itemBuilder: (context, index) {
+                        return index >= state.dealData.length
+                            ? const BottomLoader()
+                            : Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10.0),
+                                child:
+                                    DealCard(dealData: state.dealData[index]),
+                              );
+                      },
+                    ),
+                  );
+                case DealListStatus.wonFilter:
+                  return Scrollbar(
+                    controller: _scrollController,
+                    thickness: 5.0,
+                    radius: Radius.circular(5.0),
+                    //thumbVisibility: true,
+                    trackVisibility: true,
+                    child: ListView.builder(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      controller: _scrollController,
+                      itemCount:
+                          state.dealData.length + (state.hasReachedMax ? 0 : 1),
+                      itemBuilder: (context, index) {
+                        return index >= state.dealData.length
+                            ? const BottomLoader()
+                            : Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10.0),
+                                child:
+                                    DealCard(dealData: state.dealData[index]),
+                              );
+                      },
+                    ),
+                  );
+                case DealListStatus.lostFilter:
+                  return Scrollbar(
+                    controller: _scrollController,
+                    thickness: 5.0,
+                    radius: Radius.circular(5.0),
+                    //thumbVisibility: true,
+                    trackVisibility: true,
+                    child: ListView.builder(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      controller: _scrollController,
+                      itemCount:
+                          state.dealData.length + (state.hasReachedMax ? 0 : 1),
+                      itemBuilder: (context, index) {
+                        return index >= state.dealData.length
+                            ? const BottomLoader()
+                            : Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10.0),
+                                child:
+                                    DealCard(dealData: state.dealData[index]),
+                              );
+                      },
+                    ),
+                  );
               }
             },
           ),
         ),
-        floatingActionButton: ValueListenableBuilder<bool>(
-          valueListenable: _isFabVisible,
-          builder: (context, isVisible, child) {
-            return AnimatedSwitcher(
-              duration: Duration(milliseconds: 300),
-              transitionBuilder: (child, animation) {
-                return ScaleTransition(scale: animation, child: child);
-              },
-              child: isVisible
-                  ? FloatingActionButton(
-                      key: ValueKey(
-                          "fab_visible"), // Helps AnimatedSwitcher differentiate between old & new FAB
-                      onPressed: () => newDealFormBottomSheetWidget(context),
-                      child: Icon(Icons.add),
-                    )
-                  : SizedBox.shrink(
-                      key: ValueKey(
-                          "fab_hidden")), // Replaces FAB with an empty widget
-            );
-          },
-        ),
-        // ValueListenableBuilder(
-        //   valueListenable: _isFabVisible,
-        //   builder: (context, value, child) {
-        //     return AnimatedSlide(
-        //       duration: Duration(milliseconds: 300),
-        //       offset: value ? Offset(0, 0) : Offset(0, 2),
-        //       child: FloatingActionButton(
-        //         onPressed: () {
-        //           newLeadFormBottomSheetWidget(context);
-        //         },
-        //         child: Icon(
-        //           Icons.add,
-        //         ),
-        //       ),
-        //     );
-        //   },
-        // ),
       ),
+      floatingActionButton: ValueListenableBuilder<bool>(
+        valueListenable: _isFabVisible,
+        builder: (context, isVisible, child) {
+          return AnimatedSwitcher(
+            duration: Duration(milliseconds: 300),
+            transitionBuilder: (child, animation) {
+              return ScaleTransition(scale: animation, child: child);
+            },
+            child: isVisible
+                ? FloatingActionButton(
+                    key: ValueKey(
+                        "deal_fab_visible"), // Helps AnimatedSwitcher differentiate between old & new FAB
+                    onPressed: () => newDealFormBottomSheetWidget(context),
+                    child: Icon(Icons.add),
+                  )
+                : SizedBox.shrink(
+                    key: ValueKey(
+                        "deal_fab_hidden")), // Replaces FAB with an empty widget
+          );
+        },
+      ),
+      // ValueListenableBuilder(
+      //   valueListenable: _isFabVisible,
+      //   builder: (context, value, child) {
+      //     return AnimatedSlide(
+      //       duration: Duration(milliseconds: 300),
+      //       offset: value ? Offset(0, 0) : Offset(0, 2),
+      //       child: FloatingActionButton(
+      //         onPressed: () {
+      //           newLeadFormBottomSheetWidget(context);
+      //         },
+      //         child: Icon(
+      //           Icons.add,
+      //         ),
+      //       ),
+      //     );
+      //   },
+      // ),
     );
   }
 
