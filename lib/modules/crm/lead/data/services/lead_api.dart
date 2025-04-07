@@ -258,9 +258,6 @@ class LeadApiImpl implements LeadApi {
     try {
       Uri uri = Uri.parse(ApiEndPoints.leads).replace(
         queryParameters: {
-          "filters": jsonEncode([
-            ["name", "like", "%$enteredSearchText%"]
-          ]),
           // Ensure fields are treated as strings
           "fields": jsonEncode([
             'name',
@@ -274,6 +271,10 @@ class LeadApiImpl implements LeadApi {
             'mobile_no',
             'status',
             'communication_status'
+          ]),
+          "filters": jsonEncode([
+            ["converted", "like", "%0%"],
+            ["first_name", "=", enteredSearchText]
           ]),
         },
       );

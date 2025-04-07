@@ -2,6 +2,7 @@ import 'package:crm_mobile_app/core/dependency%20injection/dependency_injection.
 import 'package:crm_mobile_app/modules/crm/deal/presentation/view_model/deal_bloc/deal_bloc.dart';
 import 'package:crm_mobile_app/modules/crm/lead/presentation/view/crm_tabs_widget.dart';
 import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/lead_bloc/lead_bloc.dart';
+import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/lead_bloc/lead_event.dart';
 import 'package:crm_mobile_app/modules/crm/lead/presentation/widgets/leads_filter_chips_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,6 +19,7 @@ class _LeadsScreenState extends State<LeadsScreen>
     with SingleTickerProviderStateMixin {
   int currentPageIndex = 0;
   late TabController _tabController;
+  TextEditingController searchController = TextEditingController();
   final LeadBloc leadBloc = locator<LeadBloc>();
   final DealBloc dealBloc = locator<DealBloc>();
 
@@ -61,11 +63,26 @@ class _LeadsScreenState extends State<LeadsScreen>
                   width: MediaQuery.sizeOf(context).width * 0.8,
                   height: MediaQuery.sizeOf(context).height * 0.055,
                   child: SearchBar(
+                    controller: searchController,
                     hintText: "Search...",
                     hintStyle: WidgetStateProperty.all(
                       GoogleFonts.nunitoSans(
                           fontSize: 16, color: Colors.grey.shade600),
                     ),
+                    onChanged: (value) {
+                      if (value.isEmpty) {
+                        FocusScope.of(context)
+                            .unfocus(); // hide keyboard if input is empty
+                        leadBloc.add(ClearLeadsEvent());
+                        leadBloc.add(FetchLeadsEvent(limitStart: 0, limit: 10));
+                      }
+                    },
+                    onSubmitted: (value) {
+                      leadBloc.add(SearchLeadEvent(
+                          limit: 0,
+                          limitStart: 10,
+                          searchText: searchController.text.toString()));
+                    },
                     elevation: WidgetStateProperty.all(0.0),
                     textInputAction: TextInputAction.search,
                     padding: WidgetStateProperty.all(
@@ -79,26 +96,9 @@ class _LeadsScreenState extends State<LeadsScreen>
                             width: 1.5), // Border Color & Width
                       ),
                     ),
-                    leading: Container(
-                      height: 25,
-                      width: 25,
-                      // decoration: BoxDecoration(
-                      //     color: Colors.white,
-                      //     borderRadius: BorderRadius.circular(50),
-                      //     boxShadow: [
-                      //       BoxShadow(
-                      //           color: Colors.grey.shade200,
-                      //           // Shadow color
-                      //           spreadRadius: 0.5,
-                      //           // Reduce spread for a smaller shadow
-                      //           blurRadius: 5,
-                      //           // Soften the shadow
-                      //           offset: const Offset(0, 2))
-                      //     ]),
-                      child: Icon(
-                        Icons.search,
-                        size: 22.0,
-                      ),
+                    leading: Icon(
+                      Icons.search,
+                      size: 22.0,
                     ),
                   ),
                 ),
@@ -134,7 +134,7 @@ class _LeadsScreenState extends State<LeadsScreen>
               tabController: _tabController,
             ),
             //SingleChoice(),
-           // LeadFilterScreen(),
+            // LeadFilterScreen(),
             Expanded(
                 child: TabBarViewBody(
               tabController: _tabController,

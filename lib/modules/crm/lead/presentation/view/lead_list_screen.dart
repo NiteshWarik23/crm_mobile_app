@@ -1,14 +1,13 @@
 import 'dart:async';
 
-import 'package:crm_mobile_app/core/dependency%20injection/dependency_injection.dart';
+import 'package:crm_mobile_app/modules/crm/lead/data/services/models/response/lead_response.dart';
+import 'package:crm_mobile_app/modules/crm/lead/data/services/models/response/search_lead_response_model.dart';
 import 'package:crm_mobile_app/modules/crm/lead/presentation/view/lead_card.dart';
 import 'package:crm_mobile_app/modules/crm/lead/presentation/view/new_lead_form.dart';
-import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/convert_to_deal_bloc/convert_to_deal_bloc.dart';
 import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/lead_bloc/lead_bloc.dart';
 import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/lead_bloc/lead_event.dart';
 import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/lead_bloc/lead_state.dart';
 import 'package:crm_mobile_app/modules/crm/lead/presentation/widgets/bottom_loader.dart';
-import 'package:crm_mobile_app/modules/crm/lead/presentation/widgets/overlay_toast_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -25,10 +24,6 @@ class LeadsListScreen extends StatefulWidget {
 
 class _LeadsListScreenState extends State<LeadsListScreen> {
   final ValueNotifier<bool> _isFabVisible = ValueNotifier<bool>(true);
-
-  // final LeadBloc leadBloc = locator<LeadBloc>();
-  // final ConvertLeadToDealBloc convertLeadToDealBloc =
-  //     locator<ConvertLeadToDealBloc>();
 
   final _scrollController = ScrollController();
 
@@ -108,32 +103,6 @@ class _LeadsListScreenState extends State<LeadsListScreen> {
               DeleteLeadStatus.deleteLeadFailure) {
             Fluttertoast.showToast(msg: "Failed to delete Lead.");
           }
-          // if (state is ConvertToDealLoadingState) {
-          //   print("Listening ${state}");
-
-          //   scaffoldMessengerKey.currentState?.showSnackBar(
-          //     SnackBar(
-          //       content: Text("Converting Lead To Deal...Please Wait"),
-          //     ),
-          //   );
-          // } else if (state is ConvertToDealStateSuccessState) {
-          //   print("Listening ${state}");
-
-          //   Fluttertoast.showToast(
-          //       gravity: ToastGravity.TOP,
-          //       msg: "Lead Converted To Deal Successfully");
-          //   scaffoldMessengerKey.currentState?.showSnackBar(
-          //     SnackBar(
-          //       content: Text("Lead Converted To Deal Successfully"),
-          //     ),
-          //   );
-          // } else if (state is ConvertToDealFailureState) {
-          //   scaffoldMessengerKey.currentState?.showSnackBar(
-          //     SnackBar(
-          //       content: Text("Failed to convert Lead To Deal"),
-          //     ),
-          //   );
-          // }
         },
         child: RefreshIndicator.adaptive(
           key: refreshIndicatorKey,
@@ -143,14 +112,52 @@ class _LeadsListScreenState extends State<LeadsListScreen> {
             await _onRefresh();
           },
           child: BlocBuilder<LeadBloc, LeadState>(
-            buildWhen: (previous, current) =>
-                previous.leadData !=
-                    current.leadData || // Rebuild when leadData changes
-                previous.selectedFilter != current.selectedFilter,
+            // buildWhen: (previous, current) =>
+            //     previous.leadData !=
+            //         current.leadData || // Rebuild when leadData changes
+            //     previous.selectedFilter != current.selectedFilter,
             builder: (context, state) {
-              //TODO : show different list when user searches
-              // if (state.isUserSearching) {
-              // } else {}
+              print("Searching ${state.isUserSearching}");
+              if (state.isUserSearching) {
+                switch (state.searchLeadStatus) {
+                  case SearchLeadStatus.searchLeadInitial:
+                    return LeadShimmerList(
+                      itemCount: 8,
+                    );
+                  case SearchLeadStatus.searchLeadLoading:
+                    return LeadShimmerList(
+                      itemCount: 8,
+                    );
+                  case SearchLeadStatus.searchLeadSuccess:
+                    return Scrollbar(
+                      controller: _scrollController,
+                      thickness: 5.0,
+                      radius: Radius.circular(5.0),
+                      trackVisibility: true,
+                      child: ListView.builder(
+                        physics: AlwaysScrollableScrollPhysics(),
+                        controller: _scrollController,
+                        itemCount: state.searchLeadData.length +
+                            (state.hasReachedMax ? 0 : 1),
+                        itemBuilder: (context, index) {
+                          return index >= state.searchLeadData.length
+                              ? const BottomLoader()
+                              : Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10.0),
+                                  child: LeadCard(
+                                      leadData: state.searchLeadData[index]
+                                          .toLeadData()),
+                                );
+                        },
+                      ),
+                    );
+                  case SearchLeadStatus.searchLeadFailure:
+                    return const Center(
+                      child: Text("No Leads Found"),
+                    );
+                }
+              }
               switch (state.status) {
                 case LeadListStatus.initial:
                   return LeadShimmerList(
@@ -427,6 +434,22 @@ class _LeadsListScreenState extends State<LeadsListScreen> {
       ),
       builder: (context) =>
           FractionallySizedBox(heightFactor: 0.8, child: LeadFormBottomSheet()),
+    );
+  }
+}
+
+extension SearchLeadMapper on SearchLeadData {
+  LeadData toLeadData() {
+    return LeadData(
+      name: name,
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      mobileNo: mobileNo,
+      status: status,
+      facebookCampaign: facebookCampaign,
+      metaPlatform: metaPlatform,
+      creation: creation,
     );
   }
 }

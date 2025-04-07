@@ -16,6 +16,7 @@ import 'package:crm_mobile_app/modules/crm/lead/domain/usecase/search_lead_useca
 import 'package:crm_mobile_app/modules/crm/lead/domain/usecase/update_lead_status_usecase.dart';
 import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/lead_bloc/lead_event.dart';
 import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/lead_bloc/lead_state.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:stream_transform/stream_transform.dart';
 
@@ -325,21 +326,21 @@ class LeadBloc extends Bloc<LeadEvent, LeadState> {
     try {
       final DataState<SearchLeadResponse> leadResponse =
           await searchLeadUsecase.call(
-              // LeadDataOffsetLimitRequestParams(
-              //   offsetLimitRequestModel: OffsetLimitRequestModel(
-              //     limitStart: 0,
-              //     limit: limit,
-              //   ),
-              //   searchText: event.searchText,
-              // ),
-              SearchLeadDataRequestParams(enteredSearchText: event.searchText));
+        SearchLeadDataRequestParams(
+          offsetLimitRequestModel: OffsetLimitRequestModel(
+            limitStart: event.limitStart,
+            limit: event.limit,
+          ),
+          enteredSearchText: event.searchText,
+        ),
+      );
 
       if (leadResponse is DataSuccess) {
         final leadSuccessResponseData = leadResponse.data;
         if (leadSuccessResponseData is SearchLeadSuccesssResponseModel) {
           List<SearchLeadData> newLeads = leadSuccessResponseData.data ?? [];
           // Stop pagination if no new data is returned
-          bool reachedMax = newLeads.isEmpty;
+          bool reachedMax = newLeads.isEmpty || newLeads.length < 10;
 
           // Only set hasReachedMax to true if we're paginating and get an empty list
           if (event.searchText.isNotEmpty && newLeads.isEmpty) {
@@ -349,7 +350,9 @@ class LeadBloc extends Bloc<LeadEvent, LeadState> {
 
           emit(state.copyWith(
             searchLeadStatus: SearchLeadStatus.searchLeadSuccess,
-            searchLeadData: newLeads,
+            searchLeadData: event.limitStart == 0
+                ? newLeads
+                : state.searchLeadData + newLeads,
             hasReachedMax: reachedMax,
           ));
 

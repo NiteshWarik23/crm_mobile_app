@@ -2,6 +2,7 @@ import 'package:crm_mobile_app/config/routes/arguments/lead_details_arguments.da
 import 'package:crm_mobile_app/config/routes/routes.dart';
 import 'package:crm_mobile_app/core/dependency%20injection/dependency_injection.dart';
 import 'package:crm_mobile_app/modules/crm/lead/data/services/models/response/lead_response.dart';
+import 'package:crm_mobile_app/modules/crm/lead/data/services/models/response/search_lead_response_model.dart';
 import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/lead_bloc/lead_bloc.dart';
 import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/lead_bloc/lead_event.dart';
 import 'package:crm_mobile_app/modules/crm/lead/presentation/view_model/lead_bloc/lead_state.dart';
@@ -16,11 +17,8 @@ enum Menu { delete, convertToDeal }
 class LeadCard extends StatelessWidget {
   final LeadData leadData;
 
-  LeadCard({super.key, required this.leadData});
+  LeadCard({super.key,required this.leadData,});
 
-  //final LeadBloc leadBloc = locator<LeadBloc>();
-  // final ConvertLeadToDealBloc convertLeadToDealBloc =
-  //     locator<ConvertLeadToDealBloc>();
   @override
   Widget build(BuildContext context) {
     final leadBloc = context.read<LeadBloc>();
@@ -29,7 +27,6 @@ class LeadCard extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
     return GestureDetector(
       onTap: () {
-        print("-->Lead Card Lead CRM ID ${leadData.name}");
 
         Navigator.pushNamed(
           context,
