@@ -213,6 +213,8 @@ class _LeadsListScreenState extends State<LeadsListScreen> {
                       },
                     ),
                   );
+                 case LeadListStatus.empty:
+                  return const Center(child: Text("No Leads Found"));
                 case LeadListStatus.contectedFilter:
                   return Scrollbar(
                     key: ValueKey(state

@@ -6,6 +6,7 @@ import 'package:crm_mobile_app/core/utils/secure_storage.dart';
 import 'package:crm_mobile_app/modules/login/data/services/models/request/login_request_model.dart';
 import 'package:crm_mobile_app/modules/login/data/services/models/response/login_response.dart';
 import 'package:dio/dio.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 abstract class LoginAPi {
   Future<LoginResponse> login(LoginDataRequestModel loginDataRequestModel);
@@ -25,7 +26,6 @@ class LoginAPiImpl implements LoginAPi {
         queryParameters: loginDataRequestModel.toJson(),
       );
       print("Response Code${response.statusCode}");
-
       if (response.statusCode == 200) {
         //String? cookies = response.headers['set-cookie']?.first;
 
@@ -47,20 +47,36 @@ class LoginAPiImpl implements LoginAPi {
               .writeSecureData(SecureStorageKeys.sid_cookie, sessionId);
         }
         //*************************End*******************/
+        // Fluttertoast.showToast(
+        //     msg:
+        //         "API Error ${response.data.toString()} ${response.statusCode.toString()}");
 
         return LoginSuccessResponseModel.fromJson(response.data);
       } else if (response.statusCode == 401) {
         print("API Error ${response.data.toString()}");
+        //Fluttertoast.showToast(msg: "API Error ${response.data.toString()}");
+
         return LoginErrorResponseModel.fromJson(response.data);
       } else if (response.statusCode == 500) {
         print("API Error ${response.data.toString()}");
+        //Fluttertoast.showToast(msg: "API Error ${response.data.toString()}");
+
         return LoginErrorResponseModel.fromJson(response.data);
       } else {
+        // Fluttertoast.showToast(
+        //     msg: "ServerException API Error ${response.data.toString()}");
+
         throw ServerException(response.statusMessage);
       }
     } on DioException catch (e) {
+      // Fluttertoast.showToast(
+      //     msg: "DioException API Error ${e.response!.statusCode.toString()}");
+
       print("Response Code !${e.response!.statusCode}");
       throw handleDioClientError(e);
+    } catch (e) {
+     // Fluttertoast.showToast(msg: "Unknown 3 API Error ${e.toString()}");
+      throw ServerException(e.toString());
     }
   }
 }

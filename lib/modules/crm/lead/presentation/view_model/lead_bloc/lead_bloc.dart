@@ -96,14 +96,27 @@ class LeadBloc extends Bloc<LeadEvent, LeadState> {
           filterType: event.filter.name,
         ),
       );
+      print("Server Expection Lead Bloc Response ${leadResponse.toString()}");
 
       if (leadResponse is DataSuccess) {
         final leadSuccessResponseData = leadResponse.data;
         if (leadSuccessResponseData is LeadsListSuccessResponseModel) {
           List<LeadData> newLeads = leadSuccessResponseData.data ?? [];
+
+          // 👉 Handle no leads found on initial load
+          if (event.limitStart == 0 && newLeads.isEmpty) {
+            emit(state.copyWith(
+              status: LeadListStatus.empty, // 🔧 Add this to your enum
+              leadData: [],
+              hasReachedMax: true,
+              selectedFilter: event.filter,
+            ));
+            return;
+          }
           // Stop pagination if no new data is returned
           bool reachedMax = newLeads.isEmpty || newLeads.length < 10;
           print("Lead Count ${newLeads.length}");
+
           // if (newLeads.isEmpty) {
           //   return emit(state.copyWith(hasReachedMax: true));
           // }
@@ -198,8 +211,16 @@ class LeadBloc extends Bloc<LeadEvent, LeadState> {
             limitStart += limit;
           }
         } else if (leadResponse is DataFailed) {
+          print(
+              "Server Expection Lead Bloc ${leadResponse.error?.message.toString()}");
+          print("Server Expection Lead Bloc ${leadResponse.error.toString()}");
           emit(state.copyWith(status: LeadListStatus.failure));
         }
+      } else if (leadResponse is DataFailed) {
+        print(
+            "Server Expection Lead Bloc ${leadResponse.error?.message.toString()}");
+        print("Server Expection Lead Bloc ${leadResponse.error.toString()}");
+        emit(state.copyWith(status: LeadListStatus.failure));
       }
     } catch (e) {
       emit(state.copyWith(status: LeadListStatus.failure));

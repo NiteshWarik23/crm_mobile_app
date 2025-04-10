@@ -325,8 +325,9 @@ class LeadDetailsScreen extends StatelessWidget {
               shape: BoxShape.rectangle,
               borderRadius: BorderRadius.circular(10)),
           padding: const EdgeInsets.all(10),
-          child: SvgPicture.asset(svgAssetString)
-          //Icon(icon, color: Colors.black, size: 23),
+          child: 
+          SvgPicture.asset(svgAssetString)
+          ///Icon(Icons.abc, color: Colors.black, size: 23),
           ),
     );
   }
@@ -350,8 +351,9 @@ class LeadDetailsScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(color: AppColors.greyshade500)),
             padding: const EdgeInsets.all(10),
-            child: SvgPicture.asset(svgAssetString)
-            //Icon(icon, color: Colors.black, size: 23),
+            child: 
+            SvgPicture.asset(svgAssetString)
+            //Icon(Icons.abc, color: Colors.black, size: 23),
             ),
         const SizedBox(width: 10),
         Text(label),

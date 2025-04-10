@@ -6,6 +6,7 @@ import 'package:crm_mobile_app/modules/login/domain/usecase/login_usecase.dart';
 import 'package:crm_mobile_app/modules/login/presentation/view_model/login_bloc/login_event.dart';
 import 'package:crm_mobile_app/modules/login/presentation/view_model/login_bloc/login_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final LoginUsecase loginUsecase;
@@ -20,8 +21,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       //print("onLoginClick triggered"); // Debugging
 
       emit(LoginLoadingState());
-     // print("Emitting: LoginLoadingState");
-
+      // print("Emitting: LoginLoadingState");
+      //Fluttertoast.showToast(msg: "${event.userEmailId} ${event.password}");
       LoginDataRequestModel loginDataRequestModel =
           LoginDataRequestModel(usr: event.userEmailId, pwd: event.password);
 
@@ -39,7 +40,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
           emit(LoginSuccessState(
               username: loginSuccessReponseData.fullName ?? ""));
-        }
+        } 
       } else if (loginResponse is DataFailed) {
         // print("Error 1 $loginResponse");
         // print("Error 2  ${loginResponse.error!.message}");
@@ -49,9 +50,17 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         //print("Error 3 $loginErrorReponseData");
         //print("Login Error Message ${loginErrorReponseData.message}");
         //print("Emitting: LoginFailureState");
-        emit(LoginFailureState(
-            errorMessage:
-             loginResponse.error != null ?   loginResponse.error!.message : Strings.defaultErrMsg));
+        print("DataFailed Response ${loginResponse.error}");
+        // Fluttertoast.showToast(
+        //     msg: "DataFailed Response ${loginResponse.error}");
+        print("DataFailed Response ${loginResponse.error?.message.toString()}");
+        // Fluttertoast.showToast(
+        //     msg:
+        //         "DataFailed Response ${loginResponse.error?.message.toString()}");
+
+        final errorMessage =
+            loginResponse.error?.message ?? Strings.defaultErrMsg;
+        emit(LoginFailureState(errorMessage: errorMessage));
         // }
       }
     }

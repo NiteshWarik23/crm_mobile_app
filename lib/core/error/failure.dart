@@ -14,6 +14,12 @@ class ServerFailure extends Failure {
   const ServerFailure(String message, int statusCode) : super(message, statusCode);
 }
 
+class NetworkFailure extends Failure {
+  const NetworkFailure(String message, int statusCode)
+      : super(message, statusCode);
+}
+
+
 class DataFailure extends Failure {
   const DataFailure(String message, int statusCode)
       : super(message, statusCode);

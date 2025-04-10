@@ -40,6 +40,11 @@ import 'package:crm_mobile_app/modules/login/data/repositories/login_repository_
 import 'package:crm_mobile_app/modules/login/data/services/login_api.dart';
 import 'package:crm_mobile_app/modules/login/domain/usecase/login_usecase.dart';
 import 'package:crm_mobile_app/modules/login/presentation/view_model/login_bloc/login_bloc.dart';
+import 'package:crm_mobile_app/modules/marketing/data/repositories/marketing_repository.dart';
+import 'package:crm_mobile_app/modules/marketing/data/repositories/marketing_repository_impl.dart';
+import 'package:crm_mobile_app/modules/marketing/data/services/marketing_api.dart';
+import 'package:crm_mobile_app/modules/marketing/domain/usecase/get_campaigns_usecase.dart';
+import 'package:crm_mobile_app/modules/marketing/presentation/view_model/get_campaigns_bloc/get_campaigns_bloc.dart';
 import 'package:get_it/get_it.dart';
 
 //Example of different types of registration in GetIt
@@ -155,8 +160,6 @@ void init() {
 //Create Tag Bloc
   locator.registerFactory<CreateTagBloc>(() => CreateTagBloc(locator()));
 
-
-
   //API Services
   locator.registerLazySingleton<DealApi>(() => DealApiImpl(locator()));
 //Repositories
@@ -177,23 +180,39 @@ void init() {
 // Deal Use Cases
   locator.registerLazySingleton<DealUsecase>(() => DealUsecase(locator()));
   // Get Notes Use Cases
-  locator.registerLazySingleton<GetDealNotesUsecase>(() => GetDealNotesUsecase(locator()));
-    //Get Deal Notes Bloc
-  locator
-      .registerFactory<GetDealNotesBloc>(() => GetDealNotesBloc(locator()));
+  locator.registerLazySingleton<GetDealNotesUsecase>(
+      () => GetDealNotesUsecase(locator()));
+  //Get Deal Notes Bloc
+  locator.registerFactory<GetDealNotesBloc>(() => GetDealNotesBloc(locator()));
   //Get Deals  Bloc
   locator.registerFactory<DealBloc>(
       () => DealBloc(locator(), locator(), locator(), locator()));
-      //DeleteLeadUsecase
+  //DeleteLeadUsecase
   locator.registerLazySingleton<CreateDealNoteUsecase>(
       () => CreateDealNoteUsecase(locator()));
   //Create Deal Note Bloc
-  locator.registerFactory<CreateDealNoteBloc>(() => CreateDealNoteBloc(locator()));
+  locator
+      .registerFactory<CreateDealNoteBloc>(() => CreateDealNoteBloc(locator()));
   //Create Deal Bloc
-  locator.registerFactory<CreateDealFormBloc>(() => CreateDealFormBloc(locator()));
-   // Get Notes Use Cases
+  locator
+      .registerFactory<CreateDealFormBloc>(() => CreateDealFormBloc(locator()));
+  // Get Notes Use Cases
   locator.registerLazySingleton<CreateDealTagUsecase>(
       () => CreateDealTagUsecase(locator()));
   //Get Deal Notes Bloc
-  locator.registerFactory<CreateDealTagBloc>(() => CreateDealTagBloc(locator()));
+  locator
+      .registerFactory<CreateDealTagBloc>(() => CreateDealTagBloc(locator()));
+
+  // Marketing
+  // Get Campaings
+  //  //API Services
+  locator
+      .registerLazySingleton<MarketingApi>(() => MarketingApiImpl(locator()));
+//Repositories
+  locator.registerLazySingleton<MarketingRepository>(
+      () => MarketingRepositoryImpl(locator()));
+  locator.registerLazySingleton<GetCampaignsUsecase>(
+      () => GetCampaignsUsecase(locator()));
+  locator
+      .registerFactory<GetCampaignsBloc>(() => GetCampaignsBloc(locator()));
 }

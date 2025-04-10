@@ -6,8 +6,9 @@ import 'package:crm_mobile_app/modules/dashboard/presentation/view_model/bottom_
 import 'package:crm_mobile_app/modules/dashboard/presentation/view_model/bottom_bar_bloc/bottom_nav_bar_event.dart';
 import 'package:crm_mobile_app/modules/dashboard/presentation/view_model/bottom_bar_bloc/bottom_nav_bar_state.dart';
 import 'package:crm_mobile_app/modules/crm/lead/presentation/view/leads_screen.dart';
-import 'package:crm_mobile_app/modules/markating/presentaion/view_model/markating_active_campaigns.dart';
+import 'package:crm_mobile_app/modules/marketing/presentation/view/markating_active_campaigns.dart';
 import 'package:crm_mobile_app/modules/marketing/presentation/view/campaign_detailed_view/view_campaign_detailed_view.dart';
+import 'package:crm_mobile_app/modules/marketing/presentation/view_model/get_campaigns_bloc/get_campaigns_bloc.dart';
 import 'package:crm_mobile_app/modules/profile/presentation/view/profile_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,13 +26,19 @@ class DashboardScreen extends StatelessWidget {
   ];
 
   final BottomNavBloc bottomNavBloc = locator<BottomNavBloc>();
-    int currentPageIndex = 0;
+  final GetCampaignsBloc getCampaignsBloc = locator<GetCampaignsBloc>();
 
+  int currentPageIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => bottomNavBloc,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => bottomNavBloc,
+        ),
+        BlocProvider.value(value: getCampaignsBloc)
+      ],
       child: Scaffold(
         backgroundColor: Colors.grey[200],
         body: BlocBuilder<BottomNavBloc, BottomNavState>(
@@ -79,8 +86,7 @@ class CustomBottomNavBar extends StatelessWidget {
       unselectedFontSize: 12,
       currentIndex:
           (context.watch<BottomNavBloc>().state is BottomNavUpdatedState)
-              ? (context.watch<BottomNavBloc>().state
-                      as BottomNavUpdatedState)
+              ? (context.watch<BottomNavBloc>().state as BottomNavUpdatedState)
                   .index
               : 0,
       onTap: (index) {

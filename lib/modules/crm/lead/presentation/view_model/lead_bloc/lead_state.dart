@@ -6,6 +6,7 @@ enum LeadListStatus {
   initial,
   success,
   failure,
+  empty,
   contectedFilter,
   nutureFilter,
   qualifiedFilter,

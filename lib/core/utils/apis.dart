@@ -17,4 +17,7 @@ class ApiEndPoints {
 
   //Deal API's
   static const String deals = "api/resource/CRM Deal?";
+
+  //Marketing API's
+  static const String getCampaigns = "/api/resource/Facebook Campaign?";
 }

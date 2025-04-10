@@ -30,9 +30,11 @@ class LeadRepositoryImpl implements LeadRepository {
 
   @override
   ResultFuture<LeadResponse> getLeads(
-      OffsetLimitRequestModel offsetLimitRequestModel,String filterType) async {
+      OffsetLimitRequestModel offsetLimitRequestModel,
+      String filterType) async {
     try {
-      final leadResponse = await leadApi.getLeads(offsetLimitRequestModel,filterType);
+      final leadResponse =
+          await leadApi.getLeads(offsetLimitRequestModel, filterType);
 
       if (leadResponse is LeadsListSuccessResponseModel) {
         return DataSuccess(leadResponse);
@@ -46,6 +48,7 @@ class LeadRepositoryImpl implements LeadRepository {
         return DataFailed(UnknownFailure(Strings.defaultErrMsg, 0));
       }
     } on ServerException catch (e) {
+      print("Server Expection Lead Repo ${e.message}");
       return DataFailed(ServerFailure(e.message ?? Strings.defaultErrMsg, 0));
     } on ApiServerException catch (e) {
       return DataFailed(
@@ -142,8 +145,6 @@ class LeadRepositoryImpl implements LeadRepository {
     }
   }
 
-
-  
   @override
   ResultFuture<DeleteLeadResponse> deleteLead(
       DeleteLeadRequestModel deleteLeadRequestModel) async {
@@ -153,8 +154,7 @@ class LeadRepositoryImpl implements LeadRepository {
 
       if (deleteLeadResponse is DeleteLeadSuccessResponseModel) {
         return DataSuccess(deleteLeadResponse);
-      } else if (deleteLeadResponse
-          is DeleteLeadErrorResponseModel) {
+      } else if (deleteLeadResponse is DeleteLeadErrorResponseModel) {
         return DataFailed(ServerFailure(
             //TODO TBD for what message to show
             //convertLeadToDealResponse.excType ??
@@ -175,7 +175,6 @@ class LeadRepositoryImpl implements LeadRepository {
     }
   }
 
-  
   @override
   ResultFuture<CreateLeadResponseModel> createLead(
       CreateLeadRequestModel createleadRequestModel) async {
@@ -185,8 +184,7 @@ class LeadRepositoryImpl implements LeadRepository {
 
       if (createLeadResponse is CreateLeadSuccessResponseModel) {
         return DataSuccess(createLeadResponse);
-      } else if (createLeadResponse
-          is CreateLeadErrorResponseModel) {
+      } else if (createLeadResponse is CreateLeadErrorResponseModel) {
         return DataFailed(ServerFailure(
             //TODO TBD for what message to show
             //convertLeadToDealResponse.excType ??
@@ -207,8 +205,7 @@ class LeadRepositoryImpl implements LeadRepository {
     }
   }
 
-
-   @override
+  @override
   ResultFuture<CreateTagResponseModel> createLeadTag(
       CreateTagRequestModel createTagRequestModel) async {
     try {
@@ -246,8 +243,7 @@ class LeadRepositoryImpl implements LeadRepository {
           await leadApi.createNote(createNoteRequestModel);
       if (createNoteRespone is CreateNoteSuccessResponseModel) {
         return DataSuccess(createNoteRespone);
-      } else if (createNoteRespone
-          is CreateNoteErrorResponseModel) {
+      } else if (createNoteRespone is CreateNoteErrorResponseModel) {
         return DataFailed(ServerFailure(Strings.defaultErrMsg, 401));
       } else {
         return DataFailed(UnknownFailure(Strings.defaultErrMsg, 0));
@@ -269,7 +265,8 @@ class LeadRepositoryImpl implements LeadRepository {
       GetNotesRequestModel getNotesRequestModel,
       OffsetLimitRequestModel offsetLimitRequestModel) async {
     try {
-      final getNotesResponse = await leadApi.getNotes(getNotesRequestModel, offsetLimitRequestModel);
+      final getNotesResponse =
+          await leadApi.getNotes(getNotesRequestModel, offsetLimitRequestModel);
 
       if (getNotesResponse is GetNotesSuccessResponseModel) {
         return DataSuccess(getNotesResponse);
@@ -294,4 +291,3 @@ class LeadRepositoryImpl implements LeadRepository {
     }
   }
 }
-

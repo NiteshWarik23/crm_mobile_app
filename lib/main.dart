@@ -3,6 +3,7 @@ import 'package:crm_mobile_app/config/routes/routes.dart';
 import 'package:crm_mobile_app/config/theme/app_theme.dart';
 import 'package:crm_mobile_app/core/dependency%20injection/dependency_injection.dart'
     as di;
+import 'package:crm_mobile_app/core/utils/alice.dart';
 import 'package:crm_mobile_app/modules/login/presentation/view/login_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
       onGenerateRoute: AppRouter.generateRoute,
       debugShowCheckedModeBanner: false,
       scaffoldMessengerKey: scaffoldMessengerKey,
+      //navigatorKey: alice.getNavigatorKey(),
       home: LoginScreen(),
     );
   }

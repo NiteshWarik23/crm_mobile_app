@@ -56,8 +56,10 @@ class LeadApiImpl implements LeadApi {
       OffsetLimitRequestModel offsetLimitRequestModel, String filter) async {
     String? sessionID = await SecureStorage.instance
         .readSecureData(SecureStorageKeys.sid_cookie);
-
+    print("Session ID Lead API  $sessionID");
     if (sessionID == null || sessionID.isEmpty) {
+      print("Server Expection thrown ");
+
       throw ServerException("Session ID is null or empty");
     }
     try {
