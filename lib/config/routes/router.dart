@@ -58,6 +58,8 @@ class AppRouter {
                     dealID: dealDetailsArguments.leadID,
                   ),
             ));
+      case AppRoutes.campaignDetilsScreen:
+        return MaterialPageRoute(builder: (_) => ViewCampaignDetailedView());
       default:
         return MaterialPageRoute(
           builder: (_) => ErrorScreen(

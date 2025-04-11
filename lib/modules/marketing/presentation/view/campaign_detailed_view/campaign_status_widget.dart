@@ -1,5 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:crm_mobile_app/core/utils/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class CampaignStatusWidget extends StatelessWidget {
   const CampaignStatusWidget({super.key});
@@ -9,7 +11,14 @@ class CampaignStatusWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 8,
       children: [
-        Text("Status: In Progress"),
+        Text(
+          "Status: In Progress",
+          style: GoogleFonts.nunitoSans(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: AppColors.greyshade500,
+          ),
+        ),
         StartAndEndDateWidget(
           startDate: "Start Date",
           dateValue: "Dec 15, 2024",
@@ -42,8 +51,21 @@ class StartAndEndDateWidget extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(startDate),
-            Text(dateValue),
+            Text(
+              startDate,
+              style: GoogleFonts.nunitoSans(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Text(
+              dateValue,
+              style: GoogleFonts.nunitoSans(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: AppColors.greyshade500,
+              ),
+            ),
           ],
         ),
       ],

@@ -1,3 +1,4 @@
+import 'package:crm_mobile_app/config/routes/routes.dart';
 import 'package:crm_mobile_app/modules/marketing/data/services/models/response/get_campaigns_response_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -9,61 +10,62 @@ class CampaignCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  campaign.name ?? 'NA',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, AppRoutes.campaignDetilsScreen);
+      },
+      child: Card(
+        margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        elevation: 2,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    campaign.name ?? 'NA',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  formatDate(campaign.creation ?? "NA"),
-                  style: const TextStyle(color: Colors.grey),
-                ),
-              ],
-            ),
-            Text(
-              campaign.campaignStatus ?? 'NA',
-              style: const TextStyle(fontWeight: FontWeight.w400),
-            ),
-          ],
+                  const SizedBox(height: 4),
+                  Text(
+                    formatDate(campaign.creation ?? "NA"),
+                    style: const TextStyle(color: Colors.grey),
+                  ),
+                ],
+              ),
+              Text(
+                campaign.campaignStatus ?? 'NA',
+                style: const TextStyle(fontWeight: FontWeight.w400),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
+  String formatDate(String dateTimeString) {
+    DateTime dateTime = DateTime.parse(dateTimeString);
+    String formattedDate = DateFormat('dd-MM-yyyy').format(dateTime);
 
-String formatDate(String dateTimeString) {
-  DateTime dateTime = DateTime.parse(dateTimeString);
-  String formattedDate = DateFormat('dd-MM-yyyy').format(dateTime);
+    // Get current date without time
+    DateTime now = DateTime.now();
+    DateTime today = DateTime(now.year, now.month, now.day);
+    DateTime receivedDate =
+        DateTime(dateTime.year, dateTime.month, dateTime.day);
 
-  // Get current date without time
-  DateTime now = DateTime.now();
-  DateTime today = DateTime(now.year, now.month, now.day);
-  DateTime receivedDate = DateTime(dateTime.year, dateTime.month, dateTime.day);
+    int daysAgo = today.difference(receivedDate).inDays;
 
-  int daysAgo = today.difference(receivedDate).inDays;
-
-  return "Active • $daysAgo day${daysAgo == 1 ? '' : 's'}";
+    return "Active • $daysAgo day${daysAgo == 1 ? '' : 's'}";
+  }
 }
-
-}
-
-
-
 
 class ShimmerCampaignCard extends StatefulWidget {
   const ShimmerCampaignCard({super.key});

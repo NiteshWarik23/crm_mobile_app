@@ -1,4 +1,6 @@
+import 'package:crm_mobile_app/core/utils/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ChannelPerformanceWidget extends StatelessWidget {
   const ChannelPerformanceWidget({super.key});
@@ -8,18 +10,24 @@ class ChannelPerformanceWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 5,
       children: [
-        Text("Channel Performance"),
+        Text(
+          "Channel Performance",
+          style: GoogleFonts.nunitoSans(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         Text(
           "CTR",
-          style: TextStyle(
-            fontSize: 12.0,
+          style: GoogleFonts.nunitoSans(
+            fontSize: 13,
             fontWeight: FontWeight.w400,
           ),
         ),
         Text(
           "1.56%",
-          style: TextStyle(
-            fontSize: 18.0,
+          style: GoogleFonts.nunitoSans(
+            fontSize: 18,
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -28,17 +36,18 @@ class ChannelPerformanceWidget extends StatelessWidget {
             children: [
               TextSpan(
                 text: 'Last 30 Days ',
-                style: TextStyle(
-                    fontSize: 14.0,
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.w400),
+                style: GoogleFonts.nunitoSans(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
               ),
               TextSpan(
                 text: '+12%',
-                style: TextStyle(
-                  fontSize: 14.0,
-                  color: Colors.green,
+                style: GoogleFonts.nunitoSans(
+                  fontSize: 14,
                   fontWeight: FontWeight.w400,
+                  color: AppColors.greenshade01,
                 ),
               ),
             ],
